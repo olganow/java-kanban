@@ -4,13 +4,16 @@ import ru.ya.olganow.description.Status;
 import ru.ya.olganow.description.Type;
 
 public abstract class Task {
-    private  int id;
-    private final String name;
+    private int id;
+    private String name;
+
+    private String description;
 
 
-    public Task(int id, String name) {
+    public Task(int id, String name, String description) {
         this.id = id;
         this.name = name;
+        this.description = description;
     }
     public Integer getId() {//int?
         return id;
@@ -19,8 +22,20 @@ public abstract class Task {
         return name;
     }
 
-    public void setId(int id) {//Inteder?
+    public String getDescription() {
+        return description;
+    }
+
+    public void setId(int id) {
         this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public abstract Status getStatus();

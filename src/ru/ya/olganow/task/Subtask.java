@@ -4,12 +4,18 @@ import ru.ya.olganow.description.Status;
 import ru.ya.olganow.description.Type;
 
 public class Subtask extends Task {
-    private final Status status;
-    private final EpicTask epicTask;
-    public Subtask(int id, String name, Status status, EpicTask epicTask) {
-        super(id, name);
+    private Status status;
+    private EpicTask epicTask;
+
+//    public Subtask(int id, String name, String description,  Status status, EpicTask epicTask) {
+//        super(id, name,description);
+//        this.status = status;
+//        this.epicTask = epicTask;
+//    }
+
+    public Subtask(int id, String name, String description,  Status status) {
+        super(id, name,description);
         this.status = status;
-        this.epicTask = epicTask;
     }
     @Override
     public Status getStatus() {
@@ -27,6 +33,26 @@ public class Subtask extends Task {
         return  "SubTask{" +
                 "id=" + getId() +
                 ", name='" + getName() +'\'' +
-                "}";
+                ", description='" + getDescription() + '\'' +
+                "}\n";
+    }
+
+    public static class ToCreate {
+        // this is a domain object for creating subtask without ID)
+        private String name;
+        private String description;
+
+        public ToCreate(String name, String description) {
+            this.name = name;
+            this.description = description;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
     }
 }

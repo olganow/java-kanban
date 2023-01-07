@@ -1,7 +1,9 @@
 package ru.ya.olganow.manager;
 
 import ru.ya.olganow.description.Status;
+import ru.ya.olganow.task.EpicTask;
 import ru.ya.olganow.task.SingleTask;
+import ru.ya.olganow.task.Subtask;
 import ru.ya.olganow.task.Task;
 
 import java.util.ArrayList;
@@ -21,16 +23,42 @@ public class TaskManager {
 
     //option 2: more safe, not to create SingleTask object without id
     public void saveNewTask(SingleTask.ToCreate singleTaskToCreate) {
-        // 1: createNewTask
+        // 1: create New Task
         int nextFreeId = taskIdGenerator.getNextFreedI();
         SingleTask singleTask = new SingleTask(
                 nextFreeId,
                 singleTaskToCreate.getName(),
+                singleTaskToCreate.getDescription(),
                 Status.NEW
         );
-        // 2: Save task
+        // 2: Save Task
         taskById.put(singleTask.getId(), singleTask);
+    }
 
+    public void saveNewEpic(EpicTask.ToCreate singleEpicToCreate) {
+        // 1: create NewEpic
+        int nextFreeId = taskIdGenerator.getNextFreedI();
+        EpicTask epicTask = new EpicTask(
+                nextFreeId,
+                singleEpicToCreate.getName(),
+                singleEpicToCreate.getDescription()
+        );
+        // 2: Save Epic
+        taskById.put(epicTask.getId(), epicTask);
+    }
+
+
+    public void saveNewSubtask(Subtask.ToCreate singleSubtaskToCreate) {
+        // 1: create NewEpic
+        int nextFreeId = taskIdGenerator.getNextFreedI();
+        Subtask subtask = new Subtask(
+                nextFreeId,
+                singleSubtaskToCreate.getName(),
+                singleSubtaskToCreate.getDescription(),
+                Status.NEW
+        );
+        // 2: Save Epic
+        taskById.put(subtask.getId(), subtask);
     }
 
     @Deprecated
@@ -60,6 +88,7 @@ public class TaskManager {
         ArrayList<Task> tasks = new ArrayList<>();
         for (Integer id : taskIds) {
             tasks.add(this.taskById.get(id));
+
         }
         return tasks;
     }
