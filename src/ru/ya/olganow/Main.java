@@ -1,5 +1,6 @@
 package ru.ya.olganow;
 
+import ru.ya.olganow.description.TaskStatus;
 import ru.ya.olganow.manager.TaskManager;
 import ru.ya.olganow.task.EpicTask;
 import ru.ya.olganow.task.SingleTask;
@@ -8,20 +9,22 @@ import ru.ya.olganow.task.Subtask;
 public class Main {
 
     public static void main(String[] args) {
-     //   System.out.println("Поехали!");
+        //   System.out.println("Поехали!");
 
         TaskManager taskManager = new TaskManager();
 
         // Two single task created
-        SingleTask.ToCreate singleTaskToCreate = new SingleTask.ToCreate("Single safe Task","Desc SST");
-        taskManager.saveNewTask(singleTaskToCreate);
-        taskManager.saveNewTask( new SingleTask.ToCreate( "Another safe Task", "Desc AST"));
+        SingleTask singleTask = new SingleTask(0, "Single safe Task","Desc SST", TaskStatus.NEW);
+        taskManager.saveNewTask(singleTask);
+        SingleTask singleTask2 = new SingleTask(0, "Another safe Task", "Desc AST", TaskStatus.NEW);
+        taskManager.saveNewTask(singleTask2);
+
 
         //Two Epic created
-        EpicTask.ToCreate epicTaskToCreate = new EpicTask.ToCreate("First epic","Desc FE");
-        taskManager.saveNewEpic(epicTaskToCreate);
-        Subtask.ToCreate subtaskToCreate = new Subtask.ToCreate("First subtask","Desc FSB");
-        taskManager.saveNewSubtask(new Subtask.ToCreate("Second subtask","Desc 2SB"));
+        EpicTask epicTask = new EpicTask ( 0, "First epic","Desc FE");
+        taskManager.saveNewTask(epicTask);
+        Subtask subtask1 = new Subtask(0, "First subtask","Desc FSB",TaskStatus.NEW);
+        taskManager.saveNewTask(subtask1);
 
 
         //"1 - Получить список всех задач");
@@ -31,9 +34,11 @@ public class Main {
 // "2 - Удалить все задачи");
 
 // "3 - Получить по идентификатору");
-       // SingleTask singleTask = (SingleTask) taskManager.getTaskById(0);
-        System.out.println("3 - Получить по идентификатору\n" + taskManager.getTaskById(0));
-//"4 - Создание. Сам объект должен передаваться в качестве параметра");
+        //singleTask = taskManager.getTaskById(0);
+        System.out.println("3 - Получить по идентификатору\n" + taskManager.getTaskById(1));
+
+        // ============
+        //"4 - Создание. Сам объект должен передаваться в качестве параметра");
 //5 - Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.");
 //6 - Удаление по идентификатору.");
 //7 - Получение списка всех подзадач определённого эпика.");
@@ -41,9 +46,9 @@ public class Main {
 
 
         // how to change status
-        //singleTask.setStatus(Status.IN_PROGRESS);
-       // taskManager.update(singleTask);
-       // System.out.println(taskManager.getTaskById(0));
+        singleTask.setStatus(TaskStatus.IN_PROGRESS);
+        taskManager.update(singleTask);
+        System.out.println(taskManager.getTaskById(0));
 
 //        Scanner scanner = new Scanner(System.in);
 //

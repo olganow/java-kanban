@@ -1,27 +1,29 @@
 package ru.ya.olganow.task;
 
-import ru.ya.olganow.description.Status;
-import ru.ya.olganow.description.Type;
+import ru.ya.olganow.description.TaskStatus;
+import ru.ya.olganow.description.TaskType;
 
 public class SingleTask extends Task {
-    private Status status;
-    public SingleTask(int id, String name, String description, Status status) {
+    private TaskStatus taskStatus;
+
+    public SingleTask(int id, String name, String description, TaskStatus taskStatus) {
         super(id, name, description);
-        this.status=status;
+        this.taskStatus=taskStatus;
     }
+
+    public void setStatus(TaskStatus taskStatus) {
+        this.taskStatus = taskStatus;
+    }
+
     @Override
-    public Status getStatus() {
+    public TaskStatus getTaskStatus() {
         // if all subtasks are new-->Status New
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
+        return taskStatus;
     }
 
     @Override
-    public Type getType() {
-        return Type.SINGLE;
+    public TaskType getTaskType() {
+        return null;
     }
 
     @Override
@@ -30,26 +32,8 @@ public class SingleTask extends Task {
                 "id=" + getId() +
                 ", name='" + getName() +'\'' +
                 ", description='" + getDescription() + '\'' +
-                ", status='" + getStatus() + '\'' +
+                ", status='" + getTaskStatus() + '\'' +
                 "}\n";
     }
 
-    public static class ToCreate {
-        // this is a domain object for creating task without ID)
-        private String name;
-        private String description;
-
-        public ToCreate(String name, String description) {
-            this.name = name;
-            this.description = description;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-    }
 }

@@ -1,34 +1,40 @@
 package ru.ya.olganow.task;
 
-import ru.ya.olganow.description.Status;
-import ru.ya.olganow.description.Type;
+import ru.ya.olganow.description.TaskStatus;
+import ru.ya.olganow.description.TaskType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EpicTask extends Task {
-    private List<Subtask> subtasks;
+    private List<Subtask> subtasksList;
 
     public EpicTask(int id, String name, String description) {
         super(id, name, description);
-        this.subtasks = new ArrayList<>();
+        this.subtasksList = new ArrayList<>();
+    }
+
+    @Override
+    public TaskStatus getTaskStatus() {
+        // if all subtasks are new-->Status New
+        //todo
+        return TaskStatus.NEW;
+    }
+
+    @Override
+    public TaskType getTaskType() {
+        return TaskType.EPIC;
     }
 
     public List<Subtask> getSubtasks() {
-        return subtasks;
+        return subtasksList;
     }
 
-    @Override
-    public Status getStatus() {
- // if all subtasks are new-->Status New
-        //todo
-        return Status.NEW;
-    }
+//    @Override
+//    public int getId() {
+//        return id;
+//    }
 
-    @Override
-    public Type getType(){
-        return Type.EPIC;
-    }
 
     @Override
     public String toString() {
@@ -36,27 +42,10 @@ public class EpicTask extends Task {
                 "id=" +getId() +
                 ", name='" + getName() +'\'' +
                 ", description='" + getDescription() + '\'' +
-                "status=" + getStatus() + "," +
-                "subtask=" + subtasks +
+                "status=" +  getTaskStatus() + "," +
+                "subtask=" + subtasksList +
                 "}\n";
     }
 
-    public static class ToCreate {
-        // this is a domain object for creating epic without ID)
-        private String name;
-        private String description;
 
-        public ToCreate(String name, String description) {
-            this.name = name;
-            this.description = description;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-    }
 }

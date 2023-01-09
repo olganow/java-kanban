@@ -1,23 +1,24 @@
 package ru.ya.olganow.task;
 
-import ru.ya.olganow.description.Status;
-import ru.ya.olganow.description.Type;
+import ru.ya.olganow.description.TaskStatus;
+import ru.ya.olganow.description.TaskType;
 
 public abstract class Task {
+    //Task is abstract class and cannot be instantiated
     private int id;
     private String name;
-
     private String description;
-
 
     public Task(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
-    public Integer getId() {//int?
+
+    public int getId() {
         return id;
     }
+
     public String getName() {
         return name;
     }
@@ -34,12 +35,8 @@ public abstract class Task {
         this.name = name;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public abstract Status getStatus();
-    public abstract Type getType();
+    public abstract TaskStatus getTaskStatus();
+    public abstract TaskType getTaskType();
 
     @Override
     public String toString(){

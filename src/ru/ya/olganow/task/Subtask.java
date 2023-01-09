@@ -1,58 +1,51 @@
 package ru.ya.olganow.task;
 
-import ru.ya.olganow.description.Status;
-import ru.ya.olganow.description.Type;
+import ru.ya.olganow.description.TaskStatus;
+import ru.ya.olganow.description.TaskType;
 
 public class Subtask extends Task {
-    private Status status;
+    private TaskStatus taskStatus;
+    private TaskType taskType;
     private EpicTask epicTask;
 
-//    public Subtask(int id, String name, String description,  Status status, EpicTask epicTask) {
-//        super(id, name,description);
-//        this.status = status;
+    public Subtask(int id, String name, String description, TaskStatus taskStatus) {
+        super(id, name, description);
+        this.taskStatus = taskStatus;
+
+
+    }
+
+//    public Subtask(int id, String name, String description, TaskStatus taskStatus, EpicTask epicTask) {
+//        super(id, name, description);
+//        this.taskStatus = taskStatus;
 //        this.epicTask = epicTask;
+//
 //    }
 
-    public Subtask(int id, String name, String description,  Status status) {
-        super(id, name,description);
-        this.status = status;
+
+    public EpicTask getEpicTask() {
+        return epicTask;
     }
+
     @Override
-    public Status getStatus() {
+    public TaskStatus getTaskStatus() {
         // if all subtasks are new-->Status New
-        return status;
+        return taskStatus;
     }
 
     @Override
-    public Type getType(){
-        return Type.SUB;
+    public TaskType getTaskType() {
+        return null;
     }
 
     @Override
-    public String toString(){
-        return  "SubTask{" +
+    public String toString() {
+        return "SubTask{" +
                 "id=" + getId() +
-                ", name='" + getName() +'\'' +
+                ", name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 "}\n";
     }
 
-    public static class ToCreate {
-        // this is a domain object for creating subtask without ID)
-        private String name;
-        private String description;
 
-        public ToCreate(String name, String description) {
-            this.name = name;
-            this.description = description;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-    }
 }
