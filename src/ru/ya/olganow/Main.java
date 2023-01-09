@@ -6,7 +6,6 @@ import ru.ya.olganow.manager.TaskManager;
 import ru.ya.olganow.task.EpicTask;
 import ru.ya.olganow.task.SingleTask;
 import ru.ya.olganow.task.Subtask;
-import ru.ya.olganow.task.Task;
 
 public class Main {
 
@@ -42,14 +41,14 @@ public class Main {
         // taskManager.deleteAllTask();
 
         //Get all tasks by Id
-        System.out.println("Получить по идентификатору\n" + taskManager.getTaskById(1));
+        System.out.println("Получить по измененному идентификатору\n" + taskManager.getTaskById(1));
 
-        //5 - Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра;
+        //Update task
         SingleTask singleTask3 = new SingleTask(1, "Single safe Task Changed", "Desc SST", TaskType.SINGLE, TaskStatus.NEW);
         taskManager.update(singleTask3);
         System.out.println("Получить по идентификатору\n" + taskManager.getTaskById(1));
 
-        //6 - Удаление по идентификатору.");
+        //Delete by ID
         // taskManager.deleteById(2);
 
         //7 - Получение списка всех подзадач определённого эпика.");

@@ -14,6 +14,7 @@ public class TaskManager  {
     private HashMap<Integer, Task> taskById;
     private HashMap<Integer, Integer> epicSubtaskById;
 
+
     public TaskManager() {
         this.taskIdGenerator = new TaskIdGenerator();
         this.taskById = new HashMap<>();
@@ -96,16 +97,14 @@ public void deleteAllTask(){
         return tasks;
     }
 
-
-
     // @return null if no task not found
     public Task getTaskById(int id) {
+        if (taskById.get(id) == null){
+            throw new IllegalArgumentException();
+        }
         return taskById.get(id);
     }
 
-    //
-//
-//
     public static final class TaskIdGenerator {
         private int nextFreedId = 1;
 
