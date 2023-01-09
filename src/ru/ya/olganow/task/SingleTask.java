@@ -12,6 +12,7 @@ public class SingleTask extends Task {
     }
 
     public void setStatus(TaskStatus taskStatus) {
+
         this.taskStatus = taskStatus;
     }
 

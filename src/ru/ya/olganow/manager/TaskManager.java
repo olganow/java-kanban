@@ -1,5 +1,6 @@
 package ru.ya.olganow.manager;
 
+import ru.ya.olganow.description.TaskType;
 import ru.ya.olganow.task.Subtask;
 import ru.ya.olganow.task.Task;
 
@@ -11,7 +12,7 @@ public class TaskManager  {
     // final поле инициализируется единожды при создании объекта
     private final TaskIdGenerator taskIdGenerator;
     private HashMap<Integer, Task> taskById;
-    private HashMap<Integer, String> epicSubtaskById;
+    private HashMap<Integer, Integer> epicSubtaskById;
 
     public TaskManager() {
         this.taskIdGenerator = new TaskIdGenerator();
@@ -32,10 +33,32 @@ public class TaskManager  {
         subtask.setId(taskIdGenerator.getNextFreedI());
         // 2: save task
         taskById.put(subtask.getId(), subtask);
-        epicSubtaskById.put(subtask.getId(), subtask.getEpicTaskName());
+        epicSubtaskById.put(subtask.getId(), subtask.getEpicID());
     }
 
 
+public void deleteAllTask(){
+    taskById.clear();
+    epicSubtaskById.clear();
+}
+
+    public void deleteById(int id){
+        if (taskById.containsKey(id)) {
+            System.out.println("taskById="+ taskById.get(id));
+            if (taskById.get(id).getTaskType()== TaskType.EPIC){
+                for (Integer epic : epicSubtaskById.values()) {
+                    if (epicSubtaskById.equals(id)) {
+                        epicSubtaskById.remove(id);
+                        System.out.println("Сабтаски эпика удалены");
+                    }
+                }
+            }
+            taskById.remove(id);
+            System.out.println("Задача с id ="+ id +" удалена");
+        } else {
+            System.out.println("Такого id нет ");
+        }
+    }
 
 
     public void update(Task task) {
@@ -52,11 +75,14 @@ public class TaskManager  {
     }
 
     //вернуть названия эпи
-    public ArrayList<String> getAllSubtasks() {
-        ArrayList<String> tasks = new ArrayList<>();
+    public ArrayList<Integer> getAllSubtasksIdByEpicID(int id) {
+        ArrayList<Integer> tasks = new ArrayList<>();
         //add filter if you would like only subtask
-        for (String task : this.epicSubtaskById.values()) {
-            tasks.add(task);
+        for (Integer task : this.epicSubtaskById.keySet()) {
+            if (epicSubtaskById.containsValue(id)) {
+                System.out.println(epicSubtaskById.values());
+                tasks.add(task);
+            }
         }
         return tasks;
     }

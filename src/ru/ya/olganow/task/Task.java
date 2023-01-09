@@ -16,7 +16,6 @@ public abstract class Task {
         this.description = description;
         this.taskType = taskType;
     }
-
     public int getId() {
         return id;
     }
