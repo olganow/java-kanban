@@ -10,8 +10,7 @@ public class Subtask extends Task {
     private final int epicID;
 
     public Subtask(int id, String name, String description, TaskType taskType, TaskStatus taskStatus, int epicID) {
-        super(id, name, description, taskType);
-        this.taskStatus = taskStatus;
+        super(id, name, description, taskType, taskStatus);
         this.epicID = epicID;
     }
 
@@ -32,7 +31,10 @@ public class Subtask extends Task {
         return epicID;
     }
 
-
+    @Override
+    public void setTaskStatus(TaskStatus taskStatus) {
+        this.taskStatus = taskStatus;
+    }
 
     @Override
     public String toString() {

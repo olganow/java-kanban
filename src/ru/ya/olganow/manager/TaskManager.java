@@ -60,7 +60,6 @@ public void deleteAllTask(){
         }
     }
 
-
     public void update(Task task) {
         taskById.put(task.getId(), task);
     }
@@ -108,7 +107,7 @@ public void deleteAllTask(){
 //
 //
     public static final class TaskIdGenerator {
-        private int nextFreedId = 0;
+        private int nextFreedId = 1;
 
         public int getNextFreedI() {
             return nextFreedId++;

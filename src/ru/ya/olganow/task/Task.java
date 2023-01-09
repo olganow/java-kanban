@@ -10,11 +10,14 @@ public abstract class Task {
     private String description;
     private TaskType taskType;
 
-    public Task(int id, String name, String description, TaskType taskType) {
+    private TaskStatus taskStatus;
+
+    public Task(int id, String name, String description, TaskType taskType, TaskStatus taskStatus) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.taskType = taskType;
+        this.taskStatus = taskStatus;
     }
     public int getId() {
         return id;
@@ -32,15 +35,31 @@ public abstract class Task {
         return taskType;
     }
 
+    public TaskStatus getTaskStatus() {
+        return taskStatus;
+    }
+
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setTaskStatus(TaskStatus taskStatus) {
+        this.taskStatus = taskStatus;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public abstract TaskStatus getTaskStatus();
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTaskType(TaskType taskType) {
+        this.taskType = taskType;
+    }
+
+    //public abstract TaskStatus getTaskStatus();
    // public abstract TaskType getTaskType();
 
     @Override

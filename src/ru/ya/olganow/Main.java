@@ -6,6 +6,7 @@ import ru.ya.olganow.manager.TaskManager;
 import ru.ya.olganow.task.EpicTask;
 import ru.ya.olganow.task.SingleTask;
 import ru.ya.olganow.task.Subtask;
+import ru.ya.olganow.task.Task;
 
 public class Main {
 
@@ -22,54 +23,45 @@ public class Main {
 
 
         //Two Epic created
-        EpicTask epicTask1 = new EpicTask(0, "First epic", "Desc FE", TaskType.EPIC);
+        EpicTask epicTask1 = new EpicTask(0, "First epic", "Desc FE", TaskType.EPIC, TaskStatus.NEW);
         taskManager.saveNewTask(epicTask1);
-        Subtask subtask1 = new Subtask(0, "First subtask", "Desc FSB", TaskType.SUBTASK, TaskStatus.NEW, 2);
+        Subtask subtask1 = new Subtask(0, "First subtask", "Desc FSB", TaskType.SUBTASK, TaskStatus.NEW, 3);
         taskManager.saveNewSubTask(subtask1);
-        Subtask subtask2 = new Subtask(0, "Second subtask", "Desc SSB", TaskType.SUBTASK, TaskStatus.NEW, 2);
+        Subtask subtask2 = new Subtask(0, "Second subtask", "Desc SSB", TaskType.SUBTASK, TaskStatus.NEW, 3);
         taskManager.saveNewSubTask(subtask2);
 
-        EpicTask epicTask2 = new EpicTask(0, "Second epic", "Desc FE", TaskType.EPIC);
+        EpicTask epicTask2 = new EpicTask(0, "Second epic", "Desc FE", TaskType.EPIC, TaskStatus.NEW);
         taskManager.saveNewTask(epicTask2);
-        Subtask subtask3 = new Subtask(0, "Third subtask", "Desc FSB", TaskType.SUBTASK, TaskStatus.NEW, 3);
+        Subtask subtask3 = new Subtask(0, "Third subtask", "Desc FSB", TaskType.SUBTASK, TaskStatus.NEW, 4);
         taskManager.saveNewSubTask(subtask3);
 
+        // Get a list with all tasks
+        System.out.println("Получить список всех задач\n" + taskManager.getAllTasks());
 
-        //"1 - Получить список всех задач");
-        System.out.println("1 - Получить список всех задач\n" + taskManager.getAllTasks());
+        // Delete all tasks
+        // taskManager.deleteAllTask();
 
+        //Get all tasks by Id
+        System.out.println("Получить по идентификатору\n" + taskManager.getTaskById(1));
 
-// "2 - Удалить все задачи");
-        //      taskManager.deleteAllTask();
+        //5 - Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра;
+        SingleTask singleTask3 = new SingleTask(1, "Single safe Task Changed", "Desc SST", TaskType.SINGLE, TaskStatus.NEW);
+        taskManager.update(singleTask3);
+        System.out.println("Получить по идентификатору\n" + taskManager.getTaskById(1));
 
+        //6 - Удаление по идентификатору.");
+        // taskManager.deleteById(2);
 
-// "3 - Получить по идентификатору");
-        //singleTask = taskManager.getTaskById(0);
-        System.out.println("3 - Получить по идентификатору\n" + taskManager.getTaskById(1));
-
-        // ============
-        //
-        // "4 - Создание. Сам объект должен передаваться в качестве параметра");
-
-
-//5 - Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра;
-//6 - Удаление по идентификатору.");
-       // taskManager.deleteById(2);
-      //  System.out.println("1 - Получить список всех задач\n" + taskManager.getAllTasks());
-
-
-//7 - Получение списка всех подзадач определённого эпика.");
-
+        //7 - Получение списка всех подзадач определённого эпика.");
         System.out.println("11111 - Получить список все подзадач\n" + taskManager.getAllSubtasksIdByEpicID(3));
 
 
         // how to change status
         singleTask.setStatus(TaskStatus.IN_PROGRESS);
         taskManager.update(singleTask);
-        System.out.println(taskManager.getTaskById(0));
+        System.out.println(taskManager.getTaskById(1));
 
     }
-
 
 
 }

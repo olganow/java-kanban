@@ -6,8 +6,9 @@ import ru.ya.olganow.description.TaskType;
 public class SingleTask extends Task {
     private TaskStatus taskStatus;
 
+
     public SingleTask(int id, String name, String description, TaskType taskType, TaskStatus taskStatus) {
-        super(id, name, description, taskType);
+        super(id, name, description, taskType, taskStatus);
         this.taskStatus=taskStatus;
     }
 
