@@ -1,6 +1,7 @@
 package ru.ya.olganow;
 
 import ru.ya.olganow.description.TaskStatus;
+import ru.ya.olganow.description.TaskType;
 import ru.ya.olganow.manager.TaskManager;
 import ru.ya.olganow.task.EpicTask;
 import ru.ya.olganow.task.SingleTask;
@@ -14,22 +15,31 @@ public class Main {
         TaskManager taskManager = new TaskManager();
 
         // Two single task created
-        SingleTask singleTask = new SingleTask(0, "Single safe Task","Desc SST", TaskStatus.NEW);
+        SingleTask singleTask = new SingleTask(0, "Single safe Task", "Desc SST", TaskType.SINGLE, TaskStatus.NEW);
         taskManager.saveNewTask(singleTask);
-        SingleTask singleTask2 = new SingleTask(0, "Another safe Task", "Desc AST", TaskStatus.NEW);
+        SingleTask singleTask2 = new SingleTask(0, "Another safe Task", "Desc AST", TaskType.SINGLE, TaskStatus.NEW);
         taskManager.saveNewTask(singleTask2);
 
 
         //Two Epic created
-        EpicTask epicTask = new EpicTask ( 0, "First epic","Desc FE");
-        taskManager.saveNewTask(epicTask);
-        Subtask subtask1 = new Subtask(0, "First subtask","Desc FSB",TaskStatus.NEW);
-        taskManager.saveNewTask(subtask1);
+        EpicTask epicTask1 = new EpicTask(0, "First epic", "Desc FE", TaskType.EPIC);
+        taskManager.saveNewTask(epicTask1);
+        Subtask subtask1 = new Subtask(0, "First subtask", "Desc FSB", TaskType.SUBTASK, TaskStatus.NEW, "First epic");
+        taskManager.saveNewSubTask(subtask1);
+        Subtask subtask2 = new Subtask(0, "Second subtask", "Desc SSB", TaskType.SUBTASK, TaskStatus.NEW, "First epic");
+        taskManager.saveNewSubTask(subtask2);
+
+        EpicTask epicTask2 = new EpicTask(0, "Second epic", "Desc FE", TaskType.EPIC);
+        taskManager.saveNewTask(epicTask2);
+        Subtask subtask3 = new Subtask(0, "Third subtask", "Desc FSB", TaskType.SUBTASK, TaskStatus.NEW, "Second epic");
+        taskManager.saveNewSubTask(subtask3);
+
+
 
 
         //"1 - Получить список всех задач");
         System.out.println("1 - Получить список всех задач\n" + taskManager.getAllTasks());
-
+       System.out.println("11111 - Получить список все подзадач\n" + taskManager.getAllSubtasks());
 
 // "2 - Удалить все задачи");
 

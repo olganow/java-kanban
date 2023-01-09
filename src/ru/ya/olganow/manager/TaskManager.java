@@ -1,7 +1,5 @@
 package ru.ya.olganow.manager;
 
-import ru.ya.olganow.task.EpicTask;
-import ru.ya.olganow.task.SingleTask;
 import ru.ya.olganow.task.Subtask;
 import ru.ya.olganow.task.Task;
 
@@ -13,12 +11,13 @@ public class TaskManager  {
     // final поле инициализируется единожды при создании объекта
     private final TaskIdGenerator taskIdGenerator;
     private HashMap<Integer, Task> taskById;
+    private HashMap<Integer, String> epicSubtaskById;
 
     public TaskManager() {
         this.taskIdGenerator = new TaskIdGenerator();
         this.taskById = new HashMap<>();
+        this.epicSubtaskById = new HashMap<>();
     }
-
 
     //option 1: how to save object with genereted id in hashmap
     public void saveNewTask(Task singleTask) {
@@ -28,12 +27,16 @@ public class TaskManager  {
         taskById.put(singleTask.getId(), singleTask);
     }
 
-//    public void saveNewEpic(SingleTask singleTask) {
-//        // 1: generate new id and save it to the task
-//        singleTask.setId(taskIdGenerator.getNextFreedI());
-//        // 2: save task
-//        taskById.put(singleTask.getId(), singleTask);
-//    }
+    public void saveNewSubTask(Subtask subtask) {
+        // 1: generate new id and save it to the task
+        subtask.setId(taskIdGenerator.getNextFreedI());
+        // 2: save task
+        taskById.put(subtask.getId(), subtask);
+        epicSubtaskById.put(subtask.getId(), subtask.getEpicTaskName());
+    }
+
+
+
 
     public void update(Task task) {
         taskById.put(task.getId(), task);
@@ -47,6 +50,17 @@ public class TaskManager  {
         }
         return tasks;
     }
+
+    //вернуть названия эпи
+    public ArrayList<String> getAllSubtasks() {
+        ArrayList<String> tasks = new ArrayList<>();
+        //add filter if you would like only subtask
+        for (String task : this.epicSubtaskById.values()) {
+            tasks.add(task);
+        }
+        return tasks;
+    }
+
 
     //все таски по ID
     public ArrayList<Task> getTaskByIds(List<Integer> taskIds) {

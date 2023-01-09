@@ -8,11 +8,13 @@ public abstract class Task {
     private int id;
     private String name;
     private String description;
+    private TaskType taskType;
 
-    public Task(int id, String name, String description) {
+    public Task(int id, String name, String description, TaskType taskType) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.taskType = taskType;
     }
 
     public int getId() {
@@ -27,6 +29,10 @@ public abstract class Task {
         return description;
     }
 
+    public TaskType getTaskType() {
+        return taskType;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -36,7 +42,7 @@ public abstract class Task {
     }
 
     public abstract TaskStatus getTaskStatus();
-    public abstract TaskType getTaskType();
+   // public abstract TaskType getTaskType();
 
     @Override
     public String toString(){
