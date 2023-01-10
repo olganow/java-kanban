@@ -25,7 +25,7 @@ public class SingleTask extends Task {
 
     @Override
     public TaskType getTaskType() {
-        return null;
+        return TaskType.SINGLE;
     }
 
     @Override
