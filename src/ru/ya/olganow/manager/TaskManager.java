@@ -1,6 +1,7 @@
 package ru.ya.olganow.manager;
 
 import ru.ya.olganow.description.TaskType;
+import ru.ya.olganow.task.Subtask;
 import ru.ya.olganow.task.Task;
 
 import java.util.ArrayList;
@@ -8,17 +9,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TaskManager  {
+public class TaskManager {
     // final поле инициализируется единожды при создании объекта
     private final TaskIdGenerator taskIdGenerator;
     private HashMap<Integer, Task> taskById;
-    private Map<Integer, List<Integer>> epicSubtaskById;
+    private Map<Integer, Integer> epicSubtaskById;
 
 
     public TaskManager() {
         this.taskIdGenerator = new TaskIdGenerator();
         this.taskById = new HashMap<>();
-        this.epicSubtaskById = new HashMap<Integer, List<Integer>>();
+        this.epicSubtaskById = new HashMap<>();
     }
 
     //option 1: how to save object with genereted id in hashmap
@@ -29,45 +30,52 @@ public class TaskManager  {
         taskById.put(singleTask.getId(), singleTask);
     }
 
-    public void saveNewSubTask(Task task) {
+    public void saveNewSubTask(Subtask task) {
         // 1: generate new id and save it to the task
         task.setId(taskIdGenerator.getNextFreedI());
         // 2: save task
         taskById.put(task.getId(), task);
-
-        List<Integer> tasks = epicSubtaskById.get(task.getTaskType());
-        if (tasks == null){
-            tasks = new ArrayList<>();
-            tasks.add(task.getId());
-            epicSubtaskById.put(task.getId(), tasks);
-        }
-        else {
-            tasks.add(task.getId());
-        }
-
-
-      //  taskTypes.put(subtask.getId(), subtask.getEpicID());
+        epicSubtaskById.put(task.getId(), task.getEpicID());
     }
 
 
-public void deleteAllTask(){
-    taskById.clear();
-    epicSubtaskById.clear();
-}
 
-    public void deleteById(int id){
+    public void deleteAllTask() {
+        taskById.clear();
+        epicSubtaskById.clear();
+    }
+
+    public void deleteById(int id) {
         if (taskById.containsKey(id)) {
-            System.out.println("taskById="+ taskById.get(id));
-            if (taskById.get(id).getTaskType()== TaskType.EPIC){
-                for (List<Integer> epic : epicSubtaskById.values()) {
-                    if (epicSubtaskById.equals(id)) {
-                        epicSubtaskById.remove(id);
-                        System.out.println("Сабтаски эпика удалены");
+            if (taskById.get(id).getTaskType() == TaskType.EPIC) {
+                ArrayList<Integer> tasksForDelete = new ArrayList<>();
+                for (Integer task : this.epicSubtaskById.keySet()) {
+                    if (epicSubtaskById.get(task) == id) {
+                        tasksForDelete.add(task);
+                        taskById.remove(task);
                     }
                 }
+                for (int i = 0; i < tasksForDelete.size(); i++) {
+                    epicSubtaskById.remove(tasksForDelete.get(i));
+                }
+                taskById.remove(id);
+                System.out.println("Задача с id =" + id + ", и ее сабтаски удалены");
+            } else if (taskById.get(id).getTaskType() == TaskType.SINGLE) {
+                taskById.remove(id);
+                System.out.println("Задача с id =" + id + " удалена");
+            } else if (taskById.get(id).getTaskType() == TaskType.SUBTASK) {
+                ArrayList<Integer> tasksForDelete = new ArrayList<>();
+                for (Integer task : this.epicSubtaskById.keySet()) {
+                    if (epicSubtaskById.get(task) == id) {
+                        tasksForDelete.add(task);
+                    }
+                }
+                for (int i = 0; i < tasksForDelete.size(); i++) {
+                    epicSubtaskById.remove(tasksForDelete.get(i));
+                }
+                taskById.remove(id);
+                System.out.println("Задача с id =" + id + " удалена");
             }
-            taskById.remove(id);
-            System.out.println("Задача с id ="+ id +" удалена");
         } else {
             System.out.println("Такого id нет ");
         }
@@ -77,7 +85,7 @@ public void deleteAllTask(){
         taskById.put(task.getId(), task);
     }
 
-    public  ArrayList<Task> getAllTasks() {
+    public ArrayList<Task> getAllTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
         //add filter if you would like only subtask
         for (Task task : this.taskById.values()) {
@@ -86,18 +94,16 @@ public void deleteAllTask(){
         return tasks;
     }
 
-    //вернуть названия эпи
-    public ArrayList<Integer> getAllSubtasksIdByEpicID(int id) {
-        ArrayList<Integer> tasks = new ArrayList<>();
-        //add filter if you would like only subtask
-        for (Integer task : this.epicSubtaskById.keySet()) {
-            if (epicSubtaskById.containsValue(id)) {
-                System.out.println(epicSubtaskById.values());
-                tasks.add(task);
-            }
-        }
-        return tasks;
-    }
+//    //вернуть названия эпи
+//    public ArrayList<Integer> getAllSubtasksIdByEpicID(int id) {
+//        ArrayList<Integer> tasks = new ArrayList<>();
+//        //add filter if you would like only subtask
+//        for (Integer task : this.epicSubtaskById.values()) {
+//            tasks.add(task);
+//
+//        }
+//        return tasks;
+//    }
 
 
     //все таски по ID
@@ -109,20 +115,30 @@ public void deleteAllTask(){
         return tasks;
     }
 
+    public void getSubTasksById(int id) {
+        for (Integer task : this.epicSubtaskById.keySet()) {
+            if (epicSubtaskById.get(task) == id) {
+                System.out.println("Эпик номер= ='" + epicSubtaskById.get(task) + "Subtask номер= " + task);
+            }
+        }
+    }
+
+
     // @return null if no task not found
     public Task getTaskById(int id) {
-        if (taskById.get(id) == null){
+        if (taskById.get(id) == null) {
             throw new IllegalArgumentException();
         }
         return taskById.get(id);
     }
-
-    public static final class TaskIdGenerator {
-        private int nextFreedId = 1;
-
-        public int getNextFreedI() {
-            return nextFreedId++;
-        }
-    }
-
 }
+
+class TaskIdGenerator {
+    private int nextFreedId = 1;
+
+    public int getNextFreedI() {
+        return nextFreedId++;
+    }
+}
+
+
