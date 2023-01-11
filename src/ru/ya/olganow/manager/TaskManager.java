@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TaskManager {
-    // final поле инициализируется единожды при создании объекта
     private final TaskIdGenerator taskIdGenerator;
     private HashMap<Integer, Task> taskById;
     private Map<Integer, Integer> epicSubtaskById;
@@ -67,6 +66,7 @@ public class TaskManager {
                 taskById.remove(id);
                 System.out.println("Задача с id =" + id + " удалена");
             } else if (taskById.get(id).getTaskType() == TaskType.SUBTASK) {
+                int idEpic = epicSubtaskById.get(id);
                 ArrayList<Integer> tasksForDelete = new ArrayList<>();
                 for (Integer task : this.epicSubtaskById.keySet()) {
                     if (epicSubtaskById.get(task) == id) {
@@ -80,8 +80,9 @@ public class TaskManager {
                 System.out.println("Задача с id =" + id + " удалена");
 
                 //Epic Status updated
-                    setEpicStatus(id);
+                setEpicStatus(idEpic);
             }
+
         } else {
             System.out.println("Такого id нет ");
         }
@@ -89,8 +90,9 @@ public class TaskManager {
 
     public void update(Task task) {
         taskById.put(task.getId(), task);
-
         //Epic Status updated
+        // 3: Epic Status updated
+        setEpicStatus(task.getId());
         if (taskById.containsKey(task)) {
             if (taskById.get(epicSubtaskById.get(task)).getTaskType() == TaskType.EPIC) {
                 setEpicStatus(epicSubtaskById.get(task));
@@ -130,29 +132,35 @@ public class TaskManager {
 
     public void setEpicStatus(int epicId) {
         if (epicSubtaskById.containsValue(epicId)) {
-            int counterNew = 0;
-            int counterDone = 0;
-            int counterInProgress = 0;
-            for (Integer task : this.epicSubtaskById.keySet()) {
-                if (epicSubtaskById.get(task) == epicId && taskById.get(task).getTaskStatus() == TaskStatus.NEW) {
-                    counterNew++;
-                }
-                if (epicSubtaskById.get(task) == epicId && taskById.get(task).getTaskStatus() == TaskStatus.DONE) {
-                    counterDone++;
-                }
-                if (epicSubtaskById.get(task) == epicId && taskById.get(task).getTaskStatus() == TaskStatus.IN_PROGRESS) {
-                    counterInProgress++;
-                }
-            }
-            int counter = counterNew + counterDone + counterInProgress;
-
-            if (counterNew == counter) {
+            if (epicSubtaskById.get(epicId) == null) {
                 taskById.get(epicId).setTaskStatus(TaskStatus.NEW);
-            } else if (counterDone == counter) {
-                taskById.get(epicId).setTaskStatus(TaskStatus.DONE);
-            } else {
-                taskById.get(epicId).setTaskStatus(TaskStatus.IN_PROGRESS);
+            }else {
+                int counterNew = 0;
+                int counterDone = 0;
+                int counterInProgress = 0;
+                for (Integer task : this.epicSubtaskById.keySet()) {
+                    if (epicSubtaskById.get(task) == epicId && taskById.get(task).getTaskStatus() == TaskStatus.NEW) {
+                        counterNew++;
+                    }
+                    if (epicSubtaskById.get(task) == epicId && taskById.get(task).getTaskStatus() == TaskStatus.DONE) {
+                        counterDone++;
+                    }
+                    if (epicSubtaskById.get(task) == epicId && taskById.get(task).getTaskStatus() == TaskStatus.IN_PROGRESS) {
+                        counterInProgress++;
+                    }
+                }
+                int counter = counterNew + counterDone + counterInProgress;
+
+                if (counterNew == counter) {
+                    taskById.get(epicId).setTaskStatus(TaskStatus.NEW);
+                } else if (counterDone == counter) {
+                    taskById.get(epicId).setTaskStatus(TaskStatus.DONE);
+                } else {
+                    taskById.get(epicId).setTaskStatus(TaskStatus.IN_PROGRESS);
+                }
             }
+        } else {
+            System.out.println("Нет эпика с таким ID");
         }
     }
 }
@@ -164,13 +172,4 @@ class TaskIdGenerator {
         return nextFreedId++;
     }
 }
-
-
-//           System.out.println("111-Эпик номер= ='" + epicSubtaskById.get(task) + "\n" + "Subtask номер= " + task + "\n" +
-//                   " taskById.get(epicId)== >'" + taskById.get(epicId) + "\n"
-//                   +
-//                   "taskById.get(epicId)getTaskStatus()->" + taskById.get(epicId).getTaskStatus() + "\n" +
-//                   " epicSubtaskById.containsValue(epicId)== >'" + epicSubtaskById.containsValue(epicId) + "\n" +
-//                   "taskById.get(epicId)=>" + taskById.get(epicId));
-//                   System.out.println("--");
 

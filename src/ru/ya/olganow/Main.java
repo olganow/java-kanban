@@ -1,5 +1,6 @@
 package ru.ya.olganow;
 
+import ru.ya.olganow.description.TaskStatus;
 import ru.ya.olganow.description.TaskType;
 import ru.ya.olganow.manager.TaskManager;
 import ru.ya.olganow.task.EpicTask;
@@ -10,7 +11,6 @@ import ru.ya.olganow.task.Subtask;
 public class Main {
 
     public static void main(String[] args) {
-        //   System.out.println("Поехали!");
 
         TaskManager taskManager = new TaskManager();
 
@@ -37,44 +37,32 @@ public class Main {
         // Get a list with all tasks
         System.out.println("Получить список всех задач\n" + taskManager.getAllTasks());
 
-        // Delete all tasks
-        // taskManager.deleteAllTask();
+        //Delete by ID
+        taskManager.deleteById(6);
 
         //Get all tasks by Id
         System.out.println("Получить по ID\n" + taskManager.getTaskById(3));
 
         //Get all subtasks by EpicId
         System.out.println("Получить список все подзадач:");
-        taskManager.getSubTasksByEpicId(1);
-
+        taskManager.getSubTasksByEpicId(2);
 
         //Update task
-        SingleTask singleTask3 = new SingleTask("Single safe Task Changed", "Desc SST", TaskType.SINGLE);
-        taskManager.update(singleTask3);
-        System.out.println("Получить по ID измененную задачу\n" + taskManager.getTaskById(1));
+        singleTask2 = new SingleTask(1,"Another safe Task--", "Desc AST", TaskType.SINGLE, TaskStatus.IN_PROGRESS);
+        taskManager.update(singleTask2);
+
+        subtask3 = new Subtask( 6,"------", "Desc FSB", TaskType.SUBTASK, TaskStatus.IN_PROGRESS, 2);
+        taskManager.update(subtask3);
+
+        epicTask2 = new EpicTask(5, "Second epic--", "Desc FE", TaskType.EPIC);
+        taskManager.update(epicTask2);
 
         //Delete by ID
-      //  taskManager.deleteById(4);
+        taskManager.deleteById(6);
 
-        //7 - Получение списка всех подзадач определённого эпика.");
-        System.out.println("11111 - Получить список все подзадач\n");
-        taskManager.getSubTasksByEpicId(1);
+        // Delete all tasks
+        taskManager.deleteAllTask();
 
-
-//        // how to change status
-//        subtask1.setTaskStatus(TaskStatus.DONE);
-//         subtask2.setTaskStatus(TaskStatus.DONE);
-//     //  taskManager.update(singleTask);
-//        System.out.println("==================");
-
-
-
-//        Subtask subtask4 = new Subtask("4thd subtask", "Desc SSB", TaskType.SUBTASK, 2);
-//        taskManager.saveNewSubTask(subtask4);
-
-
-
-        System.out.println("Получить список всех задач\n" + taskManager.getAllTasks());
     }
 
 

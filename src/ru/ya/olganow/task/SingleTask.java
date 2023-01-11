@@ -9,12 +9,10 @@ public class SingleTask extends Task {
 
     public SingleTask(String name, String description, TaskType taskType) {
         super(name, description, taskType);
-        this.taskStatus=taskStatus;
-        this.id=id;
     }
 
      public SingleTask(int id, String name, String description, TaskType taskType, TaskStatus taskStatus) {
-        super(name, description, taskType);
+        super(id, name, description, taskType);
         this.id=id;
         this.taskStatus=taskStatus;
     }
@@ -26,7 +24,6 @@ public class SingleTask extends Task {
 
     @Override
     public TaskStatus getTaskStatus() {
-        // if all subtasks are new-->Status New
         return taskStatus;
     }
 
