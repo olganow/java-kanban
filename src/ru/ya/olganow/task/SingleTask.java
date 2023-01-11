@@ -16,7 +16,7 @@ public class SingleTask extends Task {
      public SingleTask(int id, String name, String description, TaskType taskType, TaskStatus taskStatus) {
         super(name, description, taskType);
         this.id=id;
-
+        this.taskStatus=taskStatus;
     }
 
     public void setTaskStatus(TaskStatus taskStatus) {

@@ -1,5 +1,6 @@
 package ru.ya.olganow.manager;
 
+import ru.ya.olganow.description.TaskStatus;
 import ru.ya.olganow.description.TaskType;
 import ru.ya.olganow.task.Subtask;
 import ru.ya.olganow.task.Task;
@@ -27,6 +28,7 @@ public class TaskManager {
         // 1: generate new id and save it to the task
         singleTask.setId(taskIdGenerator.getNextFreedI());
         // 2: save task
+        singleTask.setTaskStatus(TaskStatus.NEW);
         taskById.put(singleTask.getId(), singleTask);
     }
 
@@ -34,10 +36,10 @@ public class TaskManager {
         // 1: generate new id and save it to the task
         task.setId(taskIdGenerator.getNextFreedI());
         // 2: save task
+        task.setTaskStatus(TaskStatus.NEW);
         taskById.put(task.getId(), task);
         epicSubtaskById.put(task.getId(), task.getEpicID());
     }
-
 
 
     public void deleteAllTask() {
@@ -87,23 +89,12 @@ public class TaskManager {
 
     public ArrayList<Task> getAllTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
-        //add filter if you would like only subtask
         for (Task task : this.taskById.values()) {
             tasks.add(task);
         }
         return tasks;
     }
 
-//    //вернуть названия эпи
-//    public ArrayList<Integer> getAllSubtasksIdByEpicID(int id) {
-//        ArrayList<Integer> tasks = new ArrayList<>();
-//        //add filter if you would like only subtask
-//        for (Integer task : this.epicSubtaskById.values()) {
-//            tasks.add(task);
-//
-//        }
-//        return tasks;
-//    }
 
 
     //все таски по ID
@@ -123,7 +114,6 @@ public class TaskManager {
         }
     }
 
-
     // @return null if no task not found
     public Task getTaskById(int id) {
         if (taskById.get(id) == null) {
@@ -131,14 +121,71 @@ public class TaskManager {
         }
         return taskById.get(id);
     }
+
+    public void setEpicStatus(int epicId) {
+        Task epicTask = taskById.get(epicId);
+        if (epicSubtaskById.containsValue(epicId)) {
+            int counterNew = 0;
+            int counterDone = 0;
+            int counterInProgress = 0;
+            for (Integer task : this.epicSubtaskById.keySet()) {
+                if (epicSubtaskById.get(task) == epicId && taskById.get(task).getTaskStatus() == TaskStatus.NEW) {
+                    counterNew++;
+                    System.out.println("counterNew= " + counterNew);
+                    System.out.println("111NEW-Эпик номер= ='" + epicSubtaskById.get(task) + "\n" + "Subtask номер= " + task);
+                }
+                if (epicSubtaskById.get(task) == epicId && taskById.get(task).getTaskStatus() == TaskStatus.DONE) {
+                    counterDone++;
+                    System.out.println("counterDone = " + counterDone);
+                    System.out.println("111Done-Эпик номер= ='" + epicSubtaskById.get(task) + "\n" + "Subtask номер= " + task);
+                }
+                if (epicSubtaskById.get(task) == epicId && taskById.get(task).getTaskStatus() == TaskStatus.IN_PROGRESS) {
+                    counterInProgress++;
+                    System.out.println("ounterInProgress= " + counterInProgress);
+                    System.out.println("111pROGRES-Эпик номер= ='" + epicSubtaskById.get(task) + "\n" + "Subtask номер= " + task);
+                }
+            }
+                int counter = counterNew + counterDone + counterInProgress;
+                System.out.println("counter Итого ==" + counter + "/n" +
+                        "counterNew= " + counterNew + "," + "counterDone =" + counterDone + "," + "counterInProgresss=" + counterInProgress);
+
+                if (counterNew == counter) {
+                    taskById.get(epicId).setTaskStatus(TaskStatus.NEW);
+                    System.out.println("happy in NEW");
+                } else if (counterDone == counter) {
+                    taskById.get(epicId).setTaskStatus(TaskStatus.DONE);
+                    System.out.println("happy in Done");
+                } else {
+                    taskById.get(epicId).setTaskStatus(TaskStatus.IN_PROGRESS);
+                    System.out.println("happy in progress");
+                }
+
+
+
+
+        }
+
+
+    }
 }
 
+
+
+
 class TaskIdGenerator {
-    private int nextFreedId = 1;
+    private int nextFreedId = 0;
 
     public int getNextFreedI() {
         return nextFreedId++;
     }
 }
 
+
+//           System.out.println("111-Эпик номер= ='" + epicSubtaskById.get(task) + "\n" + "Subtask номер= " + task + "\n" +
+//                   " taskById.get(epicId)== >'" + taskById.get(epicId) + "\n"
+//                   +
+//                   "taskById.get(epicId)getTaskStatus()->" + taskById.get(epicId).getTaskStatus() + "\n" +
+//                   " epicSubtaskById.containsValue(epicId)== >'" + epicSubtaskById.containsValue(epicId) + "\n" +
+//                   "taskById.get(epicId)=>" + taskById.get(epicId));
+//                   System.out.println("--");
 
