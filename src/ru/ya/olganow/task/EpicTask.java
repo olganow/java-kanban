@@ -10,24 +10,24 @@ public class EpicTask extends Task {
     private List<Subtask> subtasksList;
     private TaskStatus taskStatus;
 
-    public EpicTask(int id, String name, String description, TaskType taskType, TaskStatus taskStatus) {
-        super(id, name, description, taskType, taskStatus);
+    public EpicTask(String name, String description, TaskType taskType) {
+        super(name, description, taskType);
+        this.taskStatus = taskStatus;
         this.subtasksList = new ArrayList<>();
     }
+//    public EpicTask(int id, String name, String description, TaskType taskType, TaskStatus taskStatus) {
+//        super(id, name, description, taskType, taskStatus);
+//        this.subtasksList = new ArrayList<>();
+//    }
 
-
-    @Override
-    public TaskStatus getTaskStatus() {
-        if (subtasksList.isEmpty()) {
-            return taskStatus.NEW;
-        }
-//        else if ()
-//todo
-//        return taskStatus.DONE;
-        else {
-            return TaskStatus.IN_PROGRESS;
-        }
+    public void setTaskStatus(TaskStatus taskStatus) {
+        this.taskStatus = taskStatus;
     }
+    @Override
+        public TaskStatus getTaskStatus() {
+            // if all subtasks are new-->Status New
+            return taskStatus;
+        }
 
     @Override
     public TaskType getTaskType() {
@@ -52,8 +52,8 @@ public class EpicTask extends Task {
                 "id=" + getId() +
                 ", name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
-                "status=" + getTaskStatus() + "," +
-                "subtask=" + subtasksList +
+                ", type='" + getTaskType() + '\'' +
+                ", status=" + getTaskStatus() +
                 "}\n";
     }
 

@@ -12,13 +12,19 @@ public abstract class Task {
 
     private TaskStatus taskStatus;
 
-    public Task(int id, String name, String description, TaskType taskType, TaskStatus taskStatus) {
-        this.id = id;
+    public Task(String name, String description, TaskType taskType) {
         this.name = name;
         this.description = description;
         this.taskType = taskType;
-        this.taskStatus = taskStatus;
     }
+
+//    public Task(int id, String name, String description, TaskType taskType, TaskStatus taskStatus) {
+//        this.id = id;
+//        this.name = name;
+//        this.description = description;
+//        this.taskType = taskType;
+//        this.taskStatus = taskStatus;
+//    }
     public int getId() {
         return id;
     }
