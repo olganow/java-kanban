@@ -19,10 +19,11 @@ public class EpicTask extends Task {
     public void setTaskStatus(TaskStatus taskStatus) {
         this.taskStatus = taskStatus;
     }
-    @Override
+
         public TaskStatus getTaskStatus() {
             return taskStatus;
         }
+
 
     @Override
     public TaskType getTaskType() {

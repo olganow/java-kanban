@@ -1,6 +1,5 @@
 package ru.ya.olganow.task;
 
-import ru.ya.olganow.description.TaskStatus;
 import ru.ya.olganow.description.TaskType;
 
 public abstract class Task {
@@ -10,7 +9,6 @@ public abstract class Task {
     private String description;
     private TaskType taskType;
 
-    private TaskStatus taskStatus;
 
     public Task(String name, String description, TaskType taskType) {
         this.name = name;
@@ -24,13 +22,7 @@ public abstract class Task {
         this.description = description;
         this.taskType = taskType;
     }
-    public Task(int id, String name, String description, TaskType taskType, TaskStatus taskStatus) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.taskType = taskType;
-        this.taskStatus = taskStatus;
-    }
+
     public int getId() {
         return id;
     }
@@ -47,17 +39,10 @@ public abstract class Task {
         return taskType;
     }
 
-    public TaskStatus getTaskStatus() {
-        return taskStatus;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setTaskStatus(TaskStatus taskStatus) {
-        this.taskStatus = taskStatus;
-    }
 
     @Override
     public String toString(){
