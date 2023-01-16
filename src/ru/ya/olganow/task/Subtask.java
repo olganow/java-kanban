@@ -4,23 +4,17 @@ import ru.ya.olganow.description.TaskStatus;
 import ru.ya.olganow.description.TaskType;
 
 public class Subtask extends Task {
-    private TaskStatus taskStatus;
-    private final int epicID;
+    private final int epicId;
 
-    public Subtask(String name, String description, TaskType taskType,  TaskStatus taskStatus, int epicID){
+
+    public Subtask(String name, String description, TaskType taskType, TaskStatus taskStatus, int epicId) {
         super(name, description, taskType);
-        this.epicID = epicID;
-       this.taskStatus = taskStatus;
+        this.epicId = epicId;
     }
 
-    public Subtask(int id, String name, String description, TaskType taskType, TaskStatus taskStatus, int epicID) {
-        super(id, name, description, taskType);
-        this.epicID = epicID;
-        this.taskStatus = taskStatus;
-    }
-
-    public TaskStatus getTaskStatus() {
-        return taskStatus;
+    public Subtask(int id, String name, String description, TaskType taskType, TaskStatus taskStatus, int epicId) {
+        super(id, name, description, taskType, taskStatus);
+        this.epicId = epicId;
     }
 
     @Override
@@ -28,14 +22,8 @@ public class Subtask extends Task {
         return TaskType.SUBTASK;
     }
 
-    public int getEpicID() {
-        return epicID;
-    }
-
-
-    public void setTaskStatus(TaskStatus taskStatus) {
-
-        this.taskStatus = taskStatus;
+    public int getEpicId() {
+        return epicId;
     }
 
     @Override
@@ -46,7 +34,7 @@ public class Subtask extends Task {
                 ", description='" + getDescription() + '\'' +
                 ", type='" + getTaskType() + '\'' +
                 ", status=" + getTaskStatus() +
-                ", epic id='" + getEpicID() + '\'' +
+                ", epic id='" + getEpicId() + '\'' +
                 "}\n";
     }
 

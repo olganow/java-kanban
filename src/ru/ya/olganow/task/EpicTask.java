@@ -6,8 +6,6 @@ import ru.ya.olganow.description.TaskType;
 import java.util.ArrayList;
 
 public class EpicTask extends Task {
-    private TaskStatus taskStatus;
-    private int subtaskID;
 
     private ArrayList<Integer> subtaskList = new ArrayList<>();
 
@@ -19,24 +17,13 @@ public class EpicTask extends Task {
         super(id, name, description, taskType);
     }
 
-    public void setTaskStatus(TaskStatus taskStatus) {
-        this.taskStatus = taskStatus;
-    }
 
     public void setSubtaskList(ArrayList<Integer> subtaskList) {
         this.subtaskList = subtaskList;
     }
 
-    public int getSubtaskID() {
-        return subtaskID;
-    }
-
     public ArrayList<Integer> getSubtaskList() {
         return subtaskList;
-    }
-
-    public TaskStatus getTaskStatus() {
-        return taskStatus;
     }
 
     @Override
