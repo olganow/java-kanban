@@ -3,10 +3,13 @@ package ru.ya.olganow.task;
 import ru.ya.olganow.description.TaskStatus;
 import ru.ya.olganow.description.TaskType;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class EpicTask extends Task {
     private TaskStatus taskStatus;
+    private int subtaskID;
+
+    private ArrayList<Integer> subtaskList = new ArrayList<>();
 
     public EpicTask(String name, String description, TaskType taskType) {
         super(name, description, taskType);
@@ -20,10 +23,21 @@ public class EpicTask extends Task {
         this.taskStatus = taskStatus;
     }
 
-        public TaskStatus getTaskStatus() {
-            return taskStatus;
-        }
+    public void setSubtaskList(ArrayList<Integer> subtaskList) {
+        this.subtaskList = subtaskList;
+    }
 
+    public int getSubtaskID() {
+        return subtaskID;
+    }
+
+    public ArrayList<Integer> getSubtaskList() {
+        return subtaskList;
+    }
+
+    public TaskStatus getTaskStatus() {
+        return taskStatus;
+    }
 
     @Override
     public TaskType getTaskType() {
@@ -38,6 +52,7 @@ public class EpicTask extends Task {
                 ", description='" + getDescription() + '\'' +
                 ", type='" + getTaskType() + '\'' +
                 ", status=" + getTaskStatus() +
+                ", subtaskList=" + getSubtaskList() +
                 "}\n";
     }
 
