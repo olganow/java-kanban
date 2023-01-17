@@ -107,6 +107,8 @@ public class TaskManager {
 
     public void updateEpicTask(EpicTask epicTask) {
         epicTaskById.put(epicTask.getId(), epicTask);
+        //Epic Status updated
+        setEpicStatus(epicTask.getId());
     }
 
     public void updateSubtask(Subtask subtask) {

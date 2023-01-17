@@ -13,8 +13,9 @@ public class EpicTask extends Task {
         super(name, description);
     }
 
-    public EpicTask(int id, String name, String description, TaskType taskType) {
+    public EpicTask(int id, String name, String description, TaskType taskType, ArrayList<Integer> subtaskIds) {
         super(id, name, description);
+        this.subtaskIds=subtaskIds;
     }
 
 
