@@ -46,7 +46,7 @@ public class TaskManager {
         // 2: save task
         EpicTask epicTask = epicTaskById.get(subtask.getEpicId());
         Integer id = subtask.getId();
-        epicTask.getSubtaskList().add(id);
+        epicTask.getSubtaskIds().add(id);
         subtaskById.put(subtask.getId(), subtask);
         // 3: Epic Status updated
         setEpicStatus(epicTask.getId());
@@ -70,7 +70,7 @@ public class TaskManager {
             System.out.println(subtaskById.get(task).getEpicId());
             setEpicStatus((subtaskById.get(task).getEpicId()));
             EpicTask epicTask = epicTaskById.get((subtaskById.get(task).getEpicId()));
-            epicTask.getSubtaskList().clear();
+            epicTask.getSubtaskIds().clear();
         }
         subtaskById.clear();
     }
@@ -86,7 +86,7 @@ public class TaskManager {
             singleTaskById.remove(id);
             System.out.println("Задача с id =" + id + " удалена");
         } else if (epicTaskById.containsKey(id)) {
-            if (epicTaskById.get(id).getSubtaskList().isEmpty()) {
+            if (epicTaskById.get(id).getSubtaskIds().isEmpty()) {
                 epicTaskById.remove(id);
             } else {
                 ArrayList<Integer> tasksForDelete = new ArrayList<>();
@@ -193,7 +193,7 @@ public class TaskManager {
 
     private void setEpicStatus(int epicId) {
         EpicTask epicTask = epicTaskById.get(epicId);
-        if (epicTaskById.get(epicId).getSubtaskList().size() == 0) {
+        if (epicTaskById.get(epicId).getSubtaskIds().size() == 0) {
             epicTaskById.get(epicId).setTaskStatus(TaskStatus.NEW);
         } else {
             int counterNew = 0;

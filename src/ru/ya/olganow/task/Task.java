@@ -8,27 +8,23 @@ public abstract class Task {
     private int id;
     private String name;
     private String description;
-    private TaskType taskType;
     private TaskStatus taskStatus = TaskStatus.NEW;
 
-    public Task(String name, String description, TaskType taskType) {
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.taskType = taskType;
     }
 
-    public Task(int id, String name, String description, TaskType taskType) {
+    public Task(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.taskType = taskType;
     }
 
-    public Task(int id, String name, String description, TaskType taskType, TaskStatus taskStatus) {
+    public Task(int id, String name, String description, TaskStatus taskStatus) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.taskType = taskType;
         this.taskStatus = taskStatus;
     }
 
@@ -44,9 +40,7 @@ public abstract class Task {
         return description;
     }
 
-    public TaskType getTaskType() {
-        return taskType;
-    }
+    public abstract TaskType getTaskType();
 
     public TaskStatus getTaskStatus() {
         return taskStatus;

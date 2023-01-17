@@ -1,29 +1,28 @@
 package ru.ya.olganow.task;
 
-import ru.ya.olganow.description.TaskStatus;
 import ru.ya.olganow.description.TaskType;
 
 import java.util.ArrayList;
 
 public class EpicTask extends Task {
 
-    private ArrayList<Integer> subtaskList = new ArrayList<>();
+    private ArrayList<Integer> subtaskIds = new ArrayList<>();
 
     public EpicTask(String name, String description, TaskType taskType) {
-        super(name, description, taskType);
+        super(name, description);
     }
 
     public EpicTask(int id, String name, String description, TaskType taskType) {
-        super(id, name, description, taskType);
+        super(id, name, description);
     }
 
 
-    public void setSubtaskList(ArrayList<Integer> subtaskList) {
-        this.subtaskList = subtaskList;
+    public void setSubtaskIds(ArrayList<Integer> subtaskIds) {
+        this.subtaskIds = subtaskIds;
     }
 
-    public ArrayList<Integer> getSubtaskList() {
-        return subtaskList;
+    public ArrayList<Integer> getSubtaskIds() {
+        return subtaskIds;
     }
 
     @Override
@@ -39,9 +38,8 @@ public class EpicTask extends Task {
                 ", description='" + getDescription() + '\'' +
                 ", type='" + getTaskType() + '\'' +
                 ", status=" + getTaskStatus() +
-                ", subtaskList=" + getSubtaskList() +
+                ", subtaskList=" + getSubtaskIds() +
                 "}\n";
     }
-
 
 }
