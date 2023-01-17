@@ -1,5 +1,6 @@
 package ru.ya.olganow.task;
 
+import ru.ya.olganow.description.TaskStatus;
 import ru.ya.olganow.description.TaskType;
 
 import java.util.ArrayList;
