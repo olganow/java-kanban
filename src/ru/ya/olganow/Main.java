@@ -17,22 +17,22 @@ public class Main {
         TaskManager taskManager = new TaskManager();
 
         // Two single task created
-        SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST", TaskType.SINGLE, TaskStatus.NEW);
+        SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST",  TaskStatus.NEW);
         taskManager.saveSingleTask(singleTask);
-        SingleTask singleTask2 = new SingleTask("Another safe Task", "Desc AST", TaskType.SINGLE,TaskStatus.NEW);
+        SingleTask singleTask2 = new SingleTask("Another safe Task", "Desc AST", TaskStatus.NEW);
         taskManager.saveSingleTask(singleTask2);
 
         //Two Epic created
-        EpicTask epicTask1 = new EpicTask("First epic", "Desc FE", TaskType.EPIC);
+        EpicTask epicTask1 = new EpicTask("First epic", "Desc FE");
         taskManager.saveEpicTask(epicTask1);
-        Subtask subtask1 = new Subtask( "First subtask", "Desc FSB", TaskType.SUBTASK,TaskStatus.NEW,  2);
+        Subtask subtask1 = new Subtask( "First subtask", "Desc FSB", TaskStatus.NEW,  2);
         taskManager.saveNewSubTask(subtask1);
-        Subtask subtask2 = new Subtask("Second subtask", "Desc SSB", TaskType.SUBTASK,TaskStatus.NEW, 2);
+        Subtask subtask2 = new Subtask("Second subtask", "Desc SSB", TaskStatus.IN_PROGRESS, 2);
         taskManager.saveNewSubTask(subtask2);
 
-        EpicTask epicTask2 = new EpicTask( "Second epic", "Desc FE", TaskType.EPIC);
+        EpicTask epicTask2 = new EpicTask( "Second epic", "Desc FE");
         taskManager.saveEpicTask(epicTask2);
-        Subtask subtask3 = new Subtask( "Third subtask", "Desc FSB", TaskType.SUBTASK,TaskStatus.DONE, 5);
+        Subtask subtask3 = new Subtask( "Third subtask", "Desc FSB", TaskStatus.DONE, 5);
         taskManager.saveNewSubTask(subtask3);
 
         // Get a list with all tasks
@@ -61,13 +61,13 @@ public class Main {
         System.out.println("Получить сабтаски по ID эпика:" + taskManager.getSubTasksByEpicId(2));
 
         //Update task
-        singleTask2 = new SingleTask(1,"Another safe Task--", "Desc AST", TaskType.SINGLE, TaskStatus.IN_PROGRESS);
+        singleTask2 = new SingleTask(1,"Another safe Task--", "Desc AST", TaskStatus.IN_PROGRESS);
         taskManager.updateSingleTask(singleTask2);
 
-        subtask3 = new Subtask( 3,"Subtask--", "Desc FSB", TaskType.SUBTASK, TaskStatus.IN_PROGRESS, 2);
+        subtask3 = new Subtask( 3,"Subtask--", "Desc FSB", TaskStatus.DONE, 2);
         taskManager.updateSubtask(subtask3);
 
-        epicTask2 = new EpicTask(5, "Second epic--", "Desc FE", TaskType.EPIC,epicTask2.getSubtaskIds());
+        epicTask2 = new EpicTask(5, "Second epic--", "Desc FE", epicTask2.getSubtaskIds());
         taskManager.updateEpicTask(epicTask2);
     }
 

@@ -64,9 +64,9 @@ public class TaskManager {
 
     public void deleteAllSubtask() {
         subtaskById.clear();
-        for (Integer epicID: epicTaskById.keySet()) {
-            epicTaskById.get(epicID).getSubtaskIds().clear();
-            setEpicStatus(epicID);
+        for (Integer epicId: epicTaskById.keySet()) {
+            epicTaskById.get(epicId).getSubtaskIds().clear();
+            setEpicStatus(epicId);
         }
     }
 
@@ -171,64 +171,32 @@ public class TaskManager {
         }
     }
 
-        private void setEpicStatus(int epicId) {
+    private void setEpicStatus(int epicId) {
         EpicTask epicTask = epicTaskById.get(epicId);
         if (epicTask.getSubtaskIds().isEmpty()) {
             epicTaskById.get(epicId).setTaskStatus(TaskStatus.NEW);
         } else {
             int counterNew = 0;
             int counterDone = 0;
-            EpicTask epic = epicTaskById.get(epicId);
 
-            for (Integer subtaskId : epic.getSubtaskIds()) {
+            for (Integer subtaskId : epicTask.getSubtaskIds()) {
                 TaskStatus status = subtaskById.get(subtaskId).getTaskStatus();
                 if (status == TaskStatus.NEW) {
                     counterNew++;
-                }
-                if (status == TaskStatus.DONE) {
+                } else if (status == TaskStatus.DONE) {
                     counterDone++;
+                } else {
+                    epicTask.setTaskStatus(TaskStatus.IN_PROGRESS);
+                    return;
                 }
             }
-            if (counterNew == epic.getSubtaskIds().size()) {
+            if (counterNew == epicTask.getSubtaskIds().size()) {
                 epicTask.setTaskStatus(TaskStatus.NEW);
-            } else if (counterDone == epic.getSubtaskIds().size()) {
+            } else if (counterDone == epicTask.getSubtaskIds().size()) {
                 epicTask.setTaskStatus(TaskStatus.DONE);
-            } else {
-                epicTask.setTaskStatus(TaskStatus.IN_PROGRESS);
             }
         }
     }
-
-
-//    private void setEpicStatus(int epicId) {
-//        EpicTask epicTask = epicTaskById.get(epicId);
-//        if (epicTaskById.get(epicId).getSubtaskIds().size() == 0) {
-//            epicTaskById.get(epicId).setTaskStatus(TaskStatus.NEW);
-//        } else {
-//            int counterNew = 0;
-//            int counterDone = 0;
-//            int counterInProgress = 0;
-//            for (Integer task : this.subtaskById.keySet()) {
-//                if (subtaskById.get(task).getEpicId() == epicId && subtaskById.get(task).getTaskStatus() == TaskStatus.NEW) {
-//                    counterNew++;
-//                }
-//                if (subtaskById.get(task).getEpicId() == epicId && subtaskById.get(task).getTaskStatus() == TaskStatus.DONE) {
-//                    counterDone++;
-//                }
-//                if (subtaskById.get(task).getEpicId() == epicId && subtaskById.get(task).getTaskStatus() == TaskStatus.IN_PROGRESS) {
-//                    counterInProgress++;
-//                }
-//            }
-//            int counter = counterNew + counterDone + counterInProgress;
-//            if (counterNew == counter) {
-//                epicTask.setTaskStatus(TaskStatus.NEW);
-//            } else if (counterDone == counter) {
-//                epicTask.setTaskStatus(TaskStatus.DONE);
-//            } else {
-//                epicTask.setTaskStatus(TaskStatus.IN_PROGRESS);
-//            }
-//        }
-//    }
 
     private static class TaskIdGenerator {
         private int nextFreedId = 0;

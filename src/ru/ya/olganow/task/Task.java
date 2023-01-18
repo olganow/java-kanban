@@ -16,7 +16,6 @@ public abstract class Task {
     }
 
     public Task(String name, String description,TaskStatus taskStatus) {
-        this.id = id;
         this.name = name;
         this.description = description;
         this.taskStatus = taskStatus;
