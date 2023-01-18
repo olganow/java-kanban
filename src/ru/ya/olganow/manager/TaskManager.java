@@ -174,7 +174,7 @@ public class TaskManager {
     private void setEpicStatus(int epicId) {
         EpicTask epicTask = epicTaskById.get(epicId);
         if (epicTask.getSubtaskIds().isEmpty()) {
-            epicTaskById.get(epicId).setTaskStatus(TaskStatus.NEW);
+            epicTask.setTaskStatus(TaskStatus.NEW);
         } else {
             int counterNew = 0;
             int counterDone = 0;
@@ -194,6 +194,8 @@ public class TaskManager {
                 epicTask.setTaskStatus(TaskStatus.NEW);
             } else if (counterDone == epicTask.getSubtaskIds().size()) {
                 epicTask.setTaskStatus(TaskStatus.DONE);
+            } else {
+                epicTask.setTaskStatus(TaskStatus.IN_PROGRESS);
             }
         }
     }
