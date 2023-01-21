@@ -1,23 +1,21 @@
 package ru.ya.olganow;
 
 import ru.ya.olganow.description.TaskStatus;
-import ru.ya.olganow.description.TaskType;
+import ru.ya.olganow.manager.Managers;
 import ru.ya.olganow.manager.TaskManager;
 import ru.ya.olganow.task.EpicTask;
 import ru.ya.olganow.task.SingleTask;
 import ru.ya.olganow.task.Subtask;
 
-import java.util.ArrayList;
-
-
 public class Main {
 
     public static void main(String[] args) {
+        Managers managers = new Managers();
+        TaskManager taskManager = managers.getDefault();
 
-        TaskManager taskManager = new TaskManager();
 
         // Two single task created
-        SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST",  TaskStatus.NEW);
+        SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST", TaskStatus.NEW);
         taskManager.saveSingleTask(singleTask);
         SingleTask singleTask2 = new SingleTask("Another safe Task", "Desc AST", TaskStatus.NEW);
         taskManager.saveSingleTask(singleTask2);
@@ -25,20 +23,20 @@ public class Main {
         //Two Epic created
         EpicTask epicTask1 = new EpicTask("First epic", "Desc FE");
         taskManager.saveEpicTask(epicTask1);
-        Subtask subtask1 = new Subtask( "First subtask", "Desc FSB", TaskStatus.NEW,  2);
+        Subtask subtask1 = new Subtask("First subtask", "Desc FSB", TaskStatus.NEW, 2);
         taskManager.saveNewSubTask(subtask1);
-        Subtask subtask2 = new Subtask("Second subtask", "Desc SSB", TaskStatus.IN_PROGRESS, 2);
+        Subtask subtask2 = new Subtask("Second subtask", "Desc SSB", TaskStatus.NEW, 2);
         taskManager.saveNewSubTask(subtask2);
 
-        EpicTask epicTask2 = new EpicTask( "Second epic", "Desc FE");
+        EpicTask epicTask2 = new EpicTask("Second epic", "Desc FE");
         taskManager.saveEpicTask(epicTask2);
-        Subtask subtask3 = new Subtask( "Third subtask", "Desc FSB", TaskStatus.DONE, 5);
+        Subtask subtask3 = new Subtask("Third subtask", "Desc FSB", TaskStatus.DONE, 5);
         taskManager.saveNewSubTask(subtask3);
 
-        // Get a list with all tasks
-        System.out.println("Получить список всех одиночных задач\n" + taskManager.getAllSingleTasks());
-        System.out.println("Получить список всех эпиков\n" + taskManager.getAllEpicTasks());
-        System.out.println("Получить список всех подзадач\n" + taskManager.getAllSubtasks());
+//        // Get a list with all tasks
+//        System.out.println("Получить список всех одиночных задач\n" + taskManager.getAllSingleTasks());
+//        System.out.println("Получить список всех эпиков\n" + taskManager.getAllEpicTasks());
+//        System.out.println("Получить список всех подзадач\n" + taskManager.getAllSubtasks());
 
         // Delete all tasks
 //        System.out.println("Все одиночные задачи удалены");
@@ -55,16 +53,24 @@ public class Main {
 //        taskManager.deleteById(3);
 
         //Get all tasks by Id
+        System.out.println("Получить по ID\n" + taskManager.getTaskById(0));
+        System.out.println("Получить по ID\n" + taskManager.getTaskById(1));
         System.out.println("Получить по ID\n" + taskManager.getTaskById(2));
+        System.out.println("Получить по ID\n" + taskManager.getTaskById(3));
+        System.out.println("Получить по ID\n" + taskManager.getTaskById(2));
+        System.out.println("Получить по ID\n" + taskManager.getTaskById(5));
 
         //Get all subtasks by EpicId
         System.out.println("Получить сабтаски по ID эпика:" + taskManager.getSubTasksByEpicId(2));
 
+        //Get search history
+        System.out.println("Получить историю поиска:\n" + managers.getDefaultHistory());
+
         //Update task
-        singleTask2 = new SingleTask(1,"Another safe Task--", "Desc AST", TaskStatus.IN_PROGRESS);
+        singleTask2 = new SingleTask(1, "Another safe Task--", "Desc AST", TaskStatus.IN_PROGRESS);
         taskManager.updateSingleTask(singleTask2);
 
-        subtask3 = new Subtask( 3,"Subtask--", "Desc FSB", TaskStatus.DONE, 2);
+        subtask3 = new Subtask(3, "Subtask--", "Desc FSB", TaskStatus.NEW, 2);
         taskManager.updateSubtask(subtask3);
 
         epicTask2 = new EpicTask(5, "Second epic--", "Desc FE", epicTask2.getSubtaskIds());
