@@ -10,14 +10,14 @@ public class InMemoryHistoryManager implements HistoryManager {
     // Объявите класс InMemoryHistoryManager и перенесите в него часть кода для работы с историей из класса InMemoryTaskManager.
     // Новый класс InMemoryHistoryManager должен реализовывать интерфейс HistoryManager.
     public static final Integer SIZE_MAX_HISTORY = 10;
-    private static final List<Task> historyList = new LinkedList<>();
+    private static final LinkedList<Task> historyList = new LinkedList<>();
 
     @Override
     public void add(Task task) {
         if (historyList.size() < SIZE_MAX_HISTORY) {
             historyList.add(task);
         } else {
-            historyList.remove(0);
+            historyList.removeFirst();
             historyList.add(task);
         }
     }
