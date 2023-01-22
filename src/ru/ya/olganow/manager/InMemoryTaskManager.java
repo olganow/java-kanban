@@ -8,21 +8,25 @@ import ru.ya.olganow.task.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private final TaskIdGenerator taskIdGenerator;
     private HashMap<Integer, SingleTask> singleTaskById;
     private HashMap<Integer, EpicTask> epicTaskById;
     private HashMap<Integer, Subtask> subtaskById;
-    private final InMemoryHistoryManager historyManager;
-
+    private final  InMemoryHistoryManager historyManager=new InMemoryHistoryManager();
     public InMemoryTaskManager() {
         this.taskIdGenerator = new TaskIdGenerator();
         this.singleTaskById = new HashMap<>();
         this.epicTaskById = new HashMap<>();
         this.subtaskById = new HashMap<>();
-        this.historyManager = new InMemoryHistoryManager();
+    }
 
+    @Override
+    public List<Task> getHistory() {
+      return historyManager.getHistory();
+     // return  new managers.getDefault();
     }
 
     @Override

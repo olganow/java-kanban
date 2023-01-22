@@ -6,10 +6,11 @@ import ru.ya.olganow.task.Subtask;
 import ru.ya.olganow.task.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
 
-    //option 1: how to save object with generated id in hashmap
+    List<Task> getHistory();
     void saveSingleTask(SingleTask singleTask);
 
     void saveEpicTask(EpicTask epicTask);
@@ -39,7 +40,6 @@ public interface TaskManager {
     ArrayList<Task> getAllSubtasks();
 
     ArrayList<Subtask> getSubTasksByEpicId(int id);
-
 
     Task getTaskById(int id);
 

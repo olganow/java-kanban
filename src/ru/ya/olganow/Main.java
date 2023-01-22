@@ -13,7 +13,6 @@ public class Main {
         Managers managers = new Managers();
         TaskManager taskManager = managers.getDefault();
 
-
         // Two single task created
         SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST", TaskStatus.NEW);
         taskManager.saveSingleTask(singleTask);
@@ -64,7 +63,7 @@ public class Main {
         System.out.println("Получить сабтаски по ID эпика:" + taskManager.getSubTasksByEpicId(2));
 
         //Get search history
-        System.out.println("Получить историю поиска:\n" + managers.getDefaultHistory());
+        System.out.println("Получить историю поиска:\n" + taskManager.getHistory());
 
         //Update task
         singleTask2 = new SingleTask(1, "Another safe Task--", "Desc AST", TaskStatus.IN_PROGRESS);
