@@ -53,21 +53,33 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         //добавление задачи в конец списка
         private void linkLast(E value) {
-            // Реализуйте метод
-            final Node<E> oldTail = tail;
-            final Node<E> newNode = new Node<>(oldTail, value, null);
-            tail = newNode;
-            if (oldTail == null)
+            if (size == 0) {
+                final Node<E> oldHead = head;
+                final Node<E> newNode = new Node<>(value);
+                historyMap.put(value.getId(), newNode);
+                head = newNode;
+                //add first
+                if (oldHead == null)
+                    tail = newNode;
+                else
+                    oldHead.prev = newNode;
+                size++;
+            } else {
+                final Node<E> oldTail = tail;
+                Node<E> newNode = new Node<>(value);
+                historyMap.put(value.getId(), newNode);
                 tail = newNode;
-            else
-                oldTail.prev = newNode;
-            size++;
-
+                if (oldTail == null) {
+                    head = newNode;
+                } else {
+                    oldTail.next = newNode;
+                    size++;
+                }
+            }
         }
 
 
         private void removeNode(Node<E> value) {
-
         }
 
         //Собирает все задачи из MyLinkedList в обычный ArrayList
@@ -75,10 +87,8 @@ public class InMemoryHistoryManager implements HistoryManager {
             if (head != null) {
                 Node<E> node = head;
                 List<E> tasks = new ArrayList<>();
-                while (true) {
+                while (node != null) {
                     tasks.add(node.getData());
-                    if (node.getNext() == null)
-                        break;
                     node = node.getNext();
                 }
                 return tasks;
@@ -89,17 +99,14 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
 
-    class Node<E> {
+    static class Node<E> {
         public E data;
         public Node<E> next;
         public Node<E> prev;
 
-        public Node(Node<E> next, E data, Node<E> prev) {
+        public Node(E data) {
             this.data = data;
-            this.next = next;
-            this.prev = prev;
         }
-
 
         public E getData() {
             return data;
