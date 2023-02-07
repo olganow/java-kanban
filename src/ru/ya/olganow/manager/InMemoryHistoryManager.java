@@ -42,7 +42,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         return historyList.getTasks();
     }
 
-    private class CustomLinkedList<E extends Task> {
+    private static class CustomLinkedList<E extends Task> {
         //Указатель на первый элемент списка. Он же first
         private Node<E> head;
         //Указатель на последний элемент списка. Он же last
@@ -59,10 +59,11 @@ public class InMemoryHistoryManager implements HistoryManager {
                 historyMap.put(value.getId(), newNode);
                 head = newNode;
                 //add first
-                if (oldHead == null)
+                if (oldHead == null){
                     tail = newNode;
-                else
+                } else {
                     oldHead.prev = newNode;
+                }
                 size++;
             } else {
                 final Node<E> oldTail = tail;
@@ -73,13 +74,33 @@ public class InMemoryHistoryManager implements HistoryManager {
                     head = newNode;
                 } else {
                     oldTail.next = newNode;
-                    size++;
                 }
+                    size++;
             }
         }
 
-
         private void removeNode(Node<E> value) {
+            if (value == head) {
+                if (value == tail) {
+                    head = null;
+                    tail = null;
+                    return;
+                }
+                head = head.getNext();
+                head.getPrev().setNext(null);
+                head.setPrev(null);
+                return;
+            }
+            if (value == tail) {
+                tail = value.prev;
+                value.next = null;
+                return;
+            }
+            value.getPrev().setNext(value.getNext());
+            value.getNext().setPrev(value.getPrev());
+            value.setNext(null);
+            value.setPrev(null);
+            size--;
         }
 
         //Собирает все задачи из MyLinkedList в обычный ArrayList
