@@ -2,6 +2,7 @@ package ru.ya.olganow.manager;
 
 import ru.ya.olganow.task.Task;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,71 +45,74 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private static class CustomLinkedList<E extends Task> {
         //Указатель на первый элемент списка. Он же first
-        private Node<E> head;
+        private Node head;
         //Указатель на последний элемент списка. Он же last
-        private Node<E> tail;
+        private Node tail;
         private int size = 0;
         //CustomLinkedList собирает все задачи из MyLinkedList в обычный ArrayList
-        private final Map<Integer, Node<E>> historyMap = new HashMap<>();
+        private final Map<Integer, Node> historyMap = new HashMap<>();
 
         //добавление задачи в конец списка
-        private void linkLast(E value) {
-            if (size == 0) {
-                final Node<E> oldHead = head;
-                final Node<E> newNode = new Node<>(value);
-                historyMap.put(value.getId(), newNode);
-                head = newNode;
-                //add first
-                if (oldHead == null) {
-                    tail = newNode;
-                } else {
-                    oldHead.prev = newNode;
-                }
-                size++;
-            } else {
-                final Node<E> oldTail = tail;
-                Node<E> newNode = new Node<>(value);
-                historyMap.put(value.getId(), newNode);
-                tail = newNode;
-                if (oldTail == null) {
-                    head = newNode;
-                } else {
-                    oldTail.next = newNode;
-                }
-                size++;
-            }
+        private void linkLast(Task task) {
+          if (!historyMap.containsKey(task.getId())) {
+              if (size == 0) {
+                  final Node oldHead = head;
+                  final Node newNode = new Node(null, task, oldHead);
+                  historyMap.put(task.getId(), newNode);
+                  head = newNode;
+                  //add first
+                  if (oldHead == null) {
+                      tail = newNode;
+                  } else {
+                      oldHead.prev = newNode;
+                  }
+                  size++;
+              } else {
+                  final Node oldTail = tail;
+                  Node newNode = new Node(oldTail, task, null);
+                  historyMap.put(task.getId(), newNode);
+                  tail = newNode;
+                  if (oldTail == null) {
+                      head = newNode;
+                  } else {
+                      oldTail.next = newNode;
+                  }
+                  size++;
+              }
+          }
+          else {
+              removeNode(historyMap.get(task.getId()));
+              historyMap.remove(task.getId());
+              linkLast(task);
+              size--;
+          }
         }
 
-        private void removeNode(Node<E> value) {
-            if (value == head) {
-                if (value == tail) {
-                    head = null;
-                    tail = null;
-                    return;
+        private void removeNode(Node node) {
+            if (head == tail) {
+                head = null;
+                tail = null;
+            }
+            if (node.getPrev() != null) {
+                if (node.getNext() == null) {
+                    node.getPrev().setNext(null);
+                    tail = node.getPrev();
+                } else {
+                    node.getNext().setPrev(node.getPrev());
+                    node.getPrev().setNext(node.getNext());
                 }
-                head = head.getNext();
-                head.getPrev().setNext(null);
-                head.setPrev(null);
-                return;
+            } else if (node.getNext() != null) {
+                node.getNext().setPrev(null);
+                head = node.getNext();
             }
-            if (value == tail) {
-                tail = value.prev;
-                value.next = null;
-                return;
-            }
-            value.getPrev().setNext(value.getNext());
-            value.getNext().setPrev(value.getPrev());
-            value.setNext(null);
-            value.setPrev(null);
-            size--;
         }
 
 
         //Собирает все задачи из MyLinkedList в обычный ArrayList
-        private List<E> getTasks() {
+        private List getTasks() {
             if (head != null) {
-                Node<E> newNode = head;
-                List<E> tasks = new ArrayList<>();
+                Node newNode = head;
+                List tasks = new ArrayList<>();
                 while (newNode != null) {
                     tasks.add(newNode.getData());
                     newNode = newNode.getNext();
@@ -121,33 +125,42 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
 
-    static class Node<E> {
-        public E data;
-        public Node<E> next;
-        public Node<E> prev;
+    static class Node {
 
-        public Node(E data) {
+        public Task data;
+        public Node next;
+        public Node prev;
+
+        public Node( Node prev, Task data,Node next) {
             this.data = data;
+            this.next = next;
+            this.prev = prev;
         }
 
-        public E getData() {
+        public Task getData() {
             return data;
         }
 
-        public Node<E> getNext() {
+        public void setData(Task data) {
+            this.data = data;
+        }
+
+        public Node getNext() {
             return next;
         }
 
-        private Node<E> getPrev() {
-            return prev;
-        }
-
-        private void setNext(Node<E> next) {
+        public void setNext(Node next) {
             this.next = next;
         }
 
-        private void setPrev(Node<E> prev) {
+        public Node getPrev() {
+            return prev;
+        }
+
+        public void setPrev(Node prev) {
             this.prev = prev;
         }
     }
+
 }
+
