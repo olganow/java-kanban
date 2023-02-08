@@ -22,7 +22,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (historyList.size < SIZE_MAX_HISTORY) {
             historyList.linkLast(task);
         } else {
-            // historyList.removeFirst();
+            historyList.historyMap.remove(task.getId());
             historyList.linkLast(task);
         }
     }
@@ -59,7 +59,7 @@ public class InMemoryHistoryManager implements HistoryManager {
                 historyMap.put(value.getId(), newNode);
                 head = newNode;
                 //add first
-                if (oldHead == null){
+                if (oldHead == null) {
                     tail = newNode;
                 } else {
                     oldHead.prev = newNode;
@@ -75,7 +75,7 @@ public class InMemoryHistoryManager implements HistoryManager {
                 } else {
                     oldTail.next = newNode;
                 }
-                    size++;
+                size++;
             }
         }
 
@@ -103,14 +103,15 @@ public class InMemoryHistoryManager implements HistoryManager {
             size--;
         }
 
+
         //Собирает все задачи из MyLinkedList в обычный ArrayList
         private List<E> getTasks() {
             if (head != null) {
-                Node<E> node = head;
+                Node<E> newNode = head;
                 List<E> tasks = new ArrayList<>();
-                while (node != null) {
-                    tasks.add(node.getData());
-                    node = node.getNext();
+                while (newNode != null) {
+                    tasks.add(newNode.getData());
+                    newNode = newNode.getNext();
                 }
                 return tasks;
             } else
