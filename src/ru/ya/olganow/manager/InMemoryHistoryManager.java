@@ -13,19 +13,12 @@ public class InMemoryHistoryManager implements HistoryManager {
     // Объявите класс InMemoryHistoryManager и перенесите в него часть кода для работы с историей из класса InMemoryTaskManager.
     // Новый класс InMemoryHistoryManager должен реализовывать интерфейс HistoryManager.
 
-    //  private static final LinkedList<Task> historyList = new LinkedList<>();
-    private static final int SIZE_MAX_HISTORY = 10;
     private final CustomLinkedList<Task> historyList = new CustomLinkedList<>();
 
     //для добавления нового просмотра задачи
     @Override
     public void add(Task task) {
-        if (historyList.size < SIZE_MAX_HISTORY) {
             historyList.linkLast(task);
-        } else {
-            historyList.historyMap.remove(task.getId());
-            historyList.linkLast(task);
-        }
     }
 
     //для удаления просмотра из истории
@@ -93,6 +86,7 @@ public class InMemoryHistoryManager implements HistoryManager {
                 head = null;
                 tail = null;
             }
+
             if (node.getPrev() != null) {
                 if (node.getNext() == null) {
                     node.getPrev().setNext(null);
@@ -110,16 +104,16 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         //Собирает все задачи из MyLinkedList в обычный ArrayList
         private List getTasks() {
+            List tasks = new ArrayList<>();
             if (head != null) {
                 Node newNode = head;
-                List tasks = new ArrayList<>();
                 while (newNode != null) {
                     tasks.add(newNode.getData());
                     newNode = newNode.getNext();
                 }
                 return tasks;
             } else
-                return null;
+                return tasks;
         }
 
     }
