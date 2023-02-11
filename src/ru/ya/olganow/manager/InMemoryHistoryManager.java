@@ -18,7 +18,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     //для добавления нового просмотра задачи
     @Override
     public void add(Task task) {
-            historyList.linkLast(task);
+        historyList.linkLast(task);
     }
 
     //для удаления просмотра из истории
@@ -41,44 +41,30 @@ public class InMemoryHistoryManager implements HistoryManager {
         private Node head;
         //Указатель на последний элемент списка. Он же last
         private Node tail;
-        private int size = 0;
+        // private int size = 0;
         //CustomLinkedList собирает все задачи из MyLinkedList в обычный ArrayList
         private final Map<Integer, Node> historyMap = new HashMap<>();
 
         //добавление задачи в конец списка
         private void linkLast(Task task) {
-          if (!historyMap.containsKey(task.getId())) {
-              if (size == 0) {
-                  final Node oldHead = head;
-                  final Node newNode = new Node(null, task, oldHead);
-                  historyMap.put(task.getId(), newNode);
-                  head = newNode;
-                  //add first
-                  if (oldHead == null) {
-                      tail = newNode;
-                  } else {
-                      oldHead.prev = newNode;
-                  }
-                  size++;
-              } else {
-                  final Node oldTail = tail;
-                  Node newNode = new Node(oldTail, task, null);
-                  historyMap.put(task.getId(), newNode);
-                  tail = newNode;
-                  if (oldTail == null) {
-                      head = newNode;
-                  } else {
-                      oldTail.next = newNode;
-                  }
-                  size++;
-              }
-          }
-          else {
-              removeNode(historyMap.get(task.getId()));
-              historyMap.remove(task.getId());
-              linkLast(task);
-              size--;
-          }
+            if (!historyMap.containsKey(task.getId())) {
+                if (historyMap.size() == 0) {
+                    final Node newNode = new Node(null, task, null);
+                    historyMap.put(task.getId(), newNode);
+                    head = newNode;
+                    tail = newNode;
+                } else {
+                    final Node oldTail = tail;
+                    Node newNode = new Node(oldTail, task, null);
+                    historyMap.put(task.getId(), newNode);
+                    tail = newNode;
+                    oldTail.next = newNode;
+                }
+            } else {
+                removeNode(historyMap.get(task.getId()));
+                historyMap.remove(task.getId());
+                linkLast(task);
+            }
         }
 
         private void removeNode(Node node) {
@@ -125,7 +111,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         public Node next;
         public Node prev;
 
-        public Node( Node prev, Task data,Node next) {
+        public Node(Node prev, Task data, Node next) {
             this.data = data;
             this.next = next;
             this.prev = prev;
