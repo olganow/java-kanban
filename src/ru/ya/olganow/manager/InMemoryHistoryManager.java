@@ -41,7 +41,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         private Node head;
         //Указатель на последний элемент списка. Он же last
         private Node tail;
-        // private int size = 0;
         //CustomLinkedList собирает все задачи из MyLinkedList в обычный ArrayList
         private final Map<Integer, Node> historyMap = new HashMap<>();
 
@@ -67,12 +66,16 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
         }
 
+        //Надо ещё на всякий случай проверить, что голова и хвост совпадают с node
         private void removeNode(Node node) {
             if (head == tail) {
-                head = null;
-                tail = null;
+                if (head == node) {
+                    head = null;
+                    tail = null;
+                    return;
+                }
+                return;
             }
-
             if (node.getPrev() != null) {
                 if (node.getNext() == null) {
                     node.getPrev().setNext(null);
