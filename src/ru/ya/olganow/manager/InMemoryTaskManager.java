@@ -6,17 +6,18 @@ import ru.ya.olganow.task.SingleTask;
 import ru.ya.olganow.task.Subtask;
 import ru.ya.olganow.task.Task;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private final TaskIdGenerator taskIdGenerator;
-    private HashMap<Integer, SingleTask> singleTaskById;
-    private HashMap<Integer, EpicTask> epicTaskById;
-    private HashMap<Integer, Subtask> subtaskById;
+    protected final  HashMap<Integer, SingleTask> singleTaskById;
+    protected final HashMap<Integer, EpicTask> epicTaskById;
+    protected final HashMap<Integer, Subtask> subtaskById;
     private Managers managers;
-    private final HistoryManager historyManager;
+    protected final HistoryManager historyManager;
     public InMemoryTaskManager() {
         this.taskIdGenerator = new TaskIdGenerator();
         this.singleTaskById = new HashMap<>();
@@ -32,7 +33,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     //option 1: how to save object with generated id in hashmap
-    public void saveSingleTask(SingleTask singleTask) {
+    public void addSingleTask(SingleTask singleTask) {
         // 1: generate new id and save it to the task
         singleTask.setId(taskIdGenerator.getNextFreedI());
         // 2: save task
@@ -40,7 +41,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void saveEpicTask(EpicTask epicTask) {
+    public void addEpicTask(EpicTask epicTask) {
         // 1: generate new id and save it to the task
         epicTask.setId(taskIdGenerator.getNextFreedI());
         // 2: save task
@@ -50,7 +51,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void saveNewSubTask(Subtask subtask) {
+    public void addNewSubTask(Subtask subtask) {
         // 1: generate new id and save it to the task
         subtask.setId(taskIdGenerator.getNextFreedI());
         // 2: save task
@@ -245,5 +246,9 @@ public class InMemoryTaskManager implements TaskManager {
         public int getNextFreedI() {
             return nextFreedId++;
         }
+    }
+
+    public void save() throws IOException {
+
     }
 }

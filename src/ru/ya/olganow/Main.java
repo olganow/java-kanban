@@ -1,41 +1,47 @@
 package ru.ya.olganow;
 
 import ru.ya.olganow.description.TaskStatus;
+import ru.ya.olganow.manager.FileBackedTasksManager;
 import ru.ya.olganow.manager.Managers;
 import ru.ya.olganow.manager.TaskManager;
 import ru.ya.olganow.task.EpicTask;
 import ru.ya.olganow.task.SingleTask;
 import ru.ya.olganow.task.Subtask;
 
+import java.io.File;
+import java.io.IOException;
+
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Managers managers = new Managers();
+
         TaskManager taskManager = managers.getDefault();
+        taskManager  = new FileBackedTasksManager(new File("src/resourсes/history.csv"));
 
         // Two single task created
         SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST", TaskStatus.NEW);
-        taskManager.saveSingleTask(singleTask);
+        taskManager.addSingleTask(singleTask);
         SingleTask singleTask2 = new SingleTask("Another safe Task", "Desc AST", TaskStatus.NEW);
-        taskManager.saveSingleTask(singleTask2);
+        taskManager.addSingleTask(singleTask2);
 
         //Two Epic created
         EpicTask epicTask1 = new EpicTask("First epic", "Desc FE");
-        taskManager.saveEpicTask(epicTask1);
+        taskManager.addEpicTask(epicTask1);
         Subtask subtask1 = new Subtask("First subtask", "Desc FSB", TaskStatus.NEW, 2);
-        taskManager.saveNewSubTask(subtask1);
+        taskManager.addNewSubTask(subtask1);
         Subtask subtask2 = new Subtask("Second subtask", "Desc SSB", TaskStatus.NEW, 2);
-        taskManager.saveNewSubTask(subtask2);
+        taskManager.addNewSubTask(subtask2);
 
         EpicTask epicTask2 = new EpicTask("Second epic", "Desc FE");
-        taskManager.saveEpicTask(epicTask2);
+        taskManager.addEpicTask(epicTask2);
         Subtask subtask3 = new Subtask("Third subtask", "Desc FSB", TaskStatus.DONE, 5);
-        taskManager.saveNewSubTask(subtask3);
+        taskManager.addNewSubTask(subtask3);
 
-//        // Get a list with all tasks
-//        System.out.println("Получить список всех одиночных задач\n" + taskManager.getAllSingleTasks());
-//        System.out.println("Получить список всех эпиков\n" + taskManager.getAllEpicTasks());
-//        System.out.println("Получить список всех подзадач\n" + taskManager.getAllSubtasks());
+        // Get a list with all tasks
+        System.out.println("Получить список всех одиночных задач\n" + taskManager.getAllSingleTasks());
+        System.out.println("Получить список всех эпиков\n" + taskManager.getAllEpicTasks());
+        System.out.println("Получить список всех подзадач\n" + taskManager.getAllSubtasks());
 
         // Delete all tasks
 //        System.out.println("Все одиночные задачи удалены");
@@ -56,24 +62,33 @@ public class Main {
         System.out.println("Получить по ID\n" + taskManager.getTaskById(1));
         System.out.println("Получить по ID\n" + taskManager.getTaskById(2));
         System.out.println("Получить по ID\n" + taskManager.getTaskById(3));
-        System.out.println("Получить по ID\n" + taskManager.getTaskById(2));
-        System.out.println("Получить по ID\n" + taskManager.getTaskById(5));
-
-        //Get all subtasks by EpicId
-        System.out.println("Получить сабтаски по ID эпика:" + taskManager.getSubTasksByEpicId(2));
-
+//        System.out.println("Получить по ID\n" + taskManager.getTaskById(2));
+//        System.out.println("Получить по ID\n" + taskManager.getTaskById(5));
+//
+//        //Get all subtasks by EpicId
+//        System.out.println("Получить сабтаски по ID эпика:" + taskManager.getSubTasksByEpicId(2));
+//
         //Get search history
         System.out.println("Получить историю поиска:\n" + taskManager.getHistory());
+//
+//        //Update task
+//        singleTask2 = new SingleTask(1, "Another safe Task--", "Desc AST", TaskStatus.IN_PROGRESS);
+//        taskManager.updateSingleTask(singleTask2);
+//
+//        subtask3 = new Subtask(3, "Subtask--", "Desc FSB", TaskStatus.NEW, 2);
+//        taskManager.updateSubtask(subtask3);
+//
+//        epicTask2 = new EpicTask(5, "Second epic--", "Desc FE", epicTask2.getSubtaskIds());
+//        taskManager.updateEpicTask(epicTask2);
 
-        //Update task
-        singleTask2 = new SingleTask(1, "Another safe Task--", "Desc AST", TaskStatus.IN_PROGRESS);
-        taskManager.updateSingleTask(singleTask2);
 
-        subtask3 = new Subtask(3, "Subtask--", "Desc FSB", TaskStatus.NEW, 2);
-        taskManager.updateSubtask(subtask3);
+        taskManager.save();
 
-        epicTask2 = new EpicTask(5, "Second epic--", "Desc FE", epicTask2.getSubtaskIds());
-        taskManager.updateEpicTask(epicTask2);
+
+//        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile
+//                (new File("src/resourсes/history.csv"));
+   //     fileBackedTasksManager.save();
+     //   System.out.println("Задачи совпадают: " + taskManager.getAllSingleTasks().equals(fileBackedTasksManager.getAllSingleTasks()));
     }
 
 }
