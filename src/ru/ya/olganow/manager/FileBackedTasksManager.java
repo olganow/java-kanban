@@ -1,16 +1,17 @@
 package ru.ya.olganow.manager;
 
+import ru.ya.olganow.description.TaskStatus;
 import ru.ya.olganow.description.TaskType;
 import ru.ya.olganow.task.EpicTask;
 import ru.ya.olganow.task.SingleTask;
 import ru.ya.olganow.task.Subtask;
 import ru.ya.olganow.task.Task;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
+import java.io.*;
+import java.nio.file.Files;
+
+import java.nio.file.Paths;
+import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
     private File historyFile;
@@ -41,6 +42,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         fileWriter.close();
 }
 
+    //Сохранения задачи в строк
     private String toString(Task task){
         String result = "";
         if (task.getTaskType() == TaskType.SINGLE || task.getTaskType() == TaskType.SUBTASK ) {
@@ -65,14 +67,46 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return result;
     }
 
+    //Сохранение менеджера истории с CSV
     private static String toStringHistory(HistoryManager manager) {
         List<Task> historyTasks = manager.getHistory();
         StringBuilder historyIDs = new StringBuilder();
         for (int i = 0; i < historyTasks .size(); i++) {
             historyIDs.append(String.format("%d,", historyTasks.get(i).getId()));
         }
-
         return historyIDs.toString();
+    }
+
+    //Создания задачи из строки
+    private Task fromString(String value) throws IOException {
+        Task task = null;
+
+        String[] taskOptions = value.split(",");
+        if (taskOptions[1].equals("SINGLE")) {
+            task = new SingleTask(Integer.parseInt(taskOptions[0]), taskOptions[1], taskOptions[2], TaskStatus.valueOf(taskOptions[3]));
+        } else if (taskOptions[1].equals("SUBTASK")) {
+            task = new Subtask(Integer.parseInt(taskOptions[0]), taskOptions[1], taskOptions[2], TaskStatus.valueOf(taskOptions[3]), Integer.parseInt(taskOptions[4]));
+
+        } else if (taskOptions[1].equals("EPIC")) {
+            String[] subtasks = taskOptions[4].split(" ");
+           ArrayList<Integer> subtaskIds = null;
+            for (String subtask : subtasks) {
+                subtask.subSequence(1,subtask.length()-1);
+                subtaskIds.add(Integer.parseInt(subtask));
+            }
+            task = new EpicTask(Integer.parseInt(taskOptions[0]), taskOptions[1],
+                    taskOptions[2],subtaskIds);
+        }
+        return task;
+    }
+    //Сохранения и восстановления менеджера истории из CSV
+    static List<Integer> historyFromString(String value) {
+        List<Integer> historyFromString = new ArrayList<>();
+        final String[] historyIds = value.split(",");
+        for (String id : historyIds) {
+            historyFromString.add(Integer.valueOf(id));
+        }
+        return historyFromString;
     }
 
     @Override
@@ -105,9 +139,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
     }
 
-//    public static FileBackedTasksManager loadFromFile(File file) {
-//        final FileBackedTasksManager manager = new FileBackedTasksManager(file);
-//        return manager;
-//    }
+    public String loadFromFile(String path) throws IOException {
+        String content = Files.readString(Paths.get(path));
+        System.out.println(content);
 
+        return content;
+    }
+
+
+    public static void main(String[] args) throws IOException {
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new File("src/resourсes/history.csv"));
+     fileBackedTasksManager.loadFromFile("src/resourсes/history.csv");
+
+    }
 }
