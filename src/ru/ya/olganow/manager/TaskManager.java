@@ -5,7 +5,6 @@ import ru.ya.olganow.task.SingleTask;
 import ru.ya.olganow.task.Subtask;
 import ru.ya.olganow.task.Task;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +42,6 @@ public interface TaskManager {
     ArrayList<Subtask> getSubTasksByEpicId(int id);
 
     Task getTaskById(int id);
-    void save() throws IOException;
+    void save();
 
 }

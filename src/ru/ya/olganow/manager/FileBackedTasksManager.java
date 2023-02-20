@@ -21,6 +21,65 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         this.historyFile = historyFile;
     }
 
+    @Override
+    public void addSingleTask(SingleTask singleTask){
+        super.addSingleTask(singleTask);
+        save();
+    }
+    @Override
+    public void addNewSubTask(Subtask subtask) {
+        super.addNewSubTask(subtask);
+        save();
+    }
+
+    @Override
+    public void addEpicTask(EpicTask epicTask) {
+        super.addEpicTask(epicTask);
+        save();
+    }
+
+    @Override
+    public void deleteAllSingleTask(){
+        super.deleteAllSingleTask();
+        save();
+    }
+    @Override
+    public void deleteAllEpicTask(){
+        super.deleteAllEpicTask();
+        save();
+    }
+    @Override
+    public void deleteAllSubtask(){
+        super.deleteAllSubtask();
+        save();
+    }
+    @Override
+    public void deleteAllTask(){
+        super.deleteAllTask();
+        save();
+    }
+    @Override
+    public void deleteById(int id){
+        super.deleteById(id);
+        save();
+    }
+
+    @Override
+    public void updateSingleTask(SingleTask singleTask){
+        super.updateSingleTask(singleTask);
+        save();
+    }
+    @Override
+    public void updateEpicTask(EpicTask epicTask){
+        super.updateEpicTask(epicTask);
+        save();
+    }
+    @Override
+    public void updateSubtask(Subtask subtask){
+        super.updateSubtask(subtask);
+        save();
+    }
+
     // Сохранение в файл
     public void save() {
         try (Writer fileWriter = new FileWriter(historyFile)) {
@@ -107,25 +166,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return historyFromString;
     }
 
-    @Override
-    public void addNewSubTask(Subtask subtask) {
-        super.addNewSubTask(subtask);
-        save();
-    }
-
-    @Override
-    public void addEpicTask(EpicTask epicTask) {
-        super.addEpicTask(epicTask);
-        save();
-
-    }
-
-    @Override
-    public void addSingleTask(SingleTask singleTask) {
-        super.addSingleTask(singleTask);
-        save();
-    }
-
     public void loadFromFile(String path) {
         try {
             String historyFileContent = Files.readString(Paths.get(path));
@@ -147,14 +187,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                         break;
                     case ("SUBTASK"):
                         subtaskById.put(task.getId(), (Subtask) task);
+                        System.out.println("SUBTASK");
+                        System.out.println(subtaskById);
                         break;
                     case ("EPIC"):
                         epicTaskById.put(task.getId(), (EpicTask) task);
                         break;
                 }
-                for (Subtask subtask : subtaskById.values()) {
-                    epicTaskById.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
-                }
+            }
+
+            //Добавления сабтасок к эпикам
+            for (Subtask subtask : subtaskById.values()) {
+                epicTaskById.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
             }
 
             //Восстановление истории из файла

@@ -6,7 +6,6 @@ import ru.ya.olganow.task.SingleTask;
 import ru.ya.olganow.task.Subtask;
 import ru.ya.olganow.task.Task;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -248,7 +247,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public void save() throws IOException {
+    public void save() {
 
     }
 }
