@@ -22,24 +22,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     // Сохранение в файл
-    public void save() throws IOException {
-        Writer fileWriter = new FileWriter(historyFile);
-        fileWriter.write(TITLE_LINE);
+    public void save() {
+        try (Writer fileWriter = new FileWriter(historyFile)) {
+            fileWriter.write(TITLE_LINE);
 
-        for (SingleTask singleTask : singleTaskById.values()) {
-            fileWriter.write(toString(singleTask) + "\n");
-        }
+            for (SingleTask singleTask : singleTaskById.values()) {
+                fileWriter.write(toString(singleTask) + "\n");
+            }
 
-        for (EpicTask epic : epicTaskById.values()) {
-            fileWriter.write(toString(epic) + "\n");
+            for (EpicTask epic : epicTaskById.values()) {
+                fileWriter.write(toString(epic) + "\n");
+            }
+            for (Subtask subtask : subtaskById.values()) {
+                fileWriter.write(toString(subtask) + "\n");
+            }
+            if (historyManager.getHistory() != null)
+                fileWriter.write("\n");
+            fileWriter.write(historyToStringHistory(historyManager));
+
+        } catch (IOException ex) {
+            throw new ManagerSaveException();
         }
-        for (Subtask subtask : subtaskById.values()) {
-            fileWriter.write(toString(subtask) + "\n");
-        }
-        if (historyManager.getHistory() != null)
-            fileWriter.write("\n");
-        fileWriter.write(historyToStringHistory(historyManager));
-        fileWriter.close();
     }
 
     //Сохранения задачи в строк
@@ -107,82 +110,76 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     @Override
     public void addNewSubTask(Subtask subtask) {
         super.addNewSubTask(subtask);
-        try {
-            save();
-        } catch (IOException e) {
-            System.out.println("ошибочка");
-        }
+        save();
     }
 
     @Override
     public void addEpicTask(EpicTask epicTask) {
         super.addEpicTask(epicTask);
-        try {
-            save();
-        } catch (IOException e) {
-            System.out.println("ошибочка");
-        }
+        save();
+
     }
 
     @Override
     public void addSingleTask(SingleTask singleTask) {
         super.addSingleTask(singleTask);
+        save();
+    }
+
+    public void loadFromFile(String path) {
         try {
-            save();
+            String historyFileContent = Files.readString(Paths.get(path));
+
+            int indexOfBreak = historyFileContent.indexOf("\n\n");
+            String contentWithTasksWithTitle = historyFileContent.substring(1, indexOfBreak + 1);
+            String contentWithHistory = historyFileContent.substring(indexOfBreak + 2);
+            String contentWithTasks = contentWithTasksWithTitle.substring(TITLE_LINE.length() - 1);
+            System.out.println(contentWithTasks);
+
+            //Восстановление списка задач из файла
+            final String[] content = contentWithTasks.split("\n");
+            for (String taskFromString : content) {
+                Task task = fromString(taskFromString);
+                String taskType = task.getTaskType().toString();
+                switch (taskType) {
+                    case ("SINGLE"):
+                        singleTaskById.put(task.getId(), (SingleTask) task);
+                        break;
+                    case ("SUBTASK"):
+                        subtaskById.put(task.getId(), (Subtask) task);
+                        break;
+                    case ("EPIC"):
+                        epicTaskById.put(task.getId(), (EpicTask) task);
+                        break;
+                }
+                for (Subtask subtask : subtaskById.values()) {
+                    epicTaskById.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
+                }
+            }
+
+            //Восстановление истории из файла
+            Task task = null;
+            for (int id : historyFromString(contentWithHistory)) {
+                if (singleTaskById.containsKey(id)) {
+                    task = singleTaskById.get(id);
+                    historyManager.add(task);
+                } else if (epicTaskById.containsKey(id)) {
+                    task = epicTaskById.get(id);
+                    historyManager.add(task);
+                } else if (subtaskById.containsKey(id)) {
+                    task = subtaskById.get(id);
+                    historyManager.add(task);
+                }
+            }
+            if (task != null)
+                historyManager.add(task);
         } catch (IOException e) {
-            System.out.println("ошибочка");
+            e.printStackTrace();
         }
     }
 
-    public void loadFromFile(String path) throws IOException {
-        String historyFileContent = Files.readString(Paths.get(path));
-        int indexOfBreak = historyFileContent.indexOf("\n\n");
-        String contentWithTasksWithTitle = historyFileContent.substring(1, indexOfBreak + 1);
-        String contentWithHistory = historyFileContent.substring(indexOfBreak + 2);
-        String contentWithTasks = contentWithTasksWithTitle.substring(TITLE_LINE.length() - 1);
 
-        //Восстановление списка задач из файла
-        final String[] content = contentWithTasks.split("\n");
-        for (String taskFromString : content) {
-            Task task = fromString(taskFromString);
-            String taskType = task.getTaskType().toString();
-            switch (taskType) {
-                case ("SINGLE"):
-                    singleTaskById.put(task.getId(), (SingleTask) task);
-                    break;
-                case ("SUBTASK"):
-                    subtaskById.put(task.getId(), (Subtask) task);
-                    break;
-                case ("EPIC"):
-                    epicTaskById.put(task.getId(), (EpicTask) task);
-                    break;
-            }
-            for (Subtask subtask : subtaskById.values()) {
-                epicTaskById.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
-            }
-        }
-
-        //Восстановление истории из файла
-        Task task = null;
-        for (int id : historyFromString(contentWithHistory)) {
-            if (singleTaskById.containsKey(id)) {
-                task = singleTaskById.get(id);
-                historyManager.add(task);
-            } else if (epicTaskById.containsKey(id)) {
-                task = epicTaskById.get(id);
-                historyManager.add(task);
-            } else if (subtaskById.containsKey(id)) {
-                task = subtaskById.get(id);
-                historyManager.add(task);
-            }
-        }
-        if (task != null)
-            historyManager.add(task);
-
-    }
-
-
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new File("src/resourсes/history.csv"));
         fileBackedTasksManager.loadFromFile("src/resourсes/history.csv");
 
