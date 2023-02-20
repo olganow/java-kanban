@@ -1,0 +1,9 @@
+id,type,name,status,description,epic
+0,SINGLE,Single safe Task,NEW,Desc SST
+1,SINGLE,Another safe Task,NEW,Desc AST
+2,EPIC,First epic,NEW,Desc FE
+5,EPIC,Second epic,DONE,Desc FE
+3,SUBTASK,First subtask,NEW,Desc FSB,2
+4,SUBTASK,Second subtask,NEW,Desc SSB,2
+6,SUBTASK,Third subtask,DONE,Desc FSB,5
+

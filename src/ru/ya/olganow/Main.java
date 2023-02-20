@@ -81,14 +81,5 @@ public class Main {
 //        epicTask2 = new EpicTask(5, "Second epic--", "Desc FE", epicTask2.getSubtaskIds());
 //        taskManager.updateEpicTask(epicTask2);
 
-
-        taskManager.save();
-
-
-//        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile
-//                (new File("src/resourсes/history.csv"));
-   //     fileBackedTasksManager.save();
-     //   System.out.println("Задачи совпадают: " + taskManager.getAllSingleTasks().equals(fileBackedTasksManager.getAllSingleTasks()));
     }
-
 }
