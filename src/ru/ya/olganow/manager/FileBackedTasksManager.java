@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
-    private File historyFile;
+    private final File historyFile;
     public static final String TITLE_LINE = "id,type,name,status,description,epic\n";
 
     public FileBackedTasksManager(File historyFile) {
@@ -38,7 +38,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
         if (historyManager.getHistory() != null)
             fileWriter.write("\n");
-        fileWriter.write(toStringHistory(historyManager));
+        fileWriter.write(historyToStringHistory(historyManager));
         fileWriter.close();
     }
 
@@ -68,7 +68,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     //Сохранение менеджера истории с CSV
-    private static String toStringHistory(HistoryManager manager) {
+    private static String historyToStringHistory(HistoryManager manager) {
         List<Task> historyTasks = manager.getHistory();
         StringBuilder historyIDs = new StringBuilder();
         for (int i = 0; i < historyTasks.size(); i++) {
@@ -138,9 +138,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         String historyFileContent = Files.readString(Paths.get(path));
         int indexOfBreak = historyFileContent.indexOf("\n\n");
         String contentWithTasksWithTitle = historyFileContent.substring(1, indexOfBreak + 1);
-        String contentWithHistory = historyFileContent.substring(indexOfBreak + 1);
+        String contentWithHistory = historyFileContent.substring(indexOfBreak + 2);
         String contentWithTasks = contentWithTasksWithTitle.substring(TITLE_LINE.length() - 1);
 
+        //Восстановление списка задач из файла
         final String[] content = contentWithTasks.split("\n");
         for (String taskFromString : content) {
             Task task = fromString(taskFromString);
@@ -161,6 +162,23 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             }
         }
 
+        //Восстановление истории из файла
+        Task task = null;
+        for (int id : historyFromString(contentWithHistory)) {
+            if (singleTaskById.containsKey(id)) {
+                task = singleTaskById.get(id);
+                historyManager.add(task);
+            } else if (epicTaskById.containsKey(id)) {
+                task = epicTaskById.get(id);
+                historyManager.add(task);
+            } else if (subtaskById.containsKey(id)) {
+                task = subtaskById.get(id);
+                historyManager.add(task);
+            }
+        }
+        if (task != null)
+            historyManager.add(task);
+
     }
 
 
@@ -172,6 +190,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
         System.out.println("Получить список всех подзадач\n" + fileBackedTasksManager.getAllSubtasks());
 
+        //Get search history
+        System.out.println("Получить историю поиска:\n" + fileBackedTasksManager.getHistory());
 
     }
 }
