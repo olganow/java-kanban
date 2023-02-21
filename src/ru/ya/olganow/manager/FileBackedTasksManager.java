@@ -22,10 +22,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public void addSingleTask(SingleTask singleTask){
+    public void addSingleTask(SingleTask singleTask) {
         super.addSingleTask(singleTask);
         save();
     }
+
     @Override
     public void addNewSubTask(Subtask subtask) {
         super.addNewSubTask(subtask);
@@ -39,43 +40,49 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public void deleteAllSingleTask(){
+    public void deleteAllSingleTask() {
         super.deleteAllSingleTask();
         save();
     }
+
     @Override
-    public void deleteAllEpicTask(){
+    public void deleteAllEpicTask() {
         super.deleteAllEpicTask();
         save();
     }
+
     @Override
-    public void deleteAllSubtask(){
+    public void deleteAllSubtask() {
         super.deleteAllSubtask();
         save();
     }
+
     @Override
-    public void deleteAllTask(){
+    public void deleteAllTask() {
         super.deleteAllTask();
         save();
     }
+
     @Override
-    public void deleteById(int id){
+    public void deleteById(int id) {
         super.deleteById(id);
         save();
     }
 
     @Override
-    public void updateSingleTask(SingleTask singleTask){
+    public void updateSingleTask(SingleTask singleTask) {
         super.updateSingleTask(singleTask);
         save();
     }
+
     @Override
-    public void updateEpicTask(EpicTask epicTask){
+    public void updateEpicTask(EpicTask epicTask) {
         super.updateEpicTask(epicTask);
         save();
     }
+
     @Override
-    public void updateSubtask(Subtask subtask){
+    public void updateSubtask(Subtask subtask) {
         super.updateSubtask(subtask);
         save();
     }
@@ -153,15 +160,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         String taskType = taskOptions[1];
         switch (taskType) {
             case ("SINGLE"):
-            task = new SingleTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]));
-            break;
+                task = new SingleTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]));
+                break;
             case ("SUBTASK"):
-            task = new Subtask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]), Integer.parseInt(taskOptions[5]));
-            break;
+                task = new Subtask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]), Integer.parseInt(taskOptions[5]));
+                break;
             case ("EPIC"):
-            ArrayList<Integer> subtaskIds = new ArrayList<>();
-            task = new EpicTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[3], subtaskIds);
-            break;
+                ArrayList<Integer> subtaskIds = new ArrayList<>();
+                task = new EpicTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[3], subtaskIds);
+                break;
         }
         return task;
     }
@@ -184,7 +191,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             String contentWithTasksWithTitle = historyFileContent.substring(1, indexOfBreak + 1);
             String contentWithHistory = historyFileContent.substring(indexOfBreak + 2);
             String contentWithTasks = contentWithTasksWithTitle.substring(TITLE_LINE.length() - 1);
-            System.out.println(contentWithTasks);
+            //     System.out.println(contentWithTasks);
 
             //Восстановление списка задач из файла
             final String[] content = contentWithTasks.split("\n");
@@ -197,8 +204,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                         break;
                     case ("SUBTASK"):
                         subtaskById.put(task.getId(), (Subtask) task);
-                        System.out.println("SUBTASK");
-                        System.out.println(subtaskById);
                         break;
                     case ("EPIC"):
                         epicTaskById.put(task.getId(), (EpicTask) task);
@@ -232,6 +237,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             e.printStackTrace();
         }
     }
+
     public static void main(String[] args) {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new File("src/resourсes/history.csv"));
 
@@ -257,22 +263,33 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         fileBackedTasksManager.addNewSubTask(subtask3);
 
         //Get all tasks by Id
-        System.out.println("Получить по ID\n" +   fileBackedTasksManager.getTaskById(0));
-        System.out.println("Получить по ID\n" +   fileBackedTasksManager.getTaskById(1));
-        System.out.println("Получить по ID\n" +   fileBackedTasksManager.getTaskById(2));
-        System.out.println("Получить по ID\n" +   fileBackedTasksManager.getTaskById(3));
-        System.out.println("Получить по ID\n" +   fileBackedTasksManager.getTaskById(4));
-        System.out.println("Получить по ID\n" +   fileBackedTasksManager.getTaskById(5));
+        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(0));
+        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(1));
+        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(2));
+        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(3));
+        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(4));
+        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(5));
 
-     //   fileBackedTasksManager.save();
 
-          System.out.println("Получить список всех одиночных задач\n" + fileBackedTasksManager.getAllSingleTasks());
-          System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
-          System.out.println("Получить список всех подзадач\n" + fileBackedTasksManager.getAllSubtasks());
+        System.out.println("Получить список всех одиночных задач\n" + fileBackedTasksManager.getAllSingleTasks());
+        System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
+        System.out.println("Получить список всех подзадач\n" + fileBackedTasksManager.getAllSubtasks());
 
         //Get search history
         System.out.println("Получить историю поиска:\n" + fileBackedTasksManager.getHistory());
-       fileBackedTasksManager.loadFromFile("src/resourсes/history.csv");
+
+        //Delete by ID
+        System.out.println("Задача с указанным id удалена");
+        fileBackedTasksManager.deleteById(5);
+
+        System.out.println("Загрузить историю из поиска");
+        fileBackedTasksManager.loadFromFile("src/resourсes/history.csv");
+
+        System.out.println("Получить список всех одиночных задач\n" + fileBackedTasksManager.getAllSingleTasks());
+        System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
+        System.out.println("Получить список всех подзадач\n" + fileBackedTasksManager.getAllSubtasks());
+        //Get search history
+        System.out.println("Получить историю поиска:\n" + fileBackedTasksManager.getHistory());
 
     }
 }
