@@ -80,6 +80,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         save();
     }
 
+    @Override
+    public List<Task> getHistory() {
+        super.getHistory();
+        save();
+        return historyManager.getHistory();
+    }
+
     // Сохранение в файл
     public void save() {
         try (Writer fileWriter = new FileWriter(historyFile)) {
@@ -205,6 +212,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             }
 
             //Восстановление истории из файла
+            // дописать если истори
             Task task = null;
             for (int id : historyFromString(contentWithHistory)) {
                 if (singleTaskById.containsKey(id)) {
@@ -234,18 +242,37 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         SingleTask singleTask2 = new SingleTask("Another safe Task", "Desc AST", TaskStatus.NEW);
         fileBackedTasksManager.addSingleTask(singleTask2);
 
+
+        //Two Epic created
+        EpicTask epicTask1 = new EpicTask("First epic", "Desc FE");
+        fileBackedTasksManager.addEpicTask(epicTask1);
+        Subtask subtask1 = new Subtask("First subtask", "Desc FSB", TaskStatus.NEW, 2);
+        fileBackedTasksManager.addNewSubTask(subtask1);
+        Subtask subtask2 = new Subtask("Second subtask", "Desc SSB", TaskStatus.NEW, 2);
+        fileBackedTasksManager.addNewSubTask(subtask2);
+
+        EpicTask epicTask2 = new EpicTask("Second epic", "Desc FE");
+        fileBackedTasksManager.addEpicTask(epicTask2);
+        Subtask subtask3 = new Subtask("Third subtask", "Desc FSB", TaskStatus.DONE, 5);
+        fileBackedTasksManager.addNewSubTask(subtask3);
+
         //Get all tasks by Id
         System.out.println("Получить по ID\n" +   fileBackedTasksManager.getTaskById(0));
         System.out.println("Получить по ID\n" +   fileBackedTasksManager.getTaskById(1));
+        System.out.println("Получить по ID\n" +   fileBackedTasksManager.getTaskById(2));
+        System.out.println("Получить по ID\n" +   fileBackedTasksManager.getTaskById(3));
+        System.out.println("Получить по ID\n" +   fileBackedTasksManager.getTaskById(4));
+        System.out.println("Получить по ID\n" +   fileBackedTasksManager.getTaskById(5));
 
-        fileBackedTasksManager.save();
+     //   fileBackedTasksManager.save();
 
           System.out.println("Получить список всех одиночных задач\n" + fileBackedTasksManager.getAllSingleTasks());
- //         System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
- //         System.out.println("Получить список всех подзадач\n" + fileBackedTasksManager.getAllSubtasks());
+          System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
+          System.out.println("Получить список всех подзадач\n" + fileBackedTasksManager.getAllSubtasks());
 
         //Get search history
         System.out.println("Получить историю поиска:\n" + fileBackedTasksManager.getHistory());
+       fileBackedTasksManager.loadFromFile("src/resourсes/history.csv");
 
     }
 }

@@ -9,11 +9,10 @@ import ru.ya.olganow.task.SingleTask;
 import ru.ya.olganow.task.Subtask;
 
 import java.io.File;
-import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Managers managers = new Managers();
 
         TaskManager taskManager = managers.getDefault();
@@ -62,8 +61,8 @@ public class Main {
         System.out.println("Получить по ID\n" + taskManager.getTaskById(1));
         System.out.println("Получить по ID\n" + taskManager.getTaskById(2));
         System.out.println("Получить по ID\n" + taskManager.getTaskById(3));
-//        System.out.println("Получить по ID\n" + taskManager.getTaskById(2));
-//        System.out.println("Получить по ID\n" + taskManager.getTaskById(5));
+        System.out.println("Получить по ID\n" + taskManager.getTaskById(2));
+        System.out.println("Получить по ID\n" + taskManager.getTaskById(5));
 //
 //        //Get all subtasks by EpicId
 //        System.out.println("Получить сабтаски по ID эпика:" + taskManager.getSubTasksByEpicId(2));
