@@ -43,5 +43,6 @@ public interface TaskManager {
 
     Task getTaskById(int id);
     void save();
+    void loadFromFile(String path);
 
 }

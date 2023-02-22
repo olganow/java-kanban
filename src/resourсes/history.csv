@@ -1,9 +1,11 @@
 id,type,name,status,description,epic
 0,SINGLE,Single safe Task,NEW,Desc SST
 1,SINGLE,Another safe Task,NEW,Desc AST
-2,EPIC,First epic,NEW,Desc FE
-5,EPIC,Second epic,DONE,Desc FE
+9,SINGLE,Another safe Task,NEW,3Desc AST
+2,EPIC,First epic,IN_PROGRESS,IN_PROGRESS
 3,SUBTASK,First subtask,NEW,Desc FSB,2
 4,SUBTASK,Second subtask,NEW,Desc SSB,2
-6,SUBTASK,Third subtask,DONE,Desc FSB,5
+7,SUBTASK,4 subtask,IN_PROGRESS,Desc 4SB,2
+8,SUBTASK,5 subtask,IN_PROGRESS,Desc 5SB,2
 
+0,1,2,3,4,8,

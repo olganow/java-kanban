@@ -248,6 +248,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void save() {
+    }
+
+    public void loadFromFile(String path){
 
     }
 }

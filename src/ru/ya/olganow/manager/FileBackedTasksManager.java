@@ -147,8 +147,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     private static String historyToStringHistory(HistoryManager manager) {
         List<Task> historyTasks = manager.getHistory();
         StringBuilder historyIDs = new StringBuilder();
-        for (int i = 0; i < historyTasks.size(); i++) {
-            historyIDs.append(String.format("%d,", historyTasks.get(i).getId()));
+        for (Task historyTask : historyTasks) {
+            historyIDs.append(String.format("%d,", historyTask.getId()));
         }
         return historyIDs.toString();
     }
@@ -183,6 +183,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return historyFromString;
     }
 
+    @Override
     public void loadFromFile(String path) {
         try {
             String historyFileContent = Files.readString(Paths.get(path));
@@ -191,7 +192,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             String contentWithTasksWithTitle = historyFileContent.substring(1, indexOfBreak + 1);
             String contentWithHistory = historyFileContent.substring(indexOfBreak + 2);
             String contentWithTasks = contentWithTasksWithTitle.substring(TITLE_LINE.length() - 1);
-            //     System.out.println(contentWithTasks);
 
             //Восстановление списка задач из файла
             final String[] content = contentWithTasks.split("\n");
@@ -217,7 +217,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             }
 
             //Восстановление истории из файла
-            // дописать если истори
             Task task = null;
             for (int id : historyFromString(contentWithHistory)) {
                 if (singleTaskById.containsKey(id)) {
@@ -240,7 +239,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     public static void main(String[] args) {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new File("src/resourсes/history.csv"));
-
 
         // Two single task created
         SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST", TaskStatus.NEW);
@@ -282,8 +280,26 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         System.out.println("Задача с указанным id удалена");
         fileBackedTasksManager.deleteById(5);
 
-        System.out.println("Загрузить историю из поиска");
+        Subtask subtask4 = new Subtask("4 subtask", "Desc 4SB", TaskStatus.IN_PROGRESS, 2);
+        fileBackedTasksManager.addNewSubTask(subtask4);
+
+
+        System.out.println("\nЗагрузить историю из файла");
         fileBackedTasksManager.loadFromFile("src/resourсes/history.csv");
+
+        System.out.println("Получить список всех одиночных задач\n" + fileBackedTasksManager.getAllSingleTasks());
+        System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
+        System.out.println("Получить список всех подзадач\n" + fileBackedTasksManager.getAllSubtasks());
+        //Get search history
+        System.out.println("Получить историю поиска:\n" + fileBackedTasksManager.getHistory());
+
+        Subtask subtask5 = new Subtask("5 subtask", "Desc 5SB", TaskStatus.IN_PROGRESS, 2);
+        fileBackedTasksManager.addNewSubTask(subtask5);
+        SingleTask singleTask3 = new SingleTask("Another safe Task", "3Desc AST", TaskStatus.NEW);
+        fileBackedTasksManager.addSingleTask(singleTask3);
+
+        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(8));
+
 
         System.out.println("Получить список всех одиночных задач\n" + fileBackedTasksManager.getAllSingleTasks());
         System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
