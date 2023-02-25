@@ -13,7 +13,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     // Объявите класс InMemoryHistoryManager и перенесите в него часть кода для работы с историей из класса InMemoryTaskManager.
     // Новый класс InMemoryHistoryManager должен реализовывать интерфейс HistoryManager.
 
-    private final CustomLinkedList<Task> historyList = new CustomLinkedList<>();
+    private final CustomLinkedList historyList = new CustomLinkedList();
 
     //для добавления нового просмотра задачи
     @Override
@@ -24,9 +24,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     //для удаления просмотра из истории
     @Override
     public void remove(int id) {
-        if (!historyList.historyMap.isEmpty()) {
-            historyList.removeNode(historyList.historyMap.get(id));
-            historyList.historyMap.remove(id);
+        if (historyList.historyMap.containsKey(id)) {
+            historyList.removeNode(historyList.historyMap.remove(id));
         }
     }
 
@@ -36,7 +35,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         return historyList.getTasks();
     }
 
-    private static class CustomLinkedList<E extends Task> {
+    private static class CustomLinkedList {
         //Указатель на первый элемент списка. Он же first
         private Node head;
         //Указатель на последний элемент списка. Он же last
@@ -46,28 +45,23 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         //добавление задачи в конец списка
         private void linkLast(Task task) {
-            if (!historyMap.containsKey(task.getId())) {
-                if (historyMap.size() == 0) {
-                    final Node newNode = new Node(null, task, null);
-                    historyMap.put(task.getId(), newNode);
-                    head = newNode;
-                    tail = newNode;
-                } else {
-                    final Node oldTail = tail;
-                    Node newNode = new Node(oldTail, task, null);
-                    historyMap.put(task.getId(), newNode);
-                    tail = newNode;
-                    oldTail.next = newNode;
-                }
-            } else {
+            if (historyMap.containsKey(task.getId())) {
                 removeNode(historyMap.get(task.getId()));
-                historyMap.remove(task.getId());
-                linkLast(task);
             }
+            final Node newNode = new Node(tail, task, null);
+            if (head == null) {
+                head = newNode;
+            } else {
+                tail.next = newNode;
+            }
+            tail = newNode;
+            historyMap.put(task.getId(), newNode);
         }
 
         //Надо ещё на всякий случай проверить, что голова и хвост совпадают с node
         private void removeNode(Node node) {
+            final Node next = node.getNext();
+            final Node prev = node.getPrev();
             if (head == tail) {
                 if (head == node) {
                     head = null;
@@ -77,38 +71,35 @@ public class InMemoryHistoryManager implements HistoryManager {
                 return;
             }
             if (node.getPrev() != null) {
-                if (node.getNext() == null) {
-                    node.getPrev().setNext(null);
-                    tail = node.getPrev();
+                if (next == null) {
+                    prev.setNext(null);
+                    tail = prev;
                 } else {
-                    node.getNext().setPrev(node.getPrev());
-                    node.getPrev().setNext(node.getNext());
+                    next.setPrev(prev);
+                    prev.setNext(next);
                 }
             } else if (node.getNext() != null) {
-                node.getNext().setPrev(null);
-                head = node.getNext();
+                next.setPrev(null);
+                head = next;
             }
         }
 
 
         //Собирает все задачи из MyLinkedList в обычный ArrayList
-        private List getTasks() {
-            List tasks = new ArrayList<>();
-            if (head != null) {
-                Node newNode = head;
-                while (newNode != null) {
-                    tasks.add(newNode.getData());
-                    newNode = newNode.getNext();
-                }
-                return tasks;
-            } else
-                return tasks;
+        private List<Task> getTasks() {
+            List<Task> tasks = new ArrayList<>();
+            Node current = head;
+            while (current != null) {
+                tasks.add(current.getData());
+                current = current.getNext();
+            }
+            return tasks;
         }
 
     }
 
 
-    static class Node {
+    private static class Node {
 
         public Task data;
         public Node next;
