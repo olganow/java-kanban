@@ -5,7 +5,6 @@ import ru.ya.olganow.task.SingleTask;
 import ru.ya.olganow.task.Subtask;
 import ru.ya.olganow.task.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
@@ -33,13 +32,13 @@ public interface TaskManager {
 
     void updateSubtask(Subtask subtask);
 
-    ArrayList<Task> getAllSingleTasks();
+    List<Task> getAllSingleTasks();
 
-    ArrayList<Task> getAllEpicTasks();
+    List<Task> getAllEpicTasks();
 
-    ArrayList<Task> getAllSubtasks();
+    List<Task> getAllSubtasks();
 
-    ArrayList<Subtask> getSubTasksByEpicId(int id);
+    List<Subtask> getSubTasksByEpicId(int id);
 
     Task getTaskById(int id);
 
