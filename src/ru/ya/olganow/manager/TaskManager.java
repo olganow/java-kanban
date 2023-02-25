@@ -42,7 +42,5 @@ public interface TaskManager {
     ArrayList<Subtask> getSubTasksByEpicId(int id);
 
     Task getTaskById(int id);
-    void save();
-    void loadFromFile(String path);
 
 }

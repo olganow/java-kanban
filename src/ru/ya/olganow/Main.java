@@ -13,9 +13,8 @@ import java.io.File;
 public class Main {
 
     public static void main(String[] args) {
-        Managers managers = new Managers();
 
-        TaskManager taskManager = managers.getDefault();
+        TaskManager taskManager = Managers.getDefault();
         taskManager  = new FileBackedTasksManager(new File("src/resourсes/history.csv"));
 
         // Two single task created
