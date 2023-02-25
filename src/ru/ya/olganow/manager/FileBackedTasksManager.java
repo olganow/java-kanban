@@ -1,3 +1,4 @@
+
 package ru.ya.olganow.manager;
 
 import ru.ya.olganow.description.TaskStatus;
@@ -88,14 +89,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public List<Task> getHistory() {
-        super.getHistory();
+    public Task getTaskById(int id)  {
+        Task task = super.getTaskById(id);
         save();
-        return historyManager.getHistory();
+        return task;
     }
 
     // Сохранение в файл
-    public void save() {
+    private void save() {
         try (Writer fileWriter = new FileWriter(historyFile)) {
             fileWriter.write(TITLE_LINE);
 
@@ -137,7 +138,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                     task.getName(),
                     task.getTaskStatus(),
                     task.getDescription(),
-                    subtaskById.get(task.getId()).getEpicId()
+                    ((Subtask)task).getEpicId()
             );
         }
         return result;
@@ -147,8 +148,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     private static String historyToStringHistory(HistoryManager manager) {
         List<Task> historyTasks = manager.getHistory();
         StringBuilder historyIDs = new StringBuilder();
-        for (Task historyTask : historyTasks) {
-            historyIDs.append(String.format("%d,", historyTask.getId()));
+        for (int i = 0; i < historyTasks.size(); i++) {
+            //последнего элемента истории из файла - вывод без запятой
+            if (i == historyTasks.size() - 1)
+                historyIDs.append(String.format("%d", historyTasks.get(i).getId()));
+            else
+                historyIDs.append(String.format("%d,", historyTasks.get(i).getId()));
         }
         return historyIDs.toString();
     }
@@ -157,24 +162,23 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     private Task fromString(String value) {
         Task task = null;
         String[] taskOptions = value.split(",");
-        String taskType = taskOptions[1];
+        TaskType taskType = TaskType.valueOf(taskOptions[1]);
         switch (taskType) {
-            case ("SINGLE"):
+            case SINGLE:
                 task = new SingleTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]));
                 break;
-            case ("SUBTASK"):
+            case SUBTASK:
                 task = new Subtask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]), Integer.parseInt(taskOptions[5]));
                 break;
-            case ("EPIC"):
-                ArrayList<Integer> subtaskIds = new ArrayList<>();
-                task = new EpicTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[3], subtaskIds);
+            case EPIC:
+                task = new EpicTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[3]);
                 break;
         }
         return task;
     }
 
     //Сохранения и восстановления менеджера истории из CSV
-    static List<Integer> historyFromString(String value) {
+    private static List<Integer> historyFromString(String value) {
         List<Integer> historyFromString = new ArrayList<>();
         final String[] historyIds = value.split(",");
         for (String id : historyIds) {
@@ -183,7 +187,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return historyFromString;
     }
 
-    @Override
     public void loadFromFile(String path) {
         try {
             String historyFileContent = Files.readString(Paths.get(path));
@@ -197,15 +200,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             final String[] content = contentWithTasks.split("\n");
             for (String taskFromString : content) {
                 Task task = fromString(taskFromString);
-                String taskType = task.getTaskType().toString();
+                TaskType taskType = task.getTaskType();
                 switch (taskType) {
-                    case ("SINGLE"):
+                    case SINGLE:
                         singleTaskById.put(task.getId(), (SingleTask) task);
                         break;
-                    case ("SUBTASK"):
+                    case SUBTASK:
                         subtaskById.put(task.getId(), (Subtask) task);
                         break;
-                    case ("EPIC"):
+                    case EPIC:
                         epicTaskById.put(task.getId(), (EpicTask) task);
                         break;
                 }
