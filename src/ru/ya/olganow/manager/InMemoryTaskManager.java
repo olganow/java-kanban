@@ -13,10 +13,11 @@ import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
     private final TaskIdGenerator taskIdGenerator;
-    protected final Map<Integer, SingleTask> singleTaskById;
-    protected final Map<Integer, EpicTask> epicTaskById;
-    protected final Map<Integer, Subtask> subtaskById;
-    protected final HistoryManager historyManager;
+    protected static Map<Integer, SingleTask> singleTaskById;
+    protected static Map<Integer, EpicTask> epicTaskById;
+    protected static Map<Integer, Subtask> subtaskById;
+    protected static HistoryManager historyManager;
+
     public InMemoryTaskManager() {
         this.taskIdGenerator = new TaskIdGenerator();
         this.singleTaskById = new HashMap<>();
@@ -27,7 +28,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getHistory() {
-      return historyManager.getHistory();
+        return historyManager.getHistory();
     }
 
     @Override
@@ -206,7 +207,7 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.add(task);
             return task;
         } else if (subtaskById.containsKey(id)) {
-          Subtask task = subtaskById.get(id);
+            Subtask task = subtaskById.get(id);
             historyManager.add(task);
             return task;
         } else {
@@ -243,8 +244,12 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private static class TaskIdGenerator {
-        private int nextFreedId = 0;
+     static class TaskIdGenerator {
+        private int nextFreedId;
+
+        public void setNextFreedId(int nextFreedId) {
+            this.nextFreedId = nextFreedId;
+        }
 
         public int getNextFreedI() {
             return nextFreedId++;
