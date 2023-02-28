@@ -14,9 +14,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
-    private static File historyFile;
-    public static final String TITLE_LINE = "id,type,name,status,description,epic\n";
+public class FileBackedTasksManager extends InMemoryTaskManager {
+    private File historyFile;
+    private static final String TITLE_LINE = "id,type,name,status,description,epic\n";
 
     public FileBackedTasksManager(File historyFile) {
         this.historyFile = historyFile;
@@ -144,16 +144,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return result;
     }
 
-    //Сохранение менеджера истории с CSV
+    //Сохранение менеджера истории в CSV
     private static String historyToStringHistory(HistoryManager manager) {
         List<Task> historyTasks = manager.getHistory();
         StringBuilder historyIDs = new StringBuilder();
         for (int i = 0; i < historyTasks.size(); i++) {
-            //последнего элемента истории из файла - вывод без запятой
-            if (i == historyTasks.size() - 1)
-                historyIDs.append(String.format("%d", historyTasks.get(i).getId()));
-            else
-                historyIDs.append(String.format("%d,", historyTasks.get(i).getId()));
+            historyIDs.append(historyTasks.get(i).getId());
+            if (i != historyTasks.size() - 1) {
+                historyIDs.append(",");
+            }
         }
         return historyIDs.toString();
     }
@@ -171,7 +170,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 task = new Subtask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]), Integer.parseInt(taskOptions[5]));
                 break;
             case EPIC:
-                task = new EpicTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[3]);
+                task = new EpicTask(Integer.parseInt(taskOptions[0]), taskOptions[2],  taskOptions[4], TaskStatus.valueOf(taskOptions[3]));
                 break;
         }
         return task;
@@ -189,42 +188,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return historyFromString;
     }
 
-    static String[] getTasksFromHistoryFile(String path) {
-        String[] content = new String[0];
-        try {
-            String historyFileContent = Files.readString(Paths.get(path));
-
-            int indexOfBreak = historyFileContent.indexOf("\n\n");
-            String contentWithTasksWithTitle = historyFileContent.substring(1, indexOfBreak + 1);
-            String contentWithTasks = contentWithTasksWithTitle.substring(TITLE_LINE.length() - 1);
-
-            //Восстановление списка задач из файла
-            content = contentWithTasks.split("\n");
-            return content;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return content;
-    }
-
-    static int getMaxID() {
-        String[] content = getTasksFromHistoryFile("src/resourсes/history.csv");
-        int maxId = Integer.MIN_VALUE;
-        for (String taskFromString : content) {
-            Task task = fromString(taskFromString);
-            if (task.getId() > maxId) {
-                maxId = task.getId();
-            }
-        }
-        return maxId;
-    }
-
-
     static FileBackedTasksManager loadFromFile(String path) {
-        FileBackedTasksManager newTaskManager = new FileBackedTasksManager(historyFile);
-        InMemoryTaskManager.TaskIdGenerator idGenerator = new InMemoryTaskManager.TaskIdGenerator();
-        int recoveryId = getMaxID() + 1;
-        idGenerator.setNextFreedId(recoveryId);
+        FileBackedTasksManager newTaskManager = new FileBackedTasksManager(new File(path));
         try {
             String historyFileContent = Files.readString(Paths.get(path));
 
@@ -235,23 +200,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
             //Восстановление списка задач из файла
             final String[] content = contentWithTasks.split("\n");
-
             for (String taskFromString : content) {
                 Task task = fromString(taskFromString);
                 TaskType taskType = task.getTaskType();
                 int taskID = task.getId();
+                if (newTaskManager.taskIdGenerator.getNextFreedI() < taskID) {
+                    newTaskManager.taskIdGenerator.setNextFreedId(taskID);
+                }
                 switch (taskType) {
                     case SINGLE:
-                        task.setId(idGenerator.getNextFreedI());
                         newTaskManager.singleTaskById.put(taskID, (SingleTask) task);
                         break;
                     case SUBTASK:
-                        task.setId(idGenerator.getNextFreedI());
-
                         newTaskManager.subtaskById.put(taskID, (Subtask) task);
                         break;
                     case EPIC:
-                        task.setId(idGenerator.getNextFreedI());
                         newTaskManager.epicTaskById.put(taskID, (EpicTask) task);
                         break;
                 }
@@ -260,19 +223,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             //Восстановление истории из файла
             Task task = null;
             for (int id : historyFromString(contentWithHistory)) {
-                if (singleTaskById.containsKey(id)) {
-                    task = singleTaskById.get(id);
-                    newTaskManager.getHistory().add(task);
-                } else if (epicTaskById.containsKey(id)) {
-                    task = epicTaskById.get(id);
-                    newTaskManager.getHistory().add(task);
-                } else if (subtaskById.containsKey(id)) {
-                    task = subtaskById.get(id);
-                    newTaskManager.getHistory().add(task);
+                if (newTaskManager.singleTaskById.containsKey(id)) {
+                    task = newTaskManager.singleTaskById.get(id);
+                    newTaskManager.historyManager.add(task);
+                } else if (newTaskManager.epicTaskById.containsKey(id)) {
+                    task = newTaskManager.epicTaskById.get(id);
+                    newTaskManager.historyManager.add(task);
+                } else if (newTaskManager.subtaskById.containsKey(id)) {
+                    task = newTaskManager.subtaskById.get(id);
+                    newTaskManager.historyManager.add(task);
                 }
             }
-            if (task != null)
-                historyManager.add(task);
         } catch (IOException e) {
             e.printStackTrace();
         }

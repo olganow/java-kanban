@@ -1,5 +1,6 @@
 package ru.ya.olganow.task;
 
+import ru.ya.olganow.description.TaskStatus;
 import ru.ya.olganow.description.TaskType;
 
 import java.util.ArrayList;
@@ -15,6 +16,10 @@ public class EpicTask extends Task {
 
     public EpicTask(int id, String name, String description) {
         super(id, name, description);
+        this.subtaskIds = new ArrayList<>();
+    }
+    public EpicTask(int id, String name, String description, TaskStatus taskStatus) {
+        super(id, name, description,taskStatus);
         this.subtaskIds = new ArrayList<>();
     }
 
