@@ -15,7 +15,6 @@ public class Main {
     public static void main(String[] args) {
 
         TaskManager taskManager = Managers.getDefault();
-        taskManager  = new FileBackedTasksManager(new File("src/resourсes/history.csv"));
 
         // Two single task created
         SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST", TaskStatus.NEW);

@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final TaskIdGenerator taskIdGenerator;
-    protected static Map<Integer, SingleTask> singleTaskById;
-    protected static Map<Integer, EpicTask> epicTaskById;
-    protected static Map<Integer, Subtask> subtaskById;
-    protected static HistoryManager historyManager;
+    protected final TaskIdGenerator taskIdGenerator;
+    protected final Map<Integer, SingleTask> singleTaskById;
+    protected final Map<Integer, EpicTask> epicTaskById;
+    protected final Map<Integer, Subtask> subtaskById;
+    protected final HistoryManager historyManager;
 
     public InMemoryTaskManager() {
         this.taskIdGenerator = new TaskIdGenerator();
