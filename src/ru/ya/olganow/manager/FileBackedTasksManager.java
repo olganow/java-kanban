@@ -15,7 +15,9 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
+
     private File historyFile;
+
     private static final String TITLE_LINE = "id,type,name,status,description,epic\n";
 
     public FileBackedTasksManager(File historyFile) {
@@ -170,7 +172,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 task = new Subtask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]), Integer.parseInt(taskOptions[5]));
                 break;
             case EPIC:
-                task = new EpicTask(Integer.parseInt(taskOptions[0]), taskOptions[2],  taskOptions[4], TaskStatus.valueOf(taskOptions[3]));
+                task = new EpicTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]));
                 break;
         }
         return task;
@@ -213,6 +215,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         break;
                     case SUBTASK:
                         newTaskManager.subtaskById.put(taskID, (Subtask) task);
+                        int epicID = ((Subtask) task).getEpicId();
+                        newTaskManager.epicTaskById.get(epicID).getSubtaskIds().add(taskID);
                         break;
                     case EPIC:
                         newTaskManager.epicTaskById.put(taskID, (EpicTask) task);
@@ -240,8 +244,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return newTaskManager;
     }
 
+
     public static void main(String[] args) {
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new File("src/resourсes/history.csv"));
+        File file = new File("src/resourсes/history.csv");
+        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(file.getPath());
 
         // Two single task created
         SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST", TaskStatus.NEW);
@@ -249,64 +255,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         SingleTask singleTask2 = new SingleTask("Another safe Task", "Desc AST", TaskStatus.NEW);
         fileBackedTasksManager.addSingleTask(singleTask2);
 
-
-        //Two Epic created
-        EpicTask epicTask1 = new EpicTask("First epic", "Desc FE");
-        fileBackedTasksManager.addEpicTask(epicTask1);
-        Subtask subtask1 = new Subtask("First subtask", "Desc FSB", TaskStatus.NEW, 2);
-        fileBackedTasksManager.addNewSubTask(subtask1);
-        Subtask subtask2 = new Subtask("Second subtask", "Desc SSB", TaskStatus.NEW, 2);
-        fileBackedTasksManager.addNewSubTask(subtask2);
-
-        EpicTask epicTask2 = new EpicTask("Second epic", "Desc FE");
+        EpicTask epicTask2 = new EpicTask("New epic", "Desc FE");
         fileBackedTasksManager.addEpicTask(epicTask2);
-        Subtask subtask3 = new Subtask("Third subtask", "Desc FSB", TaskStatus.DONE, 5);
-        fileBackedTasksManager.addNewSubTask(subtask3);
 
-        //Get all tasks by Id
-        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(0));
-        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(1));
-        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(2));
-        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(3));
-        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(4));
-        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(5));
-
+        System.out.println("\nИстория из файла загружена");
+        fileBackedTasksManager.loadFromFile(file.getPath());
 
         System.out.println("Получить список всех одиночных задач\n" + fileBackedTasksManager.getAllSingleTasks());
         System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
         System.out.println("Получить список всех подзадач\n" + fileBackedTasksManager.getAllSubtasks());
 
-        //Get search history
-        System.out.println("Получить историю поиска1:\n" + fileBackedTasksManager.getHistory());
-
-        //Delete by ID
-        System.out.println("Задача с указанным id удалена");
-        fileBackedTasksManager.deleteById(5);
-
-        Subtask subtask4 = new Subtask("4 subtask", "Desc 4SB", TaskStatus.IN_PROGRESS, 2);
-        fileBackedTasksManager.addNewSubTask(subtask4);
-
-
-        System.out.println("\nЗагрузить историю из файла");
-        fileBackedTasksManager.loadFromFile("src/resourсes/history.csv");
-
-        System.out.println("Получить список всех одиночных задач\n" + fileBackedTasksManager.getAllSingleTasks());
-        System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
-        System.out.println("Получить список всех подзадач\n" + fileBackedTasksManager.getAllSubtasks());
-        //Get search history
-        System.out.println("Получить историю поиска:\n" + fileBackedTasksManager.getHistory());
-
-        SingleTask singleTask3 = new SingleTask("Another safe Task", "3Desc AST", TaskStatus.NEW);
-        fileBackedTasksManager.addSingleTask(singleTask3);
-
-        System.out.println("Получить по ID\n" + fileBackedTasksManager.getTaskById(8));
-
-
-        System.out.println("Получить список всех одиночных задач\n" + fileBackedTasksManager.getAllSingleTasks());
-        System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
-        System.out.println("Получить список всех подзадач\n" + fileBackedTasksManager.getAllSubtasks());
-        //Get search history
-        System.out.println("Получить историю поиска:\n" + fileBackedTasksManager.getHistory());
 
     }
 }

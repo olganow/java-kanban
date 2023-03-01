@@ -244,7 +244,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-     static class TaskIdGenerator {
+    static class TaskIdGenerator {
         private int nextFreedId;
 
         public void setNextFreedId(int nextFreedId) {

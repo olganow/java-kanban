@@ -15,7 +15,7 @@ public abstract class Task {
         this.description = description;
     }
 
-    public Task(String name, String description,TaskStatus taskStatus) {
+    public Task(String name, String description, TaskStatus taskStatus) {
         this.name = name;
         this.description = description;
         this.taskStatus = taskStatus;
@@ -26,6 +26,7 @@ public abstract class Task {
         this.name = name;
         this.description = description;
     }
+
     public Task(int id, String name, String description, TaskStatus taskStatus) {
         this.id = id;
         this.name = name;
