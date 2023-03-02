@@ -16,7 +16,7 @@ import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
-    private File historyFile;
+    final File historyFile;
 
     private static final String TITLE_LINE = "id,type,name,status,description,epic\n";
 
@@ -181,8 +181,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     //Сохранения и восстановления менеджера истории из CSV
     private static List<Integer> historyFromString(String value) {
         List<Integer> historyFromString = new ArrayList<>();
-        final String[] historyIds = value.split(",");
-        if (historyIds.length > 1) {
+        if (!value.isEmpty()) {
+            final String[] historyIds = value.split(",");
             for (String id : historyIds) {
                 historyFromString.add(Integer.valueOf(id));
             }
@@ -195,6 +195,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             String historyFileContent = Files.readString(Paths.get(path));
 
+            if (historyFileContent.isEmpty()) {
+                return newTaskManager;
+            }
+
             int indexOfBreak = historyFileContent.indexOf("\n\n");
             String contentWithTasksWithTitle = historyFileContent.substring(1, indexOfBreak + 1);
             String contentWithHistory = historyFileContent.substring(indexOfBreak + 2);
@@ -203,6 +207,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             //Восстановление списка задач из файла
             final String[] content = contentWithTasks.split("\n");
             for (String taskFromString : content) {
+                if (taskFromString.isEmpty()) {
+                    break;
+                }
                 Task task = fromString(taskFromString);
                 TaskType taskType = task.getTaskType();
                 int taskID = task.getId();
