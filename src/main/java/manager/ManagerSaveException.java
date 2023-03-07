@@ -1,4 +1,4 @@
-package ru.ya.olganow.manager;
+package main.java.manager;
 
 public class ManagerSaveException extends RuntimeException {
     public ManagerSaveException() {

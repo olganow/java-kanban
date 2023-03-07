@@ -1,4 +1,4 @@
-package ru.ya.olganow.description;
+package main.java.description;
 
 public enum TaskStatus {
     NEW,

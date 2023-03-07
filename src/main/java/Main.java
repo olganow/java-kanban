@@ -1,14 +1,12 @@
-package ru.ya.olganow;
+package main.java;
 
-import ru.ya.olganow.description.TaskStatus;
-import ru.ya.olganow.manager.FileBackedTasksManager;
-import ru.ya.olganow.manager.Managers;
-import ru.ya.olganow.manager.TaskManager;
-import ru.ya.olganow.task.EpicTask;
-import ru.ya.olganow.task.SingleTask;
-import ru.ya.olganow.task.Subtask;
+import main.java.description.TaskStatus;
+import main.java.manager.Managers;
+import main.java.manager.TaskManager;
+import main.java.task.EpicTask;
+import main.java.task.SingleTask;
+import main.java.task.Subtask;
 
-import java.io.File;
 
 public class Main {
 

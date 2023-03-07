@@ -1,6 +1,6 @@
-package ru.ya.olganow.manager;
+package main.java.manager;
 
-import ru.ya.olganow.task.Task;
+import main.java.task.Task;
 
 
 import java.util.ArrayList;

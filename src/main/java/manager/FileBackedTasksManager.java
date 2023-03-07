@@ -1,12 +1,12 @@
 
-package ru.ya.olganow.manager;
+package main.java.manager;
 
-import ru.ya.olganow.description.TaskStatus;
-import ru.ya.olganow.description.TaskType;
-import ru.ya.olganow.task.EpicTask;
-import ru.ya.olganow.task.SingleTask;
-import ru.ya.olganow.task.Subtask;
-import ru.ya.olganow.task.Task;
+import main.java.description.TaskStatus;
+import main.java.description.TaskType;
+import main.java.task.SingleTask;
+import main.java.task.Task;
+import main.java.task.EpicTask;
+import main.java.task.Subtask;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -253,7 +253,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
 
     public static void main(String[] args) {
-        File file = new File("src/resourсes/history.csv");
+        File file = new File("src/main/resourсes/history.csv");
         FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(file.getPath());
 
         // Two single task created

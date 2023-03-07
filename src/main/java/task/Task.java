@@ -1,7 +1,7 @@
-package ru.ya.olganow.task;
+package main.java.task;
 
-import ru.ya.olganow.description.TaskStatus;
-import ru.ya.olganow.description.TaskType;
+import main.java.description.TaskType;
+import main.java.description.TaskStatus;
 
 public abstract class Task {
     //Task is abstract class and cannot be instantiated

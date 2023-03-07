@@ -1,7 +1,7 @@
-package ru.ya.olganow.task;
+package main.java.task;
 
-import ru.ya.olganow.description.TaskStatus;
-import ru.ya.olganow.description.TaskType;
+import main.java.description.TaskStatus;
+import main.java.description.TaskType;
 
 import java.util.ArrayList;
 import java.util.List;
