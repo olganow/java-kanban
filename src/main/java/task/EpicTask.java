@@ -45,6 +45,16 @@ public class EpicTask extends Task {
         return TaskType.EPIC;
     }
 
+    public void setEndTime(Instant endTime) {
+        this.endTime = endTime;
+    }
+
+    @Override
+    public Instant getEndTime() {
+        if (endTime != null) {
+            return endTime;
+        } else return Instant.MIN;
+    }
 
     @Override
     public String toString() {

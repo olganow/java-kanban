@@ -11,7 +11,7 @@ public abstract class Task {
     private String name;
     private String description;
     private TaskStatus taskStatus = TaskStatus.NEW;
-   long duration;
+    long duration;
     Instant startTime;
     Instant endTime;
 
@@ -26,12 +26,12 @@ public abstract class Task {
         this.taskStatus = taskStatus;
     }
 
-    public Task(String name, String description, TaskStatus taskStatus, Instant startTime, Instant endTime) {
+    public Task(String name, String description, TaskStatus taskStatus, Instant startTime, long duration) {
         this.name = name;
         this.description = description;
         this.taskStatus = taskStatus;
         this.startTime = startTime;
-        this.endTime = endTime;
+        this.duration = duration;
     }
 
     public Task(int id, String name, String description) {
@@ -63,6 +63,7 @@ public abstract class Task {
         this.startTime = startTime;
         this.endTime = endTime;
     }
+
     public int getId() {
         return id;
     }
@@ -97,12 +98,16 @@ public abstract class Task {
     }
 
     public void setDuration(long duration) {
-        this.duration = duration;
+        if (duration >= 0) {
+            this.duration = duration;
+        } else {
+            System.out.println("Error! Duration can't be negative");
+        }
     }
 
     public Instant getStartTime() {
-        if (startTime != null){
-        return startTime;
+        if (startTime != null) {
+            return startTime;
         } else return Instant.MIN;
     }
 
@@ -111,10 +116,9 @@ public abstract class Task {
     }
 
     public Instant getEndTime() {
-       if (startTime != null  && duration != 0){
+        if (startTime != null && duration != 0) {
             return startTime.plusSeconds(duration);
-       } else return Instant.now();
-
+        } else return Instant.MIN;
     }
 
 

@@ -18,8 +18,6 @@ import java.util.*;
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
     final File historyFile;
-
-  // private static final String TITLE_LINE = "id,type,name,status,description,epic\n";
     private static final String TITLE_LINE = "id,type,name,status,description,startTime,duration,epic\n";
 
     public FileBackedTasksManager(File historyFile) {
@@ -178,7 +176,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 break;
             case SUBTASK:
                 task = new Subtask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]),
-                        Instant.parse(taskOptions[5]), Instant.parse(taskOptions[6]),Integer.parseInt(taskOptions[7]));
+                        Instant.parse(taskOptions[5]), Instant.parse(taskOptions[6]), Integer.parseInt(taskOptions[7]));
                 break;
             case EPIC:
                 task = new EpicTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]),
@@ -270,7 +268,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST", TaskStatus.NEW);
         fileBackedTasksManager.addSingleTask(singleTask);
         SingleTask singleTask2 = new SingleTask("Another safe Task", "Desc AST", TaskStatus.NEW,
-                Instant.ofEpochMilli(1704056400000L), Instant.ofEpochMilli(1704056400000L));
+                Instant.ofEpochMilli(1704056400000L), 707568400L);
         fileBackedTasksManager.addSingleTask(singleTask2);
 
       /*  EpicTask epicTask2 = new EpicTask("New epic", "Desc FE");
@@ -280,8 +278,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fileBackedTasksManager.loadFromFile(file.getPath());
 
         System.out.println("Получить список всех одиночных задач\n" + fileBackedTasksManager.getAllSingleTasks());
-      //  System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
-      //  System.out.println("Получить список всех подзадач\n" + fileBackedTasksManager.getAllSubtasks());
+        //  System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
+        //  System.out.println("Получить список всех подзадач\n" + fileBackedTasksManager.getAllSubtasks());
 
 
     }

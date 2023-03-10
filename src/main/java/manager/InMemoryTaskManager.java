@@ -6,6 +6,7 @@ import main.java.description.TaskStatus;
 import main.java.task.EpicTask;
 import main.java.task.Subtask;
 
+import java.time.Instant;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -47,6 +48,7 @@ public class InMemoryTaskManager implements TaskManager {
         epicTaskById.put(epicTask.getId(), epicTask);
         // 3: Epic Status updated
         setEpicStatus(epicTask.getId());
+        setEpicStartAndEndTime(epicTask.getId());
     }
 
     @Override
@@ -60,6 +62,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtaskById.put(id, subtask);
         // 3: Epic Status updated
         setEpicStatus(epicTask.getId());
+        setEpicStartAndEndTime(epicTask.getId());
     }
 
     @Override
@@ -92,6 +95,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (EpicTask epic : epicTaskById.values()) {
             epic.getSubtaskIds().clear();
             setEpicStatus(epic.getId());
+            setEpicStartAndEndTime(epic.getId());
         }
     }
 
@@ -127,6 +131,7 @@ public class InMemoryTaskManager implements TaskManager {
             //Epic Status and Epic List updated
             epicTaskById.get(epicId).getSubtaskIds().remove((Integer.valueOf(id)));
             setEpicStatus(epicId);
+            setEpicStartAndEndTime(epicId);
         } else {
             System.out.println("Такого id нет ");
         }
@@ -142,6 +147,7 @@ public class InMemoryTaskManager implements TaskManager {
         epicTaskById.put(epicTask.getId(), epicTask);
         //Epic Status updated
         setEpicStatus(epicTask.getId());
+        setEpicStartAndEndTime(epicTask.getId());
     }
 
     @Override
@@ -149,6 +155,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtaskById.put(subtask.getId(), subtask);
         //Epic Status updated
         setEpicStatus(subtask.getEpicId());
+        setEpicStartAndEndTime(subtask.getEpicId());
     }
 
     @Override
@@ -252,6 +259,31 @@ public class InMemoryTaskManager implements TaskManager {
             } else {
                 epicTask.setTaskStatus(TaskStatus.IN_PROGRESS);
             }
+        }
+    }
+
+    private void setEpicStartAndEndTime(int epicId) {
+        EpicTask epicTask = epicTaskById.get(epicId);
+        if (epicTask.getSubtaskIds().isEmpty()) {
+            epicTask.setStartTime(Instant.MIN);
+            epicTask.setDuration(0);
+        } else {
+            Instant minStartTime = Instant.MAX;
+            Instant maxEndTime = Instant.MIN;
+
+            for (Integer subtaskId : epicTask.getSubtaskIds()) {
+                Instant subtaskStartTime = subtaskById.get(subtaskId).getStartTime();
+                Instant subtaskEndTime = subtaskById.get(subtaskId).getEndTime();
+                long subtaskDuration = 0;
+                if (subtaskStartTime.isBefore(minStartTime)) {
+                    minStartTime = subtaskStartTime;
+                }
+                if (subtaskEndTime.isAfter(maxEndTime)) {
+                    maxEndTime = subtaskEndTime;
+                }
+            }
+            epicTask.setStartTime(minStartTime);
+            epicTask.setEndTime(maxEndTime);
         }
     }
 

@@ -11,14 +11,15 @@ public class SingleTask extends Task {
         super(name, description, taskStatus);
     }
 
-    public SingleTask(String name, String description, TaskStatus taskStatus, Instant startTime, Instant endTime) {
-        super(name, description, taskStatus, startTime, endTime);
+    public SingleTask(String name, String description, TaskStatus taskStatus, Instant startTime, long duration) {
+        super(name, description, taskStatus, startTime, duration);
     }
+
     public SingleTask(int id, String name, String description, TaskStatus taskStatus) {
         super(id, name, description, taskStatus);
     }
 
-    public SingleTask(int id, String name, String description, TaskStatus taskStatus, Instant startTime,Instant endTime) {
+    public SingleTask(int id, String name, String description, TaskStatus taskStatus, Instant startTime, Instant endTime) {
         super(id, name, description, taskStatus, startTime, endTime);
     }
 
