@@ -6,10 +6,7 @@ import main.java.description.TaskStatus;
 import main.java.task.EpicTask;
 import main.java.task.Subtask;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     protected final TaskIdGenerator taskIdGenerator;
@@ -17,6 +14,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, EpicTask> epicTaskById;
     protected final Map<Integer, Subtask> subtaskById;
     protected final HistoryManager historyManager;
+    protected TreeSet<Task> sortedTasks;
 
     public InMemoryTaskManager() {
         this.taskIdGenerator = new TaskIdGenerator();
@@ -24,6 +22,7 @@ public class InMemoryTaskManager implements TaskManager {
         this.epicTaskById = new HashMap<>();
         this.subtaskById = new HashMap<>();
         this.historyManager = Managers.getDefaultHistory();
+        this.sortedTasks = new TreeSet<>();
     }
 
     @Override
@@ -215,6 +214,18 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        List<Task> allSingleTaskAndSubtasksTasks = new ArrayList<>(sortedTasks);
+        allSingleTaskAndSubtasksTasks.addAll(getAllSubtasks());
+        allSingleTaskAndSubtasksTasks.addAll(getAllSingleTasks());
+        // компаратор по цене от раннего к позднему
+        StartDataComparator itemPriceComparator = new StartDataComparator();
+        // применяем его
+        allSingleTaskAndSubtasksTasks.sort(itemPriceComparator);
+        return allSingleTaskAndSubtasksTasks;
+    }
+
     private void setEpicStatus(int epicId) {
         EpicTask epicTask = epicTaskById.get(epicId);
         if (epicTask.getSubtaskIds().isEmpty()) {
@@ -242,6 +253,23 @@ public class InMemoryTaskManager implements TaskManager {
                 epicTask.setTaskStatus(TaskStatus.IN_PROGRESS);
             }
         }
+    }
+
+    static class StartDataComparator implements Comparator<Task> {
+        @Override
+        public int compare(Task task1, Task task2) {
+
+            if (task1.getStartTime().isBefore(task2.getStartTime())) {
+                return -1;
+
+            } else if (task2.getStartTime().isBefore(task1.getStartTime())) {
+                return 1;
+
+            } else {
+                return 0;
+            }
+        }
+
     }
 
     static class TaskIdGenerator {
