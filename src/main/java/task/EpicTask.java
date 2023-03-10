@@ -3,6 +3,7 @@ package main.java.task;
 import main.java.description.TaskStatus;
 import main.java.description.TaskType;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,13 @@ public class EpicTask extends Task {
         this.subtaskIds = new ArrayList<>();
     }
 
+    public EpicTask(int id, String name, String description, TaskStatus taskStatus, Instant startTime, Instant endTime) {
+        super(id, name, description, taskStatus);
+        this.subtaskIds = new ArrayList<>();
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
     public void setSubtaskIds(List<Integer> subtaskIds) {
         this.subtaskIds = subtaskIds;
     }
@@ -37,6 +45,7 @@ public class EpicTask extends Task {
         return TaskType.EPIC;
     }
 
+
     @Override
     public String toString() {
         return "EpicTask{" +
@@ -45,6 +54,8 @@ public class EpicTask extends Task {
                 ", description='" + getDescription() + '\'' +
                 ", type='" + getTaskType() + '\'' +
                 ", status=" + getTaskStatus() +
+                ", start time ='" + getStartTime() + '\'' +
+                ", end time ='" + getEndTime() + '\'' +
                 ", subtaskList=" + getSubtaskIds() +
                 "}\n";
     }

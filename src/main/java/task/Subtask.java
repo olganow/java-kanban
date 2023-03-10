@@ -3,6 +3,8 @@ package main.java.task;
 import main.java.description.TaskStatus;
 import main.java.description.TaskType;
 
+import java.time.Instant;
+
 public class Subtask extends Task {
     private final int epicId;
 
@@ -16,6 +18,10 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
+    public Subtask(int id, String name, String description, TaskStatus taskStatus, Instant startTime, Instant endTime, int epicId) {
+        super(id, name, description, taskStatus,startTime, endTime);
+        this.epicId = epicId;
+    }
     @Override
     public TaskType getTaskType() {
         return TaskType.SUBTASK;
@@ -33,6 +39,8 @@ public class Subtask extends Task {
                 ", description='" + getDescription() + '\'' +
                 ", type='" + getTaskType() + '\'' +
                 ", status=" + getTaskStatus() +
+                ", start time ='" + getStartTime() + '\'' +
+                ", end time ='" + getEndTime() + '\'' +
                 ", epic id='" + getEpicId() + '\'' +
                 "}\n";
     }
