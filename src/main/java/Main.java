@@ -7,6 +7,7 @@ import main.java.task.EpicTask;
 import main.java.task.SingleTask;
 import main.java.task.Subtask;
 
+import java.time.Instant;
 
 public class Main {
 
@@ -15,22 +16,22 @@ public class Main {
         TaskManager taskManager = Managers.getDefault();
 
         // Two single task created
-        SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST", TaskStatus.NEW);
+        SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST", TaskStatus.NEW, Instant.now(), 8400L);
         taskManager.addSingleTask(singleTask);
-        SingleTask singleTask2 = new SingleTask("Another safe Task", "Desc AST", TaskStatus.NEW);
+        SingleTask singleTask2 = new SingleTask("Another safe Task 2021-10-01", "Desc AST", TaskStatus.NEW,Instant.ofEpochMilli(16393035600000L), 7107568400L);
         taskManager.addSingleTask(singleTask2);
 
         //Two Epic created
         EpicTask epicTask1 = new EpicTask("First epic", "Desc FE");
         taskManager.addEpicTask(epicTask1);
-        Subtask subtask1 = new Subtask("First subtask", "Desc FSB", TaskStatus.NEW, 2);
+        Subtask subtask1 = new Subtask("First subtask", "Desc FSB", TaskStatus.NEW,Instant.ofEpochMilli(163857900000L),707568400L, 2);
         taskManager.addNewSubTask(subtask1);
         Subtask subtask2 = new Subtask("Second subtask", "Desc SSB", TaskStatus.NEW, 2);
         taskManager.addNewSubTask(subtask2);
 
         EpicTask epicTask2 = new EpicTask("Second epic", "Desc FE");
         taskManager.addEpicTask(epicTask2);
-        Subtask subtask3 = new Subtask("Third subtask", "Desc FSB", TaskStatus.DONE, 5);
+        Subtask subtask3 = new Subtask("Third subtask", "Desc FSB", TaskStatus.DONE, Instant.ofEpochMilli(91625714000000L),798568400L, 5);
         taskManager.addNewSubTask(subtask3);
 
         // Get a list with all tasks
@@ -75,5 +76,7 @@ public class Main {
 //
 //        epicTask2 = new EpicTask(5, "Second epic--", "Desc FE", epicTask2.getSubtaskIds());
 //        taskManager.updateEpicTask(epicTask2);
+
+        System.out.println("Получить отсортированные по времени начала задачи и сабтаски:\n" + taskManager.getPrioritizedTasks() );
     }
 }

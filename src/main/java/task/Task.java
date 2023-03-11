@@ -5,7 +5,7 @@ import main.java.description.TaskStatus;
 
 import java.time.Instant;
 
-public abstract class Task {
+public abstract class Task implements Comparable<Task> {
     //Task is abstract class and cannot be instantiated
     private int id;
     private String name;
@@ -129,6 +129,14 @@ public abstract class Task {
                 ", name='" + name + '\'' +
                 "}";
 
+    }
+
+    @Override
+    public int compareTo(Task task) {
+        if (this.getStartTime().isBefore(task.getStartTime())) {
+            return -1;
+        } else
+            return 1;
     }
 
 }
