@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HistoryManagerTest {
@@ -18,10 +20,10 @@ class HistoryManagerTest {
     private void beforeEach() {
         historyManager = Managers.getDefaultHistory();
 
-        singleTaskFirst = new SingleTask("First Single Task for testing", "Desc SST", TaskStatus.NEW);
+        singleTaskFirst = new SingleTask("First Single Task for testing", "Desc SST", TaskStatus.NEW, Instant.ofEpochMilli(163857900000L),707568400L);
         singleTaskFirst.setId(1);
 
-        singleTaskSecond = new SingleTask("Second Single Task for testing", "Desc SST", TaskStatus.NEW);
+        singleTaskSecond = new SingleTask("Second Single Task for testing", "Desc SST", TaskStatus.NEW, Instant.ofEpochMilli(56163857900000L),707568400L);
         singleTaskSecond.setId(2);
 
         singleTaskThird = new SingleTask("Third Single Task for testing", "Desc SST", TaskStatus.NEW);

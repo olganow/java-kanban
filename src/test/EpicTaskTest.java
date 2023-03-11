@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTaskTest {
@@ -25,9 +27,9 @@ class EpicTaskTest {
         epicTaskSecond = new EpicTask("First epic for testing", "Desc FE for testing ");
         taskManager.addEpicTask(epicTaskSecond);
 
-        subtaskOne = new Subtask("First subtask for testing", "Desc FSB", TaskStatus.NEW, 1);
+        subtaskOne = new Subtask("First subtask for testing", "Desc FSB", TaskStatus.NEW, Instant.ofEpochMilli(163857900000L),707568400L, 1);
         taskManager.addNewSubTask(subtaskOne);
-        subtaskSecond = new Subtask("Second subtask for testing", "Desc SSB", TaskStatus.NEW, 1);
+        subtaskSecond = new Subtask("Second subtask for testing", "Desc SSB", TaskStatus.NEW, Instant.ofEpochMilli(99173857900000L),707568400L, 1);
         taskManager.addNewSubTask(subtaskSecond);
     }
 
