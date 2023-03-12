@@ -44,39 +44,48 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     //option 1: how to save object with generated id in hashmap
     public void addSingleTask(SingleTask singleTask) {
-        // 1: generate new id and save it to the task
-        singleTask.setId(taskIdGenerator.getNextFreedI());
-        // 2: save task
-        singleTaskById.put(singleTask.getId(), singleTask);
-        validateTaskTimeIntersections(singleTask);
-        sortedTasks.add(singleTask);
+        try {
+            // 1: generate new id and save it to the task
+            singleTask.setId(taskIdGenerator.getNextFreedI());
+            // 2: save task
+            singleTaskById.put(singleTask.getId(), singleTask);
+            validateTaskTimeIntersections(singleTask);
+            sortedTasks.add(singleTask);
+        } catch (NullPointerException e) {
+        }
     }
 
     @Override
     public void addEpicTask(EpicTask epicTask) {
-        // 1: generate new id and save it to the task
-        epicTask.setId(taskIdGenerator.getNextFreedI());
-        // 2: save task
-        epicTaskById.put(epicTask.getId(), epicTask);
-        // 3: Epic Status updated
-        setEpicStatus(epicTask.getId());
-        setEpicStartAndEndTime(epicTask.getId());
+        try {
+            // 1: generate new id and save it to the task
+            epicTask.setId(taskIdGenerator.getNextFreedI());
+            // 2: save task
+            epicTaskById.put(epicTask.getId(), epicTask);
+            // 3: Epic Status updated
+            setEpicStatus(epicTask.getId());
+            setEpicStartAndEndTime(epicTask.getId());
+        } catch (NullPointerException e) {
+        }
     }
 
     @Override
     public void addNewSubTask(Subtask subtask) {
-        // 1: generate new id and save it to the task
-        subtask.setId(taskIdGenerator.getNextFreedI());
-        // 2: save task
-        EpicTask epicTask = epicTaskById.get(subtask.getEpicId());
-        Integer id = subtask.getId();
-        epicTask.getSubtaskIds().add(id);
-        subtaskById.put(id, subtask);
-        validateTaskTimeIntersections(subtask);
-        sortedTasks.add(subtask);
-        // 3: Epic and StartAndEndTime Status updated
-        setEpicStatus(epicTask.getId());
-        setEpicStartAndEndTime(epicTask.getId());
+        try {
+            // 1: generate new id and save it to the task
+            subtask.setId(taskIdGenerator.getNextFreedI());
+            // 2: save task
+            EpicTask epicTask = epicTaskById.get(subtask.getEpicId());
+            Integer id = subtask.getId();
+            epicTask.getSubtaskIds().add(id);
+            subtaskById.put(id, subtask);
+            validateTaskTimeIntersections(subtask);
+            sortedTasks.add(subtask);
+            // 3: Epic and StartAndEndTime Status updated
+            setEpicStatus(epicTask.getId());
+            setEpicStartAndEndTime(epicTask.getId());
+        } catch (NullPointerException e) {
+        }
     }
 
     @Override
@@ -135,26 +144,27 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteById(int id) {
         if (singleTaskById.containsKey(id)) {
+            sortedTasks.remove(singleTaskById.get(id));
             singleTaskById.remove(id);
             System.out.println("Задача с id=" + id + " удалена");
             historyManager.remove(id);
-            sortedTasks.remove(id);
 
         } else if (epicTaskById.containsKey(id)) {
+            sortedTasks.remove(epicTaskById.get(id));
             EpicTask epicTask = epicTaskById.remove(id);
             for (Integer subtaskId : epicTask.getSubtaskIds()) {
+                sortedTasks.remove(subtaskById.get(subtaskId));
                 subtaskById.remove(subtaskId);
                 historyManager.remove(subtaskId);
-                sortedTasks.remove(subtaskId);
             }
             historyManager.remove(id);
             System.out.println("Задача с id=" + id + ", и ее сабтаски удалены");
 
         } else if (subtaskById.containsKey(id)) {
+            sortedTasks.remove(subtaskById.get(id));
             Subtask subtask = subtaskById.remove(id);
             int epicId = subtask.getEpicId();
             historyManager.remove(id);
-            sortedTasks.remove(id);
             System.out.println("Подзадача с id=" + id + " удалена");
 
             //Epic Status and Epic List updated
@@ -195,7 +205,7 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Task> getAllSingleTasks() {
         List<Task> tasks = new ArrayList<>(this.singleTaskById.values());
         if (tasks.isEmpty()) {
-            throw new IllegalArgumentException();
+            return null;
         } else {
             return tasks;
         }
@@ -205,7 +215,7 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Task> getAllEpicTasks() {
         List<Task> tasks = new ArrayList<>(this.epicTaskById.values());
         if (tasks.isEmpty()) {
-            throw new IllegalArgumentException();
+            return null;
         } else {
             return tasks;
         }
@@ -215,7 +225,7 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Task> getAllSubtasks() {
         List<Task> tasks = new ArrayList<>(this.subtaskById.values());
         if (tasks.isEmpty()) {
-            throw new IllegalArgumentException();
+            return null;
         } else {
             return tasks;
         }
