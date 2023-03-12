@@ -135,8 +135,9 @@ public abstract class Task implements Comparable<Task> {
     public int compareTo(Task task) {
         if (this.getStartTime().isBefore(task.getStartTime())) {
             return -1;
-        } else
+        } else if (this.getStartTime().isAfter(task.getStartTime()))
             return 1;
+        else return 0;
     }
 
 }

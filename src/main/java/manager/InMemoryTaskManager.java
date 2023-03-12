@@ -29,7 +29,9 @@ public class InMemoryTaskManager implements TaskManager {
             public int compare(Task o1, Task o2) {
                 if (o1.getStartTime().isBefore(o2.getStartTime())) {
                     return -1;
-                } else return 1;
+                } else if (o1.getStartTime().isAfter(o2.getStartTime()))
+                    return 1;
+                else return 0;
             }
         });
     }
@@ -114,17 +116,13 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    // удалить из TreeSet - придумала только так
     public void deleteAllTaskTypeInSortedList(TaskType taskType) {
-        // не знаю как удалить из TreeSet - придумала только так
-        Set<Task> sortedTasksForDelete = new TreeSet<>();
-        for (Task sortedTask : sortedTasks) {
-            if (sortedTask.getTaskType() != taskType) {
-                sortedTasksForDelete.add(sortedTask);
+        Set<Task> sortedTasksForDelete = new TreeSet<>(sortedTasks);
+        for (Task task : sortedTasksForDelete) {
+            if (task.getTaskType() == taskType) {
+                sortedTasks.remove(task);
             }
         }
-        sortedTasks.clear();
-        sortedTasks.addAll(sortedTasksForDelete);
     }
 
     @Override
