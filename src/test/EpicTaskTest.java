@@ -1,8 +1,8 @@
-package main.java.task;
-
 import main.java.description.TaskStatus;
 import main.java.manager.Managers;
 import main.java.manager.TaskManager;
+import main.java.task.EpicTask;
+import main.java.task.Subtask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
