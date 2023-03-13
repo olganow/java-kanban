@@ -1,5 +1,5 @@
+package main.java.manager;
 import main.java.description.TaskStatus;
-import main.java.manager.TaskManager;
 import main.java.task.EpicTask;
 import main.java.task.SingleTask;
 import main.java.task.Subtask;
@@ -11,17 +11,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-abstract class TaskManagerTest<T extends TaskManager> {
+abstract class TaskManagerTest <T extends TaskManager> {
 
     protected T taskManager;
     SingleTask singleTaskFirst;
-    SingleTask singleTaskSecond;
-    SingleTask singleTaskThird;
-
     private EpicTask epicTaskOne;
-    private EpicTask epicTaskSecond;
+
     private Subtask subtaskOne;
-    private Subtask subtaskSecond;
+
 
 
     @Test
@@ -178,27 +175,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
 }
 
 /*
-
     void deleteById(int id);
-
     void updateSingleTask(SingleTask singleTask);
-
     void updateEpicTask(EpicTask epicTask);
-
     void updateSubtask(Subtask subtask);
-
     List<Task> getAllSingleTasks();
-
     List<Task> getAllEpicTasks();
-
     List<Task> getAllSubtasks();
-
     List<Subtask> getSubTasksByEpicId(int id);
-
     Task getTaskById(int id);
-
     Set<Task> getPrioritizedTasks();
-
     */
-
-
