@@ -8,7 +8,7 @@ import main.java.task.Task;
 import org.junit.jupiter.api.*;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -349,15 +349,243 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertEquals("Такой задачи нет", exception.getMessage());
     }
 
+    @Test
+    @DisplayName("Получение всех задач")
+    public void shouldGetAllSingleTasks() {
+        SingleTask singleTaskOne = createSingleTask();
+        taskManager.addSingleTask(singleTaskOne);
+        SingleTask singleTaskSecond = createSingleTask();
+        singleTaskSecond.setStartTime(Instant.now());
+        taskManager.addSingleTask(singleTaskSecond);
+        List<Task> expectedSingleTaskList = new ArrayList<>();
+        expectedSingleTaskList.add(singleTaskOne);
+        expectedSingleTaskList.add(singleTaskSecond);
+        String expectedResult = expectedSingleTaskList.toString();
+        List<Task> tasks = taskManager.getAllSingleTasks();
+        assertEquals(expectedResult, tasks.toString());
+    }
+
+    @Test
+    @DisplayName("Получение всех эпиков")
+    public void shouldGetAlleEpicTasks() {
+        EpicTask epicTaskOne = createEpicTask();
+        taskManager.addEpicTask(epicTaskOne);
+        Subtask subtask = createSubtask(epicTaskOne);
+        taskManager.addNewSubTask(subtask);
+        EpicTask epicTaskSecond = createEpicTask();
+        taskManager.addEpicTask(epicTaskSecond);
+        List<Task> expectedEpicList = new ArrayList<>();
+        expectedEpicList.add(epicTaskOne);
+        expectedEpicList.add(epicTaskSecond);
+        String expectedResult = expectedEpicList.toString();
+        List<Task> tasks = taskManager.getAllEpicTasks();
+        assertEquals(expectedResult, tasks.toString());
+    }
+
+    @Test
+    @DisplayName("Получение всех подзадач")
+    public void shouldGetAllSubtasks() {
+        EpicTask epicTask = createEpicTask();
+        Subtask subtaskOne = createSubtask(epicTask);
+        Subtask subtaskSecond = createSubtask(epicTask);
+        subtaskSecond.setStartTime(Instant.now());
+        taskManager.addEpicTask(epicTask);
+        taskManager.addNewSubTask(subtaskOne);
+        taskManager.addNewSubTask(subtaskSecond);
+        List<Task> expectedSubtaskList = new ArrayList<>();
+        expectedSubtaskList.add(subtaskOne);
+        expectedSubtaskList.add(subtaskSecond);
+        String expectedResult = expectedSubtaskList.toString();
+        List<Task> tasks = taskManager.getAllSubtasks();
+        assertEquals(expectedResult, tasks.toString());
+    }
+
+    @Test
+    @DisplayName("Получение всех задач из пустого листа с задачами")
+    public void shouldNotGetSingleTaskFromEmptySingleTasklist() {
+        assertNull(taskManager.getAllSingleTasks());
+    }
+
+    @Test
+    @DisplayName("Получение всех задач из пустого листа с эпиками")
+    public void shouldNotGetEpicTaskFromEmptyEpicTasklist() {
+        assertNull(taskManager.getAllSubtasks());
+    }
+
+    @Test
+    @DisplayName("Получение всех задач из пустого листа с подзадачами")
+    public void shouldNotGetSubtaskFromEmptySubtaskTasklist() {
+        assertNull(taskManager.getAllSubtasks());
+    }
+
+    @Test
+    @DisplayName("Получение всех подзадач по эпик Id")
+    public void shouldGetSubTasksByEpicId() {
+        EpicTask epicTask = createEpicTask();
+        Subtask subtaskOne = createSubtask(epicTask);
+        Subtask subtaskSecond = createSubtask(epicTask);
+        subtaskSecond.setStartTime(Instant.now());
+        taskManager.addEpicTask(epicTask);
+        taskManager.addNewSubTask(subtaskOne);
+        taskManager.addNewSubTask(subtaskSecond);
+        taskManager.getSubTasksByEpicId(epicTask.getId());
+        List<Task> expectedSubtaskList = new ArrayList<>();
+        expectedSubtaskList.add(subtaskOne);
+        expectedSubtaskList.add(subtaskSecond);
+        String expectedResult = expectedSubtaskList.toString();
+        List<Subtask> tasks = taskManager.getSubTasksByEpicId(epicTask.getId());
+        assertEquals(expectedResult, tasks.toString());
+    }
+
+    @Test
+    @DisplayName("Получение всех подзадач по эпик Id из пустого листа")
+    public void shouldNotGetSubTasksByEpicIdIfSubtaskListIsEmpty() {
+        ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
+            EpicTask epicTask = createEpicTask();
+            taskManager.getSubTasksByEpicId(epicTask.getId());
+        });
+        Assertions.assertEquals("Такой задачи нет", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Получение всех подзадач по невалидному эпик Id")
+    public void shouldNotGetSubTasksByEpicIdWhenSubtaskIdInvalid() {
+        ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
+            EpicTask epicTask = createEpicTask();
+            int invalidId = epicTask.getId() + 100;
+            taskManager.getSubTasksByEpicId(invalidId);
+        });
+        Assertions.assertEquals("Такой задачи нет", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Получение задачи по Id")
+    public void shouldGetSingleTasksById() {
+        SingleTask singleTaskOne = createSingleTask();
+        taskManager.addSingleTask(singleTaskOne);
+        SingleTask singleTaskSecond = createSingleTask();
+        singleTaskSecond.setStartTime(Instant.now());
+        taskManager.addSingleTask(singleTaskSecond);
+        String task = taskManager.getTaskById(singleTaskSecond.getId()).toString();
+        assertEquals(singleTaskSecond.toString(), task);
+    }
+
+    @Test
+    @DisplayName("Получение эпика по Id")
+    public void shouldGetEpicTasksById() {
+        EpicTask epicTaskOne = createEpicTask();
+        taskManager.addEpicTask(epicTaskOne);
+        EpicTask epicTaskSecond = createEpicTask();
+        taskManager.addEpicTask(epicTaskSecond);
+        String task = taskManager.getTaskById(epicTaskSecond.getId()).toString();
+        assertEquals(epicTaskSecond.toString(), task);
+    }
+
+    @Test
+    @DisplayName("Получение подзадачи по Id")
+    public void shouldGetSubtaskById() {
+        EpicTask epicTask = createEpicTask();
+        Subtask subtaskOne = createSubtask(epicTask);
+        Subtask subtaskSecond = createSubtask(epicTask);
+        subtaskSecond.setStartTime(Instant.now());
+        taskManager.addEpicTask(epicTask);
+        taskManager.addNewSubTask(subtaskOne);
+        taskManager.addNewSubTask(subtaskSecond);
+        String task = taskManager.getTaskById(subtaskSecond.getId()).toString();
+        assertEquals(subtaskSecond.toString(), task);
+    }
+
+    @Test
+    @DisplayName("Получение задачи по Id из пустого листа")
+    public void shouldNotGetTasksIfSingleTaskListIsEmpty() {
+        ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
+            int invalidId = 123;
+            taskManager.getTaskById(invalidId);
+        });
+        Assertions.assertEquals("Такой задачи нет", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Получение задачи по невалидному эпик Id")
+    public void shouldNotGetTasksByInvalidId() {
+        ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
+            EpicTask epicTask = createEpicTask();
+            taskManager.addEpicTask(epicTask);
+            int invalidId = 123;
+            taskManager.getTaskById(invalidId);
+        });
+        Assertions.assertEquals("Такой задачи нет", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Приоритизация по времени")
+    public void shouldGetPrioritizedTaskList() {
+        EpicTask epicTask = createEpicTask();
+        Subtask subtaskOne = createSubtask(epicTask);
+        Subtask subtaskSecond = createSubtask(epicTask);
+        subtaskSecond.setStartTime(Instant.now());
+        taskManager.addEpicTask(epicTask);
+        taskManager.addNewSubTask(subtaskOne);
+        taskManager.addNewSubTask(subtaskSecond);
+        SingleTask singleTaskOne = createSingleTask();
+        singleTaskOne.setStartTime(Instant.MIN);
+        taskManager.addSingleTask(singleTaskOne);
+        Set<Task> expectedSubtaskList = new TreeSet<>(new Comparator<Task>() {
+            @Override
+            public int compare(Task o1, Task o2) {
+                if (o1.getStartTime().isBefore(o2.getStartTime())) {
+                    return -1;
+                } else if (o1.getStartTime().isAfter(o2.getStartTime()))
+                    return 1;
+                else return 0;
+            }
+        });
+
+        expectedSubtaskList.add(subtaskOne);
+        expectedSubtaskList.add(subtaskSecond);
+        expectedSubtaskList.add(singleTaskOne);
+        String expectedResult = expectedSubtaskList.toString();
+        String task = taskManager.getPrioritizedTasks().toString();
+
+        assertEquals(expectedResult, task);
+    }
+
+    @Test
+    @DisplayName("Невалидная приоритизация по времени")
+    public void shouldNotGetPrioritizedTaskListIfTasksHaveSimilarTime() {
+        ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
+            EpicTask epicTask = createEpicTask();
+            Subtask subtaskOne = createSubtask(epicTask);
+            Subtask subtaskSecond = createSubtask(epicTask);
+            subtaskSecond.setStartTime(Instant.now());
+            taskManager.addEpicTask(epicTask);
+            taskManager.addNewSubTask(subtaskOne);
+            taskManager.addNewSubTask(subtaskSecond);
+            SingleTask singleTaskOne = createSingleTask();
+            taskManager.addSingleTask(singleTaskOne);
+            Set<Task> expectedSubtaskList = new TreeSet<>(new Comparator<Task>() {
+                @Override
+                public int compare(Task o1, Task o2) {
+                    if (o1.getStartTime().isBefore(o2.getStartTime())) {
+                        return -1;
+                    } else if (o1.getStartTime().isAfter(o2.getStartTime()))
+                        return 1;
+                    else return 0;
+                }
+            });
+
+            expectedSubtaskList.add(subtaskOne);
+            expectedSubtaskList.add(subtaskSecond);
+            expectedSubtaskList.add(singleTaskOne);
+            String expectedResult = expectedSubtaskList.toString();
+            String task = taskManager.getPrioritizedTasks().toString();
+
+            assertEquals(expectedResult, task);
+        });
+        String expectedResult = "TimeIntersections: the task with a name \"First Single Task for testing\" " +
+                "with id = 3 with start time: 1975-03-12T12:05:00Z with end time: 1977-01-10T15:25:00Z and the task " +
+                "with id = 1 with start time: 1975-03-12T12:05:00Z and  with end time: 1997-08-12T22:51:40Z";
+        Assertions.assertEquals(expectedResult, exception.getMessage());
+    }
+
 }
-
-/*
-
-
-    List<Task> getAllSingleTasks();
-    List<Task> getAllEpicTasks();
-    List<Task> getAllSubtasks();
-    List<Subtask> getSubTasksByEpicId(int id);
-    Task getTaskById(int id);
-    Set<Task> getPrioritizedTasks();
-    */

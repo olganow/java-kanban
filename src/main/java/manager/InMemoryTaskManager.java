@@ -171,32 +171,38 @@ public class InMemoryTaskManager implements TaskManager {
             epicTaskById.get(epicId).getSubtaskIds().remove((Integer.valueOf(id)));
             setEpicStatus(epicId);
             setEpicStartAndEndTime(epicId);
-        } else throw new ManagerSaveException ("Такого id нет");
+        } else throw new ManagerSaveException("Такого id нет");
     }
 
     @Override
     public void updateSingleTask(SingleTask singleTask) {
-        singleTaskById.put(singleTask.getId(), singleTask);
-        validateTaskTimeIntersections(singleTask);
-        sortedTasks.add(singleTask);
+        if (singleTaskById.containsValue(singleTask)) {
+            singleTaskById.put(singleTask.getId(), singleTask);
+            validateTaskTimeIntersections(singleTask);
+            sortedTasks.add(singleTask);
+        } else throw new ManagerSaveException("Такой задачи нет");
     }
 
     @Override
     public void updateEpicTask(EpicTask epicTask) {
-        epicTaskById.put(epicTask.getId(), epicTask);
-        //Epic Status updated
-        setEpicStatus(epicTask.getId());
-        setEpicStartAndEndTime(epicTask.getId());
+        if (epicTaskById.containsValue(epicTask)) {
+            epicTaskById.put(epicTask.getId(), epicTask);
+            //Epic Status updated
+            setEpicStatus(epicTask.getId());
+            setEpicStartAndEndTime(epicTask.getId());
+        } else throw new ManagerSaveException("Такой задачи нет");
     }
 
     @Override
     public void updateSubtask(Subtask subtask) {
-        subtaskById.put(subtask.getId(), subtask);
-        validateTaskTimeIntersections(subtask);
-        sortedTasks.add(subtask);
-        //Epic Status updated
-        setEpicStatus(subtask.getEpicId());
-        setEpicStartAndEndTime(subtask.getEpicId());
+        if (subtaskById.containsValue(subtask)) {
+            subtaskById.put(subtask.getId(), subtask);
+            validateTaskTimeIntersections(subtask);
+            sortedTasks.add(subtask);
+            //Epic Status updated
+            setEpicStatus(subtask.getEpicId());
+            setEpicStartAndEndTime(subtask.getEpicId());
+        } else throw new ManagerSaveException("Такой задачи нет");
     }
 
     @Override
@@ -239,7 +245,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
             return subtasks;
         } else {
-            throw new IllegalArgumentException();
+            throw new ManagerSaveException("Такой задачи нет");
         }
     }
 
@@ -258,7 +264,7 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.add(task);
             return task;
         } else {
-            throw new IllegalArgumentException();
+            throw new ManagerSaveException("Такой задачи нет");
         }
     }
 
