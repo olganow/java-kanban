@@ -171,9 +171,7 @@ public class InMemoryTaskManager implements TaskManager {
             epicTaskById.get(epicId).getSubtaskIds().remove((Integer.valueOf(id)));
             setEpicStatus(epicId);
             setEpicStartAndEndTime(epicId);
-        } else {
-            System.out.println("Такого id нет ");
-        }
+        } else throw new ManagerSaveException ("Такого id нет");
     }
 
     @Override

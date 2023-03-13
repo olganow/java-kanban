@@ -117,7 +117,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             fileWriter.write(historyToStringHistory(historyManager));
 
         } catch (IOException ex) {
-            throw new ManagerSaveException();
+            throw new ManagerSaveException ("Такого файла нет");
         }
     }
 
