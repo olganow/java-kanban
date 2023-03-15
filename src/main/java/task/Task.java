@@ -11,9 +11,9 @@ public abstract class Task implements Comparable<Task> {
     private String name;
     private String description;
     private TaskStatus taskStatus = TaskStatus.NEW;
-    long duration;
-    Instant startTime;
-    Instant endTime;
+    private long duration;
+    private Instant startTime;
+    private Instant endTime;
 
     public Task(String name, String description) {
         this.name = name;
@@ -92,9 +92,7 @@ public abstract class Task implements Comparable<Task> {
     }
 
     public long getDuration() {
-        if (duration != 0)
-            return duration;
-        else return 0;
+        return duration;
     }
 
     public void setDuration(long duration) {
@@ -108,7 +106,7 @@ public abstract class Task implements Comparable<Task> {
     public Instant getStartTime() {
         if (startTime != null) {
             return startTime;
-        } else return Instant.MIN;
+        } else return null;
     }
 
     public void setStartTime(Instant startTime) {
@@ -116,9 +114,9 @@ public abstract class Task implements Comparable<Task> {
     }
 
     public Instant getEndTime() {
-        if (startTime != null && duration != 0) {
+        if (startTime != null) {
             return startTime.plusSeconds(duration);
-        } else return Instant.MIN;
+        } else return null;
     }
 
 
@@ -133,11 +131,7 @@ public abstract class Task implements Comparable<Task> {
 
     @Override
     public int compareTo(Task task) {
-        if (this.getStartTime().isBefore(task.getStartTime())) {
-            return -1;
-        } else if (this.getStartTime().isAfter(task.getStartTime()))
-            return 1;
-        else return 0;
+        return 0;
     }
 
 }

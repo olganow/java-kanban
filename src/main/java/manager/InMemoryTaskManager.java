@@ -24,15 +24,15 @@ public class InMemoryTaskManager implements TaskManager {
         this.epicTaskById = new HashMap<>();
         this.subtaskById = new HashMap<>();
         this.historyManager = Managers.getDefaultHistory();
-        this.sortedTasks = new TreeSet<>(new Comparator<Task>() {
-            @Override
-            public int compare(Task o1, Task o2) {
-                if (o1.getStartTime().isBefore(o2.getStartTime())) {
-                    return -1;
-                } else if (o1.getStartTime().isAfter(o2.getStartTime()))
-                    return 1;
-                else return 0;
-            }
+        this.sortedTasks = new TreeSet<>((o1, o2) -> {
+            if (o1.getStartTime() == null && o2.getStartTime() == null ){
+                return 0;
+            } else if (o1.getStartTime() == null)
+                return -1;
+            else if (o2.getStartTime() == null) {
+                return 1;
+            } else
+                return o1.getStartTime().compareTo(o2.getStartTime());
         });
     }
 
@@ -268,7 +268,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void validateTaskTimeIntersections(Task newTask) {
+    private void validateTaskTimeIntersections(Task newTask) {/*
         List<Task> tasks = List.copyOf(sortedTasks);
         if (!tasks.isEmpty()) {
             for (Task taskFromList : tasks) {
@@ -286,7 +286,7 @@ public class InMemoryTaskManager implements TaskManager {
                                     " and " + " with end time: " + taskFromList.getEndTime());
                 }
             }
-        }
+        }*/
     }
 
     @Override

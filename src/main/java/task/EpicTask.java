@@ -10,6 +10,8 @@ import java.util.List;
 public class EpicTask extends Task {
 
     private List<Integer> subtaskIds = new ArrayList<>();
+    private Instant startTime;
+    private Instant endTime;
 
     public EpicTask(String name, String description) {
         super(name, description);
@@ -20,20 +22,11 @@ public class EpicTask extends Task {
         this.subtaskIds = new ArrayList<>();
     }
 
-    public EpicTask(int id, String name, String description, TaskStatus taskStatus) {
-        super(id, name, description, taskStatus);
-        this.subtaskIds = new ArrayList<>();
-    }
-
     public EpicTask(int id, String name, String description, TaskStatus taskStatus, Instant startTime, Instant endTime) {
         super(id, name, description, taskStatus);
         this.subtaskIds = new ArrayList<>();
         this.startTime = startTime;
         this.endTime = endTime;
-    }
-
-    public void setSubtaskIds(List<Integer> subtaskIds) {
-        this.subtaskIds = subtaskIds;
     }
 
     public List<Integer> getSubtaskIds() {
@@ -50,10 +43,17 @@ public class EpicTask extends Task {
     }
 
     @Override
+    public Instant getStartTime() {
+        if (startTime != null) {
+            return startTime;
+        } else return null;
+    }
+
+    @Override
     public Instant getEndTime() {
         if (endTime != null) {
             return endTime;
-        } else return Instant.MIN;
+        } else return null;
     }
 
     @Override
