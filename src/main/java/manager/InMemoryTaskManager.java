@@ -26,14 +26,15 @@ public class InMemoryTaskManager implements TaskManager {
         this.subtaskById = new HashMap<>();
         this.historyManager = Managers.getDefaultHistory();
         this.sortedTasks = new TreeSet<>((o1, o2) -> {
-            if (o2.getStartTime() == null) {
-                return -1;
-            } else if (o1.getStartTime() == null)
-                return 1;
-            else if (o1.getStartTime() == o2.getStartTime()) {
-                return 0;
-            } else
+            //сортировку таким образом, чтобы сначала шли задачи, время старта которых задано, в порядке возрастания,
+            // а после располагались задачи, время старта которых не задано, но их сортировка будет осуществляться по
+            // возрастанию значения идентификатора
+
+            if (o2.getStartTime() != null && o1.getStartTime() != null) {
                 return o1.getStartTime().compareTo(o2.getStartTime());
+            } else if (o1.getStartTime() == o2.getStartTime() && (o2.getStartTime() != null && o1.getStartTime() != null)) {
+                return 0;
+            } else return o1.getId() - o2.getId();
         });
     }
 
