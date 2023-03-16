@@ -117,7 +117,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             fileWriter.write(historyToStringHistory(historyManager));
 
         } catch (IOException ex) {
-            throw new ManagerSaveException ("Такого файла нет");
+            throw new ManagerSaveException("Такого файла нет");
         }
     }
 
@@ -132,7 +132,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     task.getTaskStatus(),
                     task.getDescription(),
                     task.getStartTime(),
-                    task.getEndTime()
+                    task.getDuration()
             );
         }
         if (task.getTaskType() == TaskType.SUBTASK) {
@@ -143,7 +143,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     task.getTaskStatus(),
                     task.getDescription(),
                     task.getStartTime(),
-                    task.getEndTime(),
+                    task.getDuration(),
                     ((Subtask) task).getEpicId()
             );
         }
@@ -169,18 +169,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Task task = null;
         String[] taskOptions = value.split(",");
         TaskType taskType = TaskType.valueOf(taskOptions[1]);
+        Instant startTime = taskOptions[5].equals("null") ? null : Instant.parse(taskOptions[5]);
+        long duration = taskOptions[6].equals("null") ? null : Long.parseLong(taskOptions[6]);
         switch (taskType) {
             case SINGLE:
                 task = new SingleTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]),
-                        Instant.parse(taskOptions[5]), Instant.parse(taskOptions[6]));
+                        startTime, duration);
                 break;
             case SUBTASK:
                 task = new Subtask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]),
-                        Instant.parse(taskOptions[5]), Instant.parse(taskOptions[6]), Integer.parseInt(taskOptions[7]));
+                        startTime, duration, Integer.parseInt(taskOptions[7]));
                 break;
             case EPIC:
                 task = new EpicTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]),
-                        Instant.parse(taskOptions[5]), Instant.parse(taskOptions[6]));
+                        startTime, duration);
                 break;
         }
         return task;
@@ -227,11 +229,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 switch (taskType) {
                     case SINGLE:
                         newTaskManager.singleTaskById.put(taskID, (SingleTask) task);
+                        newTaskManager.sortedTasks.add(task);
                         break;
                     case SUBTASK:
                         newTaskManager.subtaskById.put(taskID, (Subtask) task);
                         int epicID = ((Subtask) task).getEpicId();
                         newTaskManager.epicTaskById.get(epicID).getSubtaskIds().add(taskID);
+                        newTaskManager.sortedTasks.add(task);
                         break;
                     case EPIC:
                         newTaskManager.epicTaskById.put(taskID, (EpicTask) task);
@@ -280,7 +284,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println("Получить список всех одиночных задач\n" + fileBackedTasksManager.getAllSingleTasks());
         //  System.out.println("Получить список всех эпиков\n" + fileBackedTasksManager.getAllEpicTasks());
         //  System.out.println("Получить список всех подзадач\n" + fileBackedTasksManager.getAllSubtasks());
-
+        System.out.println("Получить отсортированные по времени начала задачи и сабтаски:\n" + fileBackedTasksManager.getPrioritizedTasks());
 
     }
 }
