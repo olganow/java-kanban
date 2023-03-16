@@ -30,17 +30,17 @@ class EpicTaskTest {
         taskManager.addEpicTask(epicTaskSecond);
 
         subtaskOne = new Subtask("First subtask for testing", "Desc FSB", TaskStatus.NEW,
-                Instant.ofEpochMilli(163857900000L),707568400L, 1);
+                Instant.ofEpochMilli(163857900000L), 707568400L, epicTaskSecond.getId());
         taskManager.addNewSubTask(subtaskOne);
         subtaskSecond = new Subtask("Second subtask for testing", "Desc SSB", TaskStatus.NEW,
-                Instant.ofEpochMilli(99173857900000L),707568400L, 1);
+                Instant.ofEpochMilli(99173857900000L), 707568400L, epicTaskSecond.getId());
         taskManager.addNewSubTask(subtaskSecond);
 
         subtaskThird = new Subtask("Third subtask for testing", "Desc SSB", TaskStatus.NEW,
-                Instant.ofEpochMilli(900000L),400L, 0);
+                Instant.ofEpochMilli(900000L), 400L, epicTaskOne.getId());
 
         subtaskWithNullTime = new Subtask("Null Time subtask for testing", "Desc SSB", TaskStatus.NEW,
-                null,0L, 1);
+                null, 0L, epicTaskSecond.getId());
     }
 
     @Test
@@ -103,7 +103,7 @@ class EpicTaskTest {
     public void shouldSetEpicStartTimeWhenOneSubtask() {
         taskManager.addNewSubTask(subtaskThird);
         taskManager.updateSubtask(subtaskOne);
-     //   taskManager.updateEpicTask(epicTaskSecond);
+        //   taskManager.updateEpicTask(epicTaskSecond);
         assertEquals(subtaskThird.getStartTime(), epicTaskOne.getStartTime());
     }
 
@@ -124,7 +124,8 @@ class EpicTaskTest {
         //   taskManager.updateEpicTask(epicTaskSecond);
         assertEquals(subtaskThird.getDuration(), epicTaskOne.getDuration());
     }
-        @Test
+
+    @Test
     @DisplayName("Установка начального времени для эпика, когда у подзадач начальное время установлено")
     public void shouldSetEpicStartTimeWhenAllSubtasksHaveStartTime() {
         subtaskOne.setStartTime(Instant.MIN);
@@ -151,25 +152,19 @@ class EpicTaskTest {
     @DisplayName("Установка начального времени для эпика, когда у одной из подзадачи начальное время null")
     public void shouldSetEpicStartTimeNullWhenAllSubtasksHaveStartTimeNull() {
         taskManager.addNewSubTask(subtaskWithNullTime);
-        subtaskOne.setStartTime(null);
-        taskManager.updateSubtask(subtaskOne);
-        subtaskSecond.setStartTime(Instant.ofEpochMilli(99173857900000L));
-        taskManager.updateSubtask(subtaskOne);
+        subtaskSecond.setStartTime(Instant.MIN);
         taskManager.updateEpicTask(epicTaskSecond);
-        assertNull(epicTaskSecond.getStartTime());
+        assertEquals(Instant.MIN, epicTaskSecond.getStartTime());
     }
 
     @Test
     @DisplayName("Установка конечного времени для эпика, когда у одной из подзадачи конечное время null")
     public void shouldSetEpicEndTimeWhenAllSubtasksHaveEndTimeNull() {
         taskManager.addNewSubTask(subtaskWithNullTime);
-        subtaskOne.setDuration(348053485L);
-        taskManager.updateSubtask(subtaskOne);
-        subtaskSecond.setStartTime(null);
+        subtaskSecond.setStartTime(Instant.MAX);
         subtaskSecond.setDuration(0);
-        taskManager.updateSubtask(subtaskOne);
         taskManager.updateEpicTask(epicTaskSecond);
-        assertNull(epicTaskSecond.getEndTime());
+        assertEquals(Instant.MAX, epicTaskSecond.getEndTime());
     }
 
 }
