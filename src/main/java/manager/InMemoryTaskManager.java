@@ -45,20 +45,19 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     //option 1: how to save object with generated id in hashmap
     public void addSingleTask(SingleTask singleTask) {
-        try {
+        if (singleTask != null) {
             // 1: generate new id and save it to the task
             singleTask.setId(taskIdGenerator.getNextFreedI());
             // 2: save task
             validateTaskTimeIntersections(singleTask);
             singleTaskById.put(singleTask.getId(), singleTask);
             sortedTasks.add(singleTask);
-        } catch (NullPointerException e) {
-        }
+        } else throw new ManagerSaveException("Такой задачи нет");
     }
 
     @Override
     public void addEpicTask(EpicTask epicTask) {
-        try {
+        if (epicTask != null) {
             // 1: generate new id and save it to the task
             epicTask.setId(taskIdGenerator.getNextFreedI());
             // 2: save task
@@ -66,13 +65,12 @@ public class InMemoryTaskManager implements TaskManager {
             // 3: Epic Status updated
             setEpicStatus(epicTask.getId());
             setEpicStartAndEndTime(epicTask.getId());
-        } catch (NullPointerException e) {
-        }
+        } else throw new ManagerSaveException("Такой задачи нет");
     }
 
     @Override
     public void addNewSubTask(Subtask subtask) {
-        try {
+        if (subtask != null) {
             // 1: generate new id and save it to the task
             subtask.setId(taskIdGenerator.getNextFreedI());
             // 2: save task
@@ -85,8 +83,7 @@ public class InMemoryTaskManager implements TaskManager {
             // 3: Epic and StartAndEndTime Status updated
             setEpicStatus(epicTask.getId());
             setEpicStartAndEndTime(epicTask.getId());
-        } catch (NullPointerException e) {
-        }
+        } else throw new ManagerSaveException("Такой задачи нет");
     }
 
     @Override
@@ -178,6 +175,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateSingleTask(SingleTask singleTask) {
         if (singleTaskById.containsValue(singleTask)) {
             validateTaskTimeIntersections(singleTask);
+            sortedTasks.remove(singleTask);
             singleTaskById.put(singleTask.getId(), singleTask);
             sortedTasks.add(singleTask);
         } else throw new ManagerSaveException("Такой задачи нет");
@@ -197,6 +195,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateSubtask(Subtask subtask) {
         if (subtaskById.containsValue(subtask)) {
             validateTaskTimeIntersections(subtask);
+            sortedTasks.remove(subtask);
             subtaskById.put(subtask.getId(), subtask);
             sortedTasks.add(subtask);
             //Epic Status updated
@@ -292,7 +291,7 @@ public class InMemoryTaskManager implements TaskManager {
                                     && taskPriority.getEndTime() != null
                             )
                     )) {
-                        throw new ManagerSaveException (
+                        throw new ManagerSaveException(
                                 "TimeIntersections: the task with a name \"" + newTask.getName() + "\" with id = " +
                                         newTask.getId() + " with start time: " + newTask.getStartTime() +
                                         " with end time: " + newTask.getEndTime() + " and the task with id = " +
@@ -350,20 +349,25 @@ public class InMemoryTaskManager implements TaskManager {
     private void setEpicStartAndEndTime(int epicId) {
         EpicTask epicTask = epicTaskById.get(epicId);
         if (epicTask.getSubtaskIds().isEmpty()) {
-            epicTask.setStartTime(Instant.MIN);
+            epicTask.setStartTime(null);
+            epicTask.setEndTime(null);
             epicTask.setDuration(0);
         } else {
-            Instant minStartTime = Instant.MAX;
-            Instant maxEndTime = Instant.MIN;
+            Instant minStartTime = null;
+            Instant maxEndTime = null;
 
             for (Integer subtaskId : epicTask.getSubtaskIds()) {
                 Instant subtaskStartTime = subtaskById.get(subtaskId).getStartTime();
                 Instant subtaskEndTime = subtaskById.get(subtaskId).getEndTime();
-                if (subtaskStartTime.isBefore(minStartTime)) {
-                    minStartTime = subtaskStartTime;
+                if (subtaskStartTime != null) {
+                    if (minStartTime == null || subtaskStartTime.isBefore(minStartTime)) {
+                        minStartTime = subtaskStartTime;
+                    }
                 }
-                if (subtaskEndTime.isAfter(maxEndTime)) {
-                    maxEndTime = subtaskEndTime;
+                if (subtaskEndTime != null) {
+                    if (minStartTime == null || subtaskEndTime.isAfter(maxEndTime)) {
+                        maxEndTime = subtaskEndTime;
+                    }
                 }
             }
             epicTask.setStartTime(minStartTime);
