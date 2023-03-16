@@ -23,13 +23,13 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     protected Subtask createSubtask(EpicTask epic) {
         return new Subtask("First subtask for testing", "Desc FSB", TaskStatus.NEW,
-                Instant.ofEpochMilli(163857900000L), 707568400L, epic.getId());
+                Instant.ofEpochMilli(57900000L), 6800L, epic.getId());
     }
 
 
     protected SingleTask createSingleTask() {
         return new SingleTask("First Single Task for testing", "Desc SST", TaskStatus.NEW,
-                Instant.ofEpochMilli(163857900000L), 57900000L);
+                Instant.ofEpochMilli(16355857900000L), 579000L);
     }
 
 
@@ -68,28 +68,31 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     @DisplayName("Создание Null задачи")
     void shouldReturnNullWhenCreateSingleTaskNull() {
-        SingleTask singleTask = null;
-        taskManager.addSingleTask(singleTask);
-        List<Task> tasks = taskManager.getAllSingleTasks();
-        assertNull(tasks);
+        ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
+            SingleTask singleTask = null;
+            taskManager.addSingleTask(singleTask);
+        });
+        Assertions.assertEquals("Такой задачи нет", exception.getMessage());
     }
 
     @Test
     @DisplayName("Создание Null эпика")
     void shouldReturnNullWhenCreateEpicTaskNull() {
-        EpicTask epicTask = null;
-        taskManager.addEpicTask(epicTask);
-        List<Task> tasks = taskManager.getAllEpicTasks();
-        assertNull(tasks);
+        ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
+            EpicTask epicTask = null;
+            taskManager.addEpicTask(epicTask);
+        });
+        Assertions.assertEquals("Такой задачи нет", exception.getMessage());
     }
 
     @Test
     @DisplayName("Создание Null подзадачи")
     void shouldReturnNullWhenCreateSubtaskNull() {
-        Subtask subtask = null;
-        taskManager.addNewSubTask(subtask);
-        List<Task> tasks = taskManager.getAllSubtasks();
-        assertNull(tasks);
+        ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
+            Subtask subtask = null;
+            taskManager.addNewSubTask(subtask);
+        });
+        Assertions.assertEquals("Такой задачи нет", exception.getMessage());
     }
 
 
@@ -98,7 +101,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     public void shouldAddValidIdWhenCreateSingleTaskWithInvalidId() {
         int id = -100;
         SingleTask singleTaskInvalid = new SingleTask(id, "First Single Task for testing", "Desc SST", TaskStatus.NEW,
-                Instant.ofEpochMilli(163857900000L), Instant.ofEpochMilli(1163857900000L));
+                Instant.ofEpochMilli(163857900000L), 57900000L);
         taskManager.addSingleTask(singleTaskInvalid);
         int expectedResult = 0;
         assertEquals(expectedResult, singleTaskInvalid.getId());
@@ -121,7 +124,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         EpicTask epicTask = createEpicTask();
         taskManager.addEpicTask(epicTask);
         Subtask subtaskInvalid = new Subtask(id, "First subtask for testing", "Desc FSB", TaskStatus.NEW,
-                Instant.ofEpochMilli(163857900000L), Instant.ofEpochMilli(9163857900000L), epicTask.getId());
+                Instant.ofEpochMilli(163857900000L), 163857900000L, epicTask.getId());
         taskManager.addNewSubTask(subtaskInvalid);
         int expectedResult = 1;
         assertEquals(expectedResult, subtaskInvalid.getId());
@@ -196,10 +199,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     @DisplayName("Удаление эпика с сабтасками по ID")
     public void shouldDeleteEpicTaskWithSubtaskById() {
-        SingleTask singleTask = createSingleTask();
         EpicTask epicTask = createEpicTask();
         Subtask subtask = createSubtask(epicTask);
-        taskManager.addSingleTask(singleTask);
         taskManager.addEpicTask(epicTask);
         taskManager.addNewSubTask(subtask);
         taskManager.deleteById(epicTask.getId());
@@ -530,15 +531,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
         SingleTask singleTaskOne = createSingleTask();
         singleTaskOne.setStartTime(Instant.MIN);
         taskManager.addSingleTask(singleTaskOne);
-        Set<Task> expectedSubtaskList = new TreeSet<>(new Comparator<Task>() {
-            @Override
-            public int compare(Task o1, Task o2) {
-                if (o1.getStartTime().isBefore(o2.getStartTime())) {
-                    return -1;
-                } else if (o1.getStartTime().isAfter(o2.getStartTime()))
-                    return 1;
-                else return 0;
-            }
+        Set<Task> expectedSubtaskList = new TreeSet<>((o1, o2) -> {
+            if (o2.getStartTime() == null) {
+                return -1;
+            } else if (o1.getStartTime() == null)
+                return 1;
+            else if (o1.getStartTime() == o2.getStartTime()) {
+                return 0;
+            } else
+                return o1.getStartTime().compareTo(o2.getStartTime());
         });
 
         expectedSubtaskList.add(subtaskOne);
@@ -557,21 +558,22 @@ abstract class TaskManagerTest<T extends TaskManager> {
             EpicTask epicTask = createEpicTask();
             Subtask subtaskOne = createSubtask(epicTask);
             Subtask subtaskSecond = createSubtask(epicTask);
-            subtaskSecond.setStartTime(Instant.now());
+            subtaskOne.setStartTime(Instant.ofEpochMilli(57900000L));
+            subtaskSecond.setStartTime(Instant.ofEpochMilli(57900000L));
             taskManager.addEpicTask(epicTask);
             taskManager.addNewSubTask(subtaskOne);
             taskManager.addNewSubTask(subtaskSecond);
             SingleTask singleTaskOne = createSingleTask();
             taskManager.addSingleTask(singleTaskOne);
-            Set<Task> expectedSubtaskList = new TreeSet<>(new Comparator<Task>() {
-                @Override
-                public int compare(Task o1, Task o2) {
-                    if (o1.getStartTime().isBefore(o2.getStartTime())) {
-                        return -1;
-                    } else if (o1.getStartTime().isAfter(o2.getStartTime()))
-                        return 1;
-                    else return 0;
-                }
+            Set<Task> expectedSubtaskList = new TreeSet<>((o1, o2) -> {
+                if (o2.getStartTime() == null) {
+                    return -1;
+                } else if (o1.getStartTime() == null)
+                    return 1;
+                else if (o1.getStartTime() == o2.getStartTime()) {
+                    return 0;
+                } else
+                    return o1.getStartTime().compareTo(o2.getStartTime());
             });
 
             expectedSubtaskList.add(subtaskOne);
@@ -582,9 +584,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
             assertEquals(expectedResult, task);
         });
-        String expectedResult = "TimeIntersections: the task with a name \"First Single Task for testing\" " +
-                "with id = 3 with start time: 1975-03-12T12:05:00Z with end time: 1977-01-10T15:25:00Z and the task " +
-                "with id = 1 with start time: 1975-03-12T12:05:00Z and  with end time: 1997-08-12T22:51:40Z";
+        String expectedResult = "TimeIntersections: the task with a name \"First subtask for testing\" " +
+                "with id = 2 with start time: 1970-01-01T16:05:00Z with end time: 1970-01-01T17:58:20Z and the task" +
+                " with id = 1 with start time: 1970-01-01T16:05:00Z and  with end time: 1970-01-01T17:58:20Z";
         Assertions.assertEquals(expectedResult, exception.getMessage());
     }
 
