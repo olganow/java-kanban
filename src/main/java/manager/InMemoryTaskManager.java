@@ -26,7 +26,6 @@ public class InMemoryTaskManager implements TaskManager {
         this.subtaskById = new HashMap<>();
         this.historyManager = Managers.getDefaultHistory();
         this.sortedTasks = new TreeSet<>((o1, o2) -> {
-            //   if (o1.getStartTime() == null && o2.getStartTime() == null ){
             if (o2.getStartTime() == null) {
                 return -1;
             } else if (o1.getStartTime() == null)
@@ -94,7 +93,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
         deleteAllTaskTypeInSortedList(TaskType.SINGLE);
         singleTaskById.clear();
-
     }
 
     public void deleteAllEpicTask() {
@@ -298,16 +296,7 @@ public class InMemoryTaskManager implements TaskManager {
                                         " with end time: " + newTask.getEndTime() + " and the task with id = " +
                                         taskPriority.getId() + " with start time: " + taskPriority.getStartTime() +
                                         " and " + " with end time: " + taskPriority.getEndTime());
-
-                    } else {
-                        System.out.println(
-                                "Task added: the task with a name \"" + newTask.getName() + "\" with id = " +
-                                        newTask.getId() + " with start time: " + newTask.getStartTime() +
-                                        " with end time: " + newTask.getEndTime() + " and the task with id = " +
-                                        taskPriority.getId() + " with start time: " + taskPriority.getStartTime() +
-                                        " and " + " with end time: " + taskPriority.getEndTime());
                     }
-
                 }
             }
         }
@@ -354,28 +343,28 @@ public class InMemoryTaskManager implements TaskManager {
             epicTask.setEndTime(null);
             epicTask.setDuration(0);
         } else {
-            Instant minStartTime = Instant.MAX;
-            Instant maxEndTime =Instant.MIN;
+            Instant minStartTime = null;
+            Instant maxEndTime = null;
             for (Integer subtaskId : epicTask.getSubtaskIds()) {
                 Instant subtaskStartTime = subtaskById.get(subtaskId).getStartTime();
                 Instant subtaskEndTime = subtaskById.get(subtaskId).getEndTime();
                 if (subtaskStartTime != null) {
-                    if (subtaskStartTime.isBefore(minStartTime)) {
+                    if (minStartTime == null || subtaskStartTime.isBefore(minStartTime)) {
                         minStartTime = subtaskStartTime;
                     }
-                } else  maxEndTime = null;
+                }
                 if (subtaskEndTime != null) {
-                    if (subtaskEndTime.isAfter(maxEndTime)) {//null max
+                    if (maxEndTime == null || subtaskEndTime.isAfter(maxEndTime)) {
                         maxEndTime = subtaskEndTime;
                     }
-                } else maxEndTime = null;
+                }
             }
             epicTask.setStartTime(minStartTime);
             epicTask.setEndTime(maxEndTime);
 
             long duration;
-            if (!(minStartTime == null && maxEndTime == null)){
-                Duration timeElapsed = Duration.between(minStartTime, maxEndTime); //null min
+            if ((minStartTime != null && maxEndTime != null)) {
+                Duration timeElapsed = Duration.between(minStartTime, maxEndTime);
                 duration = timeElapsed.getSeconds();
             } else duration = 0;
             epicTask.setDuration(duration);
