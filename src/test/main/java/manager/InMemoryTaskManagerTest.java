@@ -1,4 +1,5 @@
-import main.java.manager.InMemoryTaskManager;
+package main.java.manager;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 

@@ -1,7 +1,7 @@
+package main.java.manager;
+
 import main.java.description.TaskStatus;
 
-import main.java.manager.HistoryManager;
-import main.java.manager.Managers;
 import main.java.task.SingleTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
