@@ -4,6 +4,7 @@ import main.java.description.TaskType;
 import main.java.description.TaskStatus;
 
 import java.time.Instant;
+import java.util.Objects;
 
 public abstract class Task implements Comparable<Task> {
     //Task is abstract class and cannot be instantiated
@@ -135,4 +136,18 @@ public abstract class Task implements Comparable<Task> {
         return 0;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && duration == task.duration && Objects.equals(name, task.name) &&
+                Objects.equals(description, task.description) && taskStatus == task.taskStatus
+                && Objects.equals(startTime, task.startTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, taskStatus, duration, startTime);
+    }
 }
