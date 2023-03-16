@@ -54,14 +54,14 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     @DisplayName("Пустой список задач")
     public void shouldSaveEmptyTaskListToFile() {
         ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
-        String path = "src/test/resources/history_for_data_test.csv";
-        File file = new File(path);
-        taskManager = new FileBackedTasksManager(file);
-        SingleTask singleTask = null;
-        taskManager.addSingleTask(singleTask);
-    });
+            String path = "src/test/resources/history_for_data_test.csv";
+            File file = new File(path);
+            taskManager = new FileBackedTasksManager(file);
+            SingleTask singleTask = null;
+            taskManager.addSingleTask(singleTask);
+        });
         Assertions.assertEquals("Такой задачи нет", exception.getMessage());
-}
+    }
 
 
     @Test
@@ -86,5 +86,45 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         File file = new File(path);
         FileBackedTasksManager fileManager = new FileBackedTasksManager(file);
         assertTrue(fileManager.getHistory().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Список задач после выгрузки совпадает")
+    public void shouldSaveEqualSingleTaskList() {
+        File file = new File(path);
+        FileBackedTasksManager fileManager = new FileBackedTasksManager(file);
+        assertEquals(taskManager.getAllSingleTasks(), fileManager.getAllSingleTasks());
+    }
+
+    @Test
+    @DisplayName("Список эпиков после выгрузки совпадает")
+    public void shouldSaveEqualEpicList() {
+        File file = new File(path);
+        FileBackedTasksManager fileManager = new FileBackedTasksManager(file);
+        assertEquals(taskManager.getAllSingleTasks(), fileManager.getAllSubtasks());
+    }
+
+    @Test
+    @DisplayName("Список сабтасок после выгрузки совпадает")
+    public void shouldSaveEqualSubtaskList() {
+        File file = new File(path);
+        FileBackedTasksManager fileManager = new FileBackedTasksManager(file);
+        assertEquals(taskManager.getAllSingleTasks(), fileManager.getAllSubtasks());
+    }
+
+    @Test
+    @DisplayName("Список историй после выгрузки совпадает")
+    public void shouldSaveEqualList() {
+        File file = new File(path);
+        FileBackedTasksManager fileManager = new FileBackedTasksManager(file);
+        assertEquals(taskManager.getHistory(), fileManager.getHistory());
+    }
+
+    @Test
+    @DisplayName("Список отсортированных задач после выгрузки совпадает")
+    public void shouldSaveEqualSortedList() {
+        File file = new File(path);
+        FileBackedTasksManager fileManager = new FileBackedTasksManager(file);
+        assertEquals(taskManager.getPrioritizedTasks(), fileManager.getPrioritizedTasks());
     }
 }
