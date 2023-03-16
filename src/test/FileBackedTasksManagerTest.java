@@ -1,6 +1,7 @@
 import main.java.description.TaskStatus;
 import main.java.manager.FileBackedTasksManager;
 
+import main.java.manager.ManagerSaveException;
 import main.java.task.EpicTask;
 import main.java.task.SingleTask;
 import main.java.task.Subtask;
@@ -42,26 +43,26 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         taskManager.addNewSubTask(subtask);
         String actualResult = Files.readString(Paths.get(path));
         String expectedResult = "id,type,name,status,description,startTime,duration,epic\n" +
-                "0,SINGLE,Another safe Task,NEW,Desc AST,2023-12-31T21:00:00Z,2046-06-03T07:46:40Z\n" +
-                "1,EPIC,First epic,NEW,Desc FE,1975-03-12T12:05:00Z,1997-08-12T22:51:40Z\n" +
-                "2,SUBTASK,First subtask for testing,NEW,Desc FSB,1975-03-12T12:05:00Z,1997-08-12T22:51:40Z,1\n" +
+                "0,SINGLE,Another safe Task,NEW,Desc AST,2023-12-31T21:00:00Z,707568400\n" +
+                "1,EPIC,First epic,NEW,Desc FE,1975-03-12T12:05:00Z,707568400\n" +
+                "2,SUBTASK,First subtask for testing,NEW,Desc FSB,1975-03-12T12:05:00Z,707568400,1\n" +
                 "\n";
         assertEquals(expectedResult, actualResult);
     }
 
-
     @Test
     @DisplayName("Пустой список задач")
-    public void shouldSaveEmptyTaskListToFile() throws IOException {
+    public void shouldSaveEmptyTaskListToFile() {
+        ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
         String path = "src/test/resources/history_for_data_test.csv";
         File file = new File(path);
         taskManager = new FileBackedTasksManager(file);
         SingleTask singleTask = null;
         taskManager.addSingleTask(singleTask);
-        String actualResult = Files.readString(Paths.get(path));
-        String expectedResult = "id,type,name,status,description,startTime,duration,epic\n" + "\n";
-        assertEquals(expectedResult, actualResult);
-    }
+    });
+        Assertions.assertEquals("Такой задачи нет", exception.getMessage());
+}
+
 
     @Test
     @DisplayName("Эпик без подзадач")
@@ -74,7 +75,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
         String actualResult = Files.readString(Paths.get(path));
         String expectedResult = "id,type,name,status,description,startTime,duration,epic\n" +
-                "0,EPIC,First epic,NEW,Desc FE,-1000000000-01-01T00:00:00Z,-1000000000-01-01T00:00:00Z\n" + "\n";
+                "0,EPIC,First epic,NEW,Desc FE,null,0\n" + "\n";
         assertEquals(expectedResult, actualResult);
     }
 
