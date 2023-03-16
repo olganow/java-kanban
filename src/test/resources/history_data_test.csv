@@ -1,4 +1,4 @@
 id,type,name,status,description,startTime,duration,epic
-0,EPIC,First epic for testing,NEW,Desc FE for testing ,1975-03-12T12:05:00Z,1997-08-12T22:51:40Z
-1,SUBTASK,First subtask for testing,NEW,Desc FSB,1975-03-12T12:05:00Z,1997-08-12T22:51:40Z,0
+0,EPIC,First epic for testing,NEW,Desc FE for testing ,1970-01-01T16:05:00Z,6800
+1,SUBTASK,First subtask for testing,NEW,Desc FSB,1970-01-01T16:05:00Z,6800,0
 
