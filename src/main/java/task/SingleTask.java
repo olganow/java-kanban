@@ -19,8 +19,8 @@ public class SingleTask extends Task {
         super(id, name, description, taskStatus);
     }
 
-    public SingleTask(int id, String name, String description, TaskStatus taskStatus, Instant startTime, Instant endTime) {
-        super(id, name, description, taskStatus, startTime, endTime);
+    public SingleTask(int id, String name, String description, TaskStatus taskStatus, Instant startTime, long duration) {
+        super(id, name, description, taskStatus, startTime, duration);
     }
 
     public void setTaskStatus(TaskStatus taskStatus) {
@@ -40,7 +40,7 @@ public class SingleTask extends Task {
                 ", type='" + getTaskType() + '\'' +
                 ", status='" + getTaskStatus() + '\'' +
                 ", start time ='" + getStartTime() + '\'' +
-                ", end time ='" + getEndTime() + '\'' +
+                ", duration ='" + getDuration() + '\'' +
                 "}\n";
     }
 

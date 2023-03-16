@@ -13,7 +13,6 @@ public abstract class Task implements Comparable<Task> {
     private TaskStatus taskStatus = TaskStatus.NEW;
     private long duration;
     private Instant startTime;
-    private Instant endTime;
 
     public Task(String name, String description) {
         this.name = name;
@@ -40,12 +39,12 @@ public abstract class Task implements Comparable<Task> {
         this.description = description;
     }
 
-    public Task(int id, String name, String description, Instant startTime, Instant endTime) {
+    public Task(int id, String name, String description, Instant startTime, long duration) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.startTime = startTime;
-        this.endTime = endTime;
+        this.duration = duration;
     }
 
     public Task(int id, String name, String description, TaskStatus taskStatus) {
@@ -55,13 +54,13 @@ public abstract class Task implements Comparable<Task> {
         this.taskStatus = taskStatus;
     }
 
-    public Task(int id, String name, String description, TaskStatus taskStatus, Instant startTime, Instant endTime) {
+    public Task(int id, String name, String description, TaskStatus taskStatus, Instant startTime, long duration) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.taskStatus = taskStatus;
         this.startTime = startTime;
-        this.endTime = endTime;
+        this.duration = duration;
     }
 
     public int getId() {
@@ -110,7 +109,9 @@ public abstract class Task implements Comparable<Task> {
     }
 
     public void setStartTime(Instant startTime) {
-        this.startTime = startTime;
+        if (startTime != null) {
+            this.startTime = startTime;
+        }
     }
 
     public Instant getEndTime() {

@@ -10,7 +10,7 @@ import java.util.List;
 public class EpicTask extends Task {
 
     private List<Integer> subtaskIds = new ArrayList<>();
-    private Instant startTime;
+
     private Instant endTime;
 
     public EpicTask(String name, String description) {
@@ -22,11 +22,14 @@ public class EpicTask extends Task {
         this.subtaskIds = new ArrayList<>();
     }
 
-    public EpicTask(int id, String name, String description, TaskStatus taskStatus, Instant startTime, Instant endTime) {
+    public EpicTask(int id, String name, String description, TaskStatus taskStatus, Instant startTime, long duration) {
+        super(id, name, description, taskStatus, startTime, duration);
+        this.subtaskIds = new ArrayList<>();
+    }
+
+    public EpicTask(int id, String name, String description, TaskStatus taskStatus) {
         super(id, name, description, taskStatus);
         this.subtaskIds = new ArrayList<>();
-        this.startTime = startTime;
-        this.endTime = endTime;
     }
 
     public List<Integer> getSubtaskIds() {
@@ -40,13 +43,6 @@ public class EpicTask extends Task {
 
     public void setEndTime(Instant endTime) {
         this.endTime = endTime;
-    }
-
-    @Override
-    public Instant getStartTime() {
-        if (startTime != null) {
-            return startTime;
-        } else return null;
     }
 
     @Override
@@ -65,7 +61,7 @@ public class EpicTask extends Task {
                 ", type='" + getTaskType() + '\'' +
                 ", status=" + getTaskStatus() +
                 ", start time ='" + getStartTime() + '\'' +
-                ", end time ='" + getEndTime() + '\'' +
+                ", duration ='" + getDuration() + '\'' +
                 ", subtaskList=" + getSubtaskIds() +
                 "}\n";
     }
