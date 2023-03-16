@@ -25,12 +25,13 @@ public class InMemoryTaskManager implements TaskManager {
         this.subtaskById = new HashMap<>();
         this.historyManager = Managers.getDefaultHistory();
         this.sortedTasks = new TreeSet<>((o1, o2) -> {
-            if (o1.getStartTime() == null && o2.getStartTime() == null ){
-                return 0;
-            } else if (o1.getStartTime() == null)
+            //   if (o1.getStartTime() == null && o2.getStartTime() == null ){
+            if (o2.getStartTime() == null) {
                 return -1;
-            else if (o2.getStartTime() == null) {
+            } else if (o1.getStartTime() == null)
                 return 1;
+            else if (o1.getStartTime() == o2.getStartTime()) {
+                return 0;
             } else
                 return o1.getStartTime().compareTo(o2.getStartTime());
         });
@@ -48,8 +49,8 @@ public class InMemoryTaskManager implements TaskManager {
             // 1: generate new id and save it to the task
             singleTask.setId(taskIdGenerator.getNextFreedI());
             // 2: save task
-            singleTaskById.put(singleTask.getId(), singleTask);
             validateTaskTimeIntersections(singleTask);
+            singleTaskById.put(singleTask.getId(), singleTask);
             sortedTasks.add(singleTask);
         } catch (NullPointerException e) {
         }
@@ -75,11 +76,11 @@ public class InMemoryTaskManager implements TaskManager {
             // 1: generate new id and save it to the task
             subtask.setId(taskIdGenerator.getNextFreedI());
             // 2: save task
+            validateTaskTimeIntersections(subtask);
             EpicTask epicTask = epicTaskById.get(subtask.getEpicId());
             Integer id = subtask.getId();
             epicTask.getSubtaskIds().add(id);
             subtaskById.put(id, subtask);
-            validateTaskTimeIntersections(subtask);
             sortedTasks.add(subtask);
             // 3: Epic and StartAndEndTime Status updated
             setEpicStatus(epicTask.getId());
@@ -150,7 +151,6 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.remove(id);
 
         } else if (epicTaskById.containsKey(id)) {
-            sortedTasks.remove(epicTaskById.get(id));
             EpicTask epicTask = epicTaskById.remove(id);
             for (Integer subtaskId : epicTask.getSubtaskIds()) {
                 sortedTasks.remove(subtaskById.get(subtaskId));
@@ -177,8 +177,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSingleTask(SingleTask singleTask) {
         if (singleTaskById.containsValue(singleTask)) {
-            singleTaskById.put(singleTask.getId(), singleTask);
             validateTaskTimeIntersections(singleTask);
+            singleTaskById.put(singleTask.getId(), singleTask);
             sortedTasks.add(singleTask);
         } else throw new ManagerSaveException("Такой задачи нет");
     }
@@ -196,8 +196,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubtask(Subtask subtask) {
         if (subtaskById.containsValue(subtask)) {
-            subtaskById.put(subtask.getId(), subtask);
             validateTaskTimeIntersections(subtask);
+            subtaskById.put(subtask.getId(), subtask);
             sortedTasks.add(subtask);
             //Epic Status updated
             setEpicStatus(subtask.getEpicId());
@@ -268,30 +268,54 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void validateTaskTimeIntersections(Task newTask) {/*
-        List<Task> tasks = List.copyOf(sortedTasks);
-        if (!tasks.isEmpty()) {
-            for (Task taskFromList : tasks) {
-                if ((newTask.getStartTime().isBefore(taskFromList.getStartTime())
-                        && newTask.getEndTime().isBefore(taskFromList.getStartTime()))
-                        ||
-                        (newTask.getStartTime().isAfter(taskFromList.getEndTime())
-                                && newTask.getEndTime().isAfter(taskFromList.getEndTime()))) {
-                } else {
-                    throw new ManagerSaveException(
-                            "TimeIntersections: the task with a name \"" + newTask.getName() + "\" with id = " +
-                                    newTask.getId() + " with start time: " + newTask.getStartTime() +
-                                    " with end time: " + newTask.getEndTime() + " and the task with id = " +
-                                    taskFromList.getId() + " with start time: " + taskFromList.getStartTime() +
-                                    " and " + " with end time: " + taskFromList.getEndTime());
+    private void validateTaskTimeIntersections(Task newTask) {
+        if (!sortedTasks.isEmpty()) {
+            if (newTask.getStartTime() != null || newTask.getEndTime() != null) {
+                for (Task taskPriority : sortedTasks) {
+                    if (newTask.getId() == taskPriority.getId() || taskPriority.getStartTime() == null ||
+                            taskPriority.getEndTime() == null) {
+                        continue;
+                    }
+                    if (!((newTask.getEndTime().isBefore(taskPriority.getStartTime()) &&
+                            taskPriority.getStartTime() != null)
+                            ||
+                            (newTask.getStartTime().isAfter(taskPriority.getEndTime()) &&
+                                    taskPriority.getEndTime() != null)
+                            ||
+                            newTask.getEndTime() == taskPriority.getStartTime()
+                            ||
+                            newTask.getEndTime() == taskPriority.getStartTime()
+                            ||
+                            (newTask.getStartTime().isBefore(taskPriority.getStartTime()) &&
+                                    taskPriority.getStartTime() != null &&
+                                    newTask.getEndTime().isAfter(taskPriority.getEndTime())
+                                    && taskPriority.getEndTime() != null
+                            )
+                    )) {
+                        throw new ManagerSaveException (
+                                "TimeIntersections: the task with a name \"" + newTask.getName() + "\" with id = " +
+                                        newTask.getId() + " with start time: " + newTask.getStartTime() +
+                                        " with end time: " + newTask.getEndTime() + " and the task with id = " +
+                                        taskPriority.getId() + " with start time: " + taskPriority.getStartTime() +
+                                        " and " + " with end time: " + taskPriority.getEndTime());
+
+                    } else {
+                        System.out.println(
+                                "TimeIntersections: the task with a name \"" + newTask.getName() + "\" with id = " +
+                                        newTask.getId() + " with start time: " + newTask.getStartTime() +
+                                        " with end time: " + newTask.getEndTime() + " and the task with id = " +
+                                        taskPriority.getId() + " with start time: " + taskPriority.getStartTime() +
+                                        " and " + " with end time: " + taskPriority.getEndTime());
+                    }
+
                 }
             }
-        }*/
+        }
     }
 
     @Override
-    public Set<Task> getPrioritizedTasks() {
-        return sortedTasks;
+    public List<Task> getPrioritizedTasks() {
+        return List.copyOf(sortedTasks);
     }
 
     private void setEpicStatus(int epicId) {
