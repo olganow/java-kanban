@@ -6,7 +6,7 @@ import main.java.description.TaskStatus;
 import java.time.Instant;
 import java.util.Objects;
 
-public abstract class Task implements Comparable<Task> {
+public abstract class Task {
     //Task is abstract class and cannot be instantiated
     private int id;
     private String name;
@@ -104,15 +104,11 @@ public abstract class Task implements Comparable<Task> {
     }
 
     public Instant getStartTime() {
-        if (startTime != null) {
-            return startTime;
-        } else return null;
+        return startTime;
     }
 
     public void setStartTime(Instant startTime) {
-        if (startTime != null) {
             this.startTime = startTime;
-        }
     }
 
     public Instant getEndTime() {
@@ -121,7 +117,6 @@ public abstract class Task implements Comparable<Task> {
         } else return null;
     }
 
-
     @Override
     public String toString() {
         return "Task{" +
@@ -129,11 +124,6 @@ public abstract class Task implements Comparable<Task> {
                 ", name='" + name + '\'' +
                 "}";
 
-    }
-
-    @Override
-    public int compareTo(Task task) {
-        return 0;
     }
 
     @Override

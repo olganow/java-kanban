@@ -47,9 +47,7 @@ public class EpicTask extends Task {
 
     @Override
     public Instant getEndTime() {
-        if (endTime != null) {
-            return endTime;
-        } else return null;
+        return endTime;
     }
 
     @Override
@@ -65,5 +63,6 @@ public class EpicTask extends Task {
                 ", subtaskList=" + getSubtaskIds() +
                 "}\n";
     }
+
 
 }
