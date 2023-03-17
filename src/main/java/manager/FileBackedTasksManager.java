@@ -17,8 +17,8 @@ import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
-    final File historyFile;
-    private static final String TITLE_LINE = "id,type,name,status,description,startTime,duration,epic\n";
+    private final File historyFile;
+    private static final String TITLE_LINE = "id,type,name,status,description,startTime,duration,endTime,epic\n";
 
     public FileBackedTasksManager(File historyFile) {
         this.historyFile = historyFile;
@@ -125,17 +125,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private String toString(Task task) {
         String result = "";
         if (task.getTaskType() == TaskType.SINGLE || task.getTaskType() == TaskType.EPIC) {
-            result = String.format("%d,%s,%s,%s,%s,%s,%s",
-                    task.getId(),
-                    task.getTaskType(),
-                    task.getName(),
-                    task.getTaskStatus(),
-                    task.getDescription(),
-                    task.getStartTime(),
-                    task.getDuration()
-            );
-        }
-        if (task.getTaskType() == TaskType.SUBTASK) {
             result = String.format("%d,%s,%s,%s,%s,%s,%s,%s",
                     task.getId(),
                     task.getTaskType(),
@@ -144,6 +133,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     task.getDescription(),
                     task.getStartTime(),
                     task.getDuration(),
+                    task.getEndTime()
+            );
+        }
+        if (task.getTaskType() == TaskType.SUBTASK) {
+            result = String.format("%d,%s,%s,%s,%s,%s,%s,%s,%s",
+                    task.getId(),
+                    task.getTaskType(),
+                    task.getName(),
+                    task.getTaskStatus(),
+                    task.getDescription(),
+                    task.getStartTime(),
+                    task.getDuration(),
+                    task.getEndTime(),
                     ((Subtask) task).getEpicId()
             );
         }
@@ -163,14 +165,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return historyIDs.toString();
     }
 
-
     //Создания задачи из строки
     private static Task fromString(String value) {
         Task task = null;
         String[] taskOptions = value.split(",");
         TaskType taskType = TaskType.valueOf(taskOptions[1]);
         Instant startTime = taskOptions[5].equals("null") ? null : Instant.parse(taskOptions[5]);
-        long duration = taskOptions[6].equals("null") ? null : Long.parseLong(taskOptions[6]);
+        long duration = taskOptions[6].equals("null") ? 0 : Long.parseLong(taskOptions[6]);
         switch (taskType) {
             case SINGLE:
                 task = new SingleTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]),
@@ -178,11 +179,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 break;
             case SUBTASK:
                 task = new Subtask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]),
-                        startTime, duration, Integer.parseInt(taskOptions[7]));
+                        startTime, duration, Integer.parseInt(taskOptions[8]));
                 break;
             case EPIC:
+                Instant endTime = taskOptions[7].equals("null") ? null : Instant.parse(taskOptions[7]);
                 task = new EpicTask(Integer.parseInt(taskOptions[0]), taskOptions[2], taskOptions[4], TaskStatus.valueOf(taskOptions[3]),
                         startTime, duration);
+                ((EpicTask) task).setEndTime(endTime);
                 break;
         }
         return task;
@@ -244,7 +247,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
 
             //Восстановление истории из файла
-            Task task = null;
+            Task task;
             for (int id : historyFromString(contentWithHistory)) {
                 if (newTaskManager.singleTaskById.containsKey(id)) {
                     task = newTaskManager.singleTaskById.get(id);
@@ -275,9 +278,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 Instant.ofEpochMilli(1704056400000L), 707568400L);
         fileBackedTasksManager.addSingleTask(singleTask2);
 
-      /*  EpicTask epicTask2 = new EpicTask("New epic", "Desc FE");
-        fileBackedTasksManager.addEpicTask(epicTask2);
-*/
+//        EpicTask epicTask2 = new EpicTask("New epic", "Desc FE");
+//        fileBackedTasksManager.addEpicTask(epicTask2);
+
         System.out.println("\nИстория из файла загружена");
         fileBackedTasksManager.loadFromFile(file.getPath());
 
