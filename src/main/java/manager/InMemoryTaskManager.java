@@ -1,6 +1,5 @@
 package main.java.manager;
 
-import main.java.description.TaskType;
 import main.java.task.SingleTask;
 import main.java.task.Task;
 import main.java.description.TaskStatus;
@@ -31,9 +30,9 @@ public class InMemoryTaskManager implements TaskManager {
                 return o1.getId() - o2.getId();
             } else if (o1.getStartTime() == null) {
                 return 1;
-            }else return -1;
+            } else return -1;
         });
-}
+    }
 
     @Override
     public List<Task> getHistory() {
@@ -87,9 +86,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllSingleTask() {
         for (int id : singleTaskById.keySet()) {
+            sortedTasks.remove(singleTaskById.get(id));
             historyManager.remove(id);
         }
-        deleteAllTaskTypeInSortedList(TaskType.SINGLE);
         singleTaskById.clear();
     }
 
@@ -100,32 +99,23 @@ public class InMemoryTaskManager implements TaskManager {
         epicTaskById.clear();
 
         for (int id : subtaskById.keySet()) {
+            sortedTasks.remove(subtaskById.get(id));
             historyManager.remove(id);
         }
-        deleteAllTaskTypeInSortedList(TaskType.SUBTASK);
         subtaskById.clear();
     }
 
     @Override
     public void deleteAllSubtask() {
         for (int id : subtaskById.keySet()) {
+            sortedTasks.remove(subtaskById.get(id));
             historyManager.remove(id);
         }
-        deleteAllTaskTypeInSortedList(TaskType.SUBTASK);
         subtaskById.clear();
         for (EpicTask epic : epicTaskById.values()) {
             epic.getSubtaskIds().clear();
             setEpicStatus(epic.getId());
             setEpicStartAndEndTime(epic.getId());
-        }
-    }
-
-    private void deleteAllTaskTypeInSortedList(TaskType taskType) {
-        Set<Task> sortedTasksForDelete = new TreeSet<>(sortedTasks);
-        for (Task task : sortedTasksForDelete) {
-            if (task.getTaskType() == taskType) {
-                sortedTasks.remove(task);
-            }
         }
     }
 
@@ -337,7 +327,7 @@ public class InMemoryTaskManager implements TaskManager {
             for (Integer subtaskId : epicTask.getSubtaskIds()) {
                 Instant subtaskStartTime = subtaskById.get(subtaskId).getStartTime();
                 Instant subtaskEndTime = subtaskById.get(subtaskId).getEndTime();
-                long  subtaskDuration = subtaskById.get(subtaskId).getDuration();
+                long subtaskDuration = subtaskById.get(subtaskId).getDuration();
                 if (subtaskStartTime != null) {
                     if (minStartTime == null || subtaskStartTime.isBefore(minStartTime)) {
                         minStartTime = subtaskStartTime;
