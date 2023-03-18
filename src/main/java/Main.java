@@ -16,27 +16,45 @@ public class Main {
         TaskManager taskManager = Managers.getDefault();
 
         // Two single task created
-        SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST", TaskStatus.NEW, Instant.now(), 8400L);
+        SingleTask singleTask = new SingleTask("Single safe Task", "Desc SST",
+                TaskStatus.NEW, null, 8400L);
         taskManager.addSingleTask(singleTask);
-        SingleTask singleTask2 = new SingleTask("Another safe Task 2021-10-01", "Desc AST", TaskStatus.NEW,Instant.ofEpochMilli(16393035600000L), 7107568400L);
+        SingleTask singleTask2 = new SingleTask("Another safe Task", "Desc AST",
+                TaskStatus.NEW, Instant.ofEpochMilli(16393035600000L), 7107568400L);
         taskManager.addSingleTask(singleTask2);
+        SingleTask singleTask3 = new SingleTask("Another safe Task 3", "Desc AST",
+                TaskStatus.NEW, Instant.ofEpochMilli(1035600000L), 1000000L);
+        taskManager.addSingleTask(singleTask3);
+        SingleTask singleTask4 = new SingleTask("Another safe Task 4", "Desc AST",
+                TaskStatus.NEW, null, 8400L);
+        taskManager.addSingleTask(singleTask4);
+        SingleTask singleTask5 = new SingleTask("Another safe Task 5", "Desc AST",
+                TaskStatus.NEW, null, 0L);
+        taskManager.addSingleTask(singleTask5);
+        SingleTask singleTask6 = new SingleTask("Another safe Task 6", "Desc AST",
+                TaskStatus.NEW, null, 56400L);
+        taskManager.addSingleTask(singleTask6);
+
 
         //Two Epic created
         EpicTask epicTask1 = new EpicTask("First epic", "Desc FE");
         taskManager.addEpicTask(epicTask1);
-        Subtask subtask1 = new Subtask("First subtask", "Desc FSB", TaskStatus.NEW,Instant.ofEpochMilli(163857900000L),707568400L, 2);
+        Subtask subtask1 = new Subtask("First subtask", "Desc FSB",
+                TaskStatus.NEW, null, 500, epicTask1.getId());
         taskManager.addNewSubTask(subtask1);
-        Subtask subtask2 = new Subtask("Second subtask", "Desc SSB", TaskStatus.NEW, 2);
+        Subtask subtask2 = new Subtask("Second subtask", "Desc SSB",
+                TaskStatus.NEW, null, 500, epicTask1.getId());
         taskManager.addNewSubTask(subtask2);
 
         EpicTask epicTask2 = new EpicTask("Second epic", "Desc FE");
         taskManager.addEpicTask(epicTask2);
-        Subtask subtask3 = new Subtask("Third subtask", "Desc FSB", TaskStatus.DONE, Instant.ofEpochMilli(91625714000000L),798568400L, 5);
+        Subtask subtask3 = new Subtask("Third subtask", "Desc FSB", TaskStatus.DONE,
+                Instant.ofEpochMilli(91625714000000L), 8400L, epicTask2.getId());
         taskManager.addNewSubTask(subtask3);
 
         // Get a list with all tasks
         System.out.println("Получить список всех одиночных задач\n" + taskManager.getAllSingleTasks());
-        System.out.println("Получить список всех эпиков\n" + taskManager.getAllEpicTasks());
+        //    System.out.println("Получить список всех эпиков\n" + taskManager.getAllEpicTasks());
         System.out.println("Получить список всех подзадач\n" + taskManager.getAllSubtasks());
 
         // Delete all tasks
@@ -54,12 +72,12 @@ public class Main {
 //        taskManager.deleteById(3);
 
         //Get all tasks by Id
-        System.out.println("Получить по ID\n" + taskManager.getTaskById(0));
+   /*     System.out.println("Получить по ID\n" + taskManager.getTaskById(0));
         System.out.println("Получить по ID\n" + taskManager.getTaskById(1));
         System.out.println("Получить по ID\n" + taskManager.getTaskById(2));
         System.out.println("Получить по ID\n" + taskManager.getTaskById(3));
         System.out.println("Получить по ID\n" + taskManager.getTaskById(2));
-        System.out.println("Получить по ID\n" + taskManager.getTaskById(5));
+        System.out.println("Получить по ID\n" + taskManager.getTaskById(5));*/
 //
 //        //Get all subtasks by EpicId
 //        System.out.println("Получить сабтаски по ID эпика:" + taskManager.getSubTasksByEpicId(2));
@@ -77,6 +95,7 @@ public class Main {
 //        epicTask2 = new EpicTask(5, "Second epic--", "Desc FE", epicTask2.getSubtaskIds());
 //        taskManager.updateEpicTask(epicTask2);
 
-        System.out.println("Получить отсортированные по времени начала задачи и сабтаски:\n" + taskManager.getPrioritizedTasks() );
+        System.out.println("Получить отсортированные по времени начала задачи и сабтаски:\n" +
+                taskManager.getPrioritizedTasks());
     }
 }
