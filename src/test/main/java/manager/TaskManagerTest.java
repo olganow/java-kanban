@@ -282,18 +282,19 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    @DisplayName("Редактирование Null задачи")
+    @DisplayName("Редактирование с некорректным Id подзадачи")
     public void shouldNotUpdateSingleTaskIfNull() {
         ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
             SingleTask singleTask = createSingleTask();
             taskManager.addSingleTask(singleTask);
-            taskManager.updateSingleTask(null);
+            singleTask.setId(999);
+            taskManager.updateSingleTask(singleTask);
         });
         Assertions.assertEquals("Такой задачи нет", exception.getMessage());
     }
 
     @Test
-    @DisplayName("Редактирование Null эпика")
+    @DisplayName("Редактирование с некорректным Id эпика")
     public void shouldNotUpdateEpicIfNull() {
         ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
             EpicTask epicTask = createEpicTask();
@@ -304,14 +305,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    @DisplayName("Редактирование Null подзадачи")
+    @DisplayName("Редактирование с некорректным Id подзадачи")
     public void shouldNotUpdateSubtaskIfNull() {
         ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
             EpicTask epicTask = createEpicTask();
             Subtask subtask = createSubtask(epicTask);
+            subtask.setId(9999);
             taskManager.addEpicTask(epicTask);
             taskManager.addNewSubTask(subtask);
-            taskManager.updateSubtask(null);
+            taskManager.updateSubtask(subtask);
         });
         Assertions.assertEquals("Такой задачи нет", exception.getMessage());
     }

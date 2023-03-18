@@ -160,9 +160,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSingleTask(SingleTask singleTask) {
-        if (singleTaskById.containsValue(singleTask)) {
+        int id = singleTask.getId();
+        if (singleTaskById.containsKey(id)) {
             validateTaskTimeIntersections(singleTask);
-            sortedTasks.remove(singleTask.getId());
+            sortedTasks.remove(singleTaskById.get(id));
             singleTaskById.put(singleTask.getId(), singleTask);
             sortedTasks.add(singleTask);
         } else throw new ManagerSaveException("Такой задачи нет");
@@ -180,9 +181,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubtask(Subtask subtask) {
-        if (subtaskById.containsValue(subtask)) {
-            sortedTasks.remove(subtask.getId());
+        int id = subtask.getId();
+        if (singleTaskById.containsKey(id)) {
             validateTaskTimeIntersections(subtask);
+            sortedTasks.remove(singleTaskById.get(id));
             subtaskById.put(subtask.getId(), subtask);
             sortedTasks.add(subtask);
             //Epic Status updated
@@ -287,31 +289,29 @@ public class InMemoryTaskManager implements TaskManager {
 
     private void setEpicStatus(int epicId) {
         EpicTask epicTask = epicTaskById.get(epicId);
-        if (epicTask.getSubtaskIds().isEmpty()) {
-            epicTask.setTaskStatus(TaskStatus.NEW);
-        } else {
-            int counterNew = 0;
-            int counterDone = 0;
+        epicTask.setTaskStatus(TaskStatus.NEW);
+        int counterNew = 0;
+        int counterDone = 0;
 
-            for (Integer subtaskId : epicTask.getSubtaskIds()) {
-                TaskStatus status = subtaskById.get(subtaskId).getTaskStatus();
-                if (status == TaskStatus.NEW) {
-                    counterNew++;
-                } else if (status == TaskStatus.DONE) {
-                    counterDone++;
-                } else {
-                    epicTask.setTaskStatus(TaskStatus.IN_PROGRESS);
-                    return;
-                }
-            }
-            if (counterNew == epicTask.getSubtaskIds().size()) {
-                epicTask.setTaskStatus(TaskStatus.NEW);
-            } else if (counterDone == epicTask.getSubtaskIds().size()) {
-                epicTask.setTaskStatus(TaskStatus.DONE);
+        for (Integer subtaskId : epicTask.getSubtaskIds()) {
+            TaskStatus status = subtaskById.get(subtaskId).getTaskStatus();
+            if (status == TaskStatus.NEW) {
+                counterNew++;
+            } else if (status == TaskStatus.DONE) {
+                counterDone++;
             } else {
                 epicTask.setTaskStatus(TaskStatus.IN_PROGRESS);
+                return;
             }
         }
+        if (counterNew == epicTask.getSubtaskIds().size()) {
+            epicTask.setTaskStatus(TaskStatus.NEW);
+        } else if (counterDone == epicTask.getSubtaskIds().size()) {
+            epicTask.setTaskStatus(TaskStatus.DONE);
+        } else {
+            epicTask.setTaskStatus(TaskStatus.IN_PROGRESS);
+        }
+
     }
 
     private void setEpicStartAndEndTime(int epicId) {
