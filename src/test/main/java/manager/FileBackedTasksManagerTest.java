@@ -21,31 +21,43 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     public final String path = "src/test/resources/history_data_test.csv";
 
     File file = new File(path);
+    SingleTask singleTask;
+    EpicTask epicTask;
+    Subtask subtask;
 
     @BeforeEach
     public void beforeEach() {
         taskManager = new FileBackedTasksManager(file);
-    }
 
+
+        singleTask = new SingleTask("Another safe Task", "Desc AST", TaskStatus.NEW,
+                Instant.ofEpochMilli(1704056400000L), 707568400L);
+        singleTask.setId(0);
+        epicTask = new EpicTask("First epic", "Desc FE");
+        epicTask.setId(1);
+        subtask = new Subtask("First subtask for testing", "Desc FSB", TaskStatus.NEW,
+                Instant.ofEpochMilli(163857900000L), 707568400L, epicTask.getId());
+        subtask.setId(2);
+    }
+    @AfterEach
+    public void afterEach() {
+        taskManager.deleteAllTask();
+    }
     @Test
     @DisplayName("Сохранение в файл")
     public void shouldSaveToFile() throws IOException {
         String path = "src/test/resources/history_for_data_test.csv";
         File file = new File(path);
         taskManager = new FileBackedTasksManager(file);
-        SingleTask singleTask = new SingleTask("Another safe Task", "Desc AST", TaskStatus.NEW,
-                Instant.ofEpochMilli(1704056400000L), 707568400L);
         taskManager.addSingleTask(singleTask);
-        EpicTask epicTask = new EpicTask("First epic", "Desc FE");
         taskManager.addEpicTask(epicTask);
-        Subtask subtask = new Subtask("First subtask for testing", "Desc FSB", TaskStatus.NEW,
-                Instant.ofEpochMilli(163857900000L), 707568400L, epicTask.getId());
         taskManager.addNewSubTask(subtask);
+
         String actualResult = Files.readString(Paths.get(path));
-        String expectedResult = "id,type,name,status,description,startTime,duration,epic\n" +
-                "0,SINGLE,Another safe Task,NEW,Desc AST,2023-12-31T21:00:00Z,707568400\n" +
-                "1,EPIC,First epic,NEW,Desc FE,1975-03-12T12:05:00Z,707568400\n" +
-                "2,SUBTASK,First subtask for testing,NEW,Desc FSB,1975-03-12T12:05:00Z,707568400,1\n" +
+        String expectedResult = "id,type,name,status,description,startTime,duration,endTime,epic\n" +
+                "0,SINGLE,Another safe Task,NEW,Desc AST,2023-12-31T21:00:00Z,707568400,2046-06-03T07:46:40Z\n" +
+                "1,EPIC,First epic,NEW,Desc FE,1975-03-12T12:05:00Z,707568400,1997-08-12T22:51:40Z\n" +
+                "2,SUBTASK,First subtask for testing,NEW,Desc FSB,1975-03-12T12:05:00Z,707568400,1997-08-12T22:51:40Z,1\n" +
                 "\n";
         assertEquals(expectedResult, actualResult);
     }
@@ -57,7 +69,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
             String path = "src/test/resources/history_for_data_test.csv";
             File file = new File(path);
             taskManager = new FileBackedTasksManager(file);
-            SingleTask singleTask = null;
+            singleTask = null;
             taskManager.addSingleTask(singleTask);
         });
         Assertions.assertEquals("Такой задачи нет", exception.getMessage());
@@ -70,12 +82,11 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         String path = "src/test/resources/history_for_data_test.csv";
         File file = new File(path);
         taskManager = new FileBackedTasksManager(file);
-        EpicTask epicTask = new EpicTask("First epic", "Desc FE");
         taskManager.addEpicTask(epicTask);
 
         String actualResult = Files.readString(Paths.get(path));
-        String expectedResult = "id,type,name,status,description,startTime,duration,epic\n" +
-                "0,EPIC,First epic,NEW,Desc FE,null,0\n" + "\n";
+        String expectedResult = "id,type,name,status,description,startTime,duration,endTime,epic\n" +
+                "0,EPIC,First epic,NEW,Desc FE,null,0,null\n" + "\n";
         assertEquals(expectedResult, actualResult);
     }
 

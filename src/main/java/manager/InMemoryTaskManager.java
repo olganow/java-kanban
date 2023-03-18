@@ -181,8 +181,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubtask(Subtask subtask) {
         if (subtaskById.containsValue(subtask)) {
-            validateTaskTimeIntersections(subtask);
             sortedTasks.remove(subtask.getId());
+            validateTaskTimeIntersections(subtask);
             subtaskById.put(subtask.getId(), subtask);
             sortedTasks.add(subtask);
             //Epic Status updated
