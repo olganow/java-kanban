@@ -164,18 +164,19 @@ public class InMemoryTaskManager implements TaskManager {
         if (singleTaskById.containsKey(id)) {
             validateTaskTimeIntersections(singleTask);
             sortedTasks.remove(singleTaskById.get(id));
-            singleTaskById.put(singleTask.getId(), singleTask);
+            singleTaskById.put(id, singleTask);
             sortedTasks.add(singleTask);
         } else throw new ManagerSaveException("Такой задачи нет");
     }
 
     @Override
     public void updateEpicTask(EpicTask epicTask) {
-        if (epicTaskById.containsValue(epicTask)) {
-            epicTaskById.put(epicTask.getId(), epicTask);
+        int id = epicTask.getId();
+        if (epicTaskById.containsKey(id)) {
+            epicTaskById.put(id, epicTask);
             //Epic Status updated
-            setEpicStatus(epicTask.getId());
-            setEpicStartAndEndTime(epicTask.getId());
+            setEpicStatus(id);
+            setEpicStartAndEndTime(id);
         } else throw new ManagerSaveException("Такой задачи нет");
     }
 
@@ -185,7 +186,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (singleTaskById.containsKey(id)) {
             validateTaskTimeIntersections(subtask);
             sortedTasks.remove(singleTaskById.get(id));
-            subtaskById.put(subtask.getId(), subtask);
+            subtaskById.put(id, subtask);
             sortedTasks.add(subtask);
             //Epic Status updated
             setEpicStatus(subtask.getEpicId());
@@ -195,32 +196,18 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getAllSingleTasks() {
-        List<Task> tasks = new ArrayList<>(this.singleTaskById.values());
-        if (tasks.isEmpty()) {
-            return new ArrayList<>(this.singleTaskById.values());
-        } else {
-            return tasks;
-        }
+        return new ArrayList<>(this.singleTaskById.values());
+
     }
 
     @Override
     public List<Task> getAllEpicTasks() {
-        List<Task> tasks = new ArrayList<>(this.epicTaskById.values());
-        if (tasks.isEmpty()) {
-            return new ArrayList<>(this.epicTaskById.values());
-        } else {
-            return tasks;
-        }
+        return new ArrayList<>(this.epicTaskById.values());
     }
 
     @Override
     public List<Task> getAllSubtasks() {
-        List<Task> tasks = new ArrayList<>(this.subtaskById.values());
-        if (tasks.isEmpty()) {
-            return new ArrayList<>(this.subtaskById.values());
-        } else {
-            return tasks;
-        }
+        return new ArrayList<>(this.subtaskById.values());
     }
 
     @Override
@@ -269,13 +256,13 @@ public class InMemoryTaskManager implements TaskManager {
                     if (!newTask.getEndTime().isAfter(taskPriority.getStartTime())
                             || !newTask.getStartTime().isBefore(taskPriority.getEndTime())) {
                         continue;
-                    } else
-                        throw new ManagerSaveException(
-                                "TimeIntersections: the task with a name \"" + newTask.getName() + "\" with id = " +
-                                        newTask.getId() + " with start time: " + newTask.getStartTime() +
-                                        " with end time: " + newTask.getEndTime() + " and the task with id = " +
-                                        taskPriority.getId() + " with start time: " + taskPriority.getStartTime() +
-                                        " and " + " with end time: " + taskPriority.getEndTime());
+                    }
+                    throw new ManagerSaveException(
+                            "TimeIntersections: the task with a name \"" + newTask.getName() + "\" with id = " +
+                                    newTask.getId() + " with start time: " + newTask.getStartTime() +
+                                    " with end time: " + newTask.getEndTime() + " and the task with id = " +
+                                    taskPriority.getId() + " with start time: " + taskPriority.getStartTime() +
+                                    " and " + " with end time: " + taskPriority.getEndTime());
 
                 }
             }

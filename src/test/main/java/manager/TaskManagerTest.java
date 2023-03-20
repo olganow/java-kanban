@@ -299,7 +299,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         ManagerSaveException exception = Assertions.assertThrows(ManagerSaveException.class, () -> {
             EpicTask epicTask = createEpicTask();
             taskManager.addEpicTask(epicTask);
-            taskManager.updateEpicTask(null);
+            epicTask.setId(999);
+            taskManager.updateEpicTask(epicTask);
         });
         Assertions.assertEquals("Такой задачи нет", exception.getMessage());
     }
