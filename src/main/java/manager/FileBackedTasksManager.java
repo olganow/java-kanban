@@ -97,8 +97,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return task;
     }
 
-    // Сохранение в файл
-    private void save() {
+
+@Override
+    public void save() {
         try (Writer fileWriter = new FileWriter(historyFile)) {
             fileWriter.write(TITLE_LINE);
 
@@ -120,6 +121,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new ManagerSaveException("Такого файла нет");
         }
     }
+
 
     //Сохранения задачи в строки
     private String toString(Task task) {

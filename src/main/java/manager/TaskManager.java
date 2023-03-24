@@ -33,6 +33,8 @@ public interface TaskManager {
 
     void updateSubtask(Subtask subtask);
 
+    void save();
+
     List<Task> getAllSingleTasks();
 
     List<Task> getAllEpicTasks();

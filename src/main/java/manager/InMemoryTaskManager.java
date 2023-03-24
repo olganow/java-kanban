@@ -195,6 +195,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public void save() {
+    }
+
+    @Override
     public List<Task> getAllSingleTasks() {
         return new ArrayList<>(this.singleTaskById.values());
 
@@ -333,7 +337,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    static class TaskIdGenerator {
+    public static class TaskIdGenerator {
         private int nextFreedId;
 
         public void setNextFreedId(int nextFreedId) {
