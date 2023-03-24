@@ -2,6 +2,7 @@ package main.java.manager;
 
 import main.java.http.HttpTaskManager;
 import main.java.http.KVServer;
+import main.java.http.taskServer.HttpTaskServer;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +14,7 @@ public class Managers {
     public static TaskManager getDefault() {
         return new FileBackedTasksManager(new File("src/main/resourсes/history.csv"));
     }
+
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }
@@ -23,6 +25,10 @@ public class Managers {
 
     public static KVServer getDefaultKVServer() throws IOException {
         return new KVServer();
+    }
+
+    public static HttpTaskServer getDefaultHttpTaskServer(HttpTaskManager taskManager) throws IOException{
+        return new HttpTaskServer(taskManager);
     }
 }
 

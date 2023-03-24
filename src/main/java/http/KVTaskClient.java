@@ -3,6 +3,7 @@ package main.java.http;
 import com.google.gson.Gson;
 import main.java.description.TaskStatus;
 import main.java.manager.ManagerSaveException;
+import main.java.manager.Managers;
 import main.java.task.SingleTask;
 
 import java.io.IOException;
@@ -82,6 +83,9 @@ public class KVTaskClient {
 
 
     public static void main(String[] args) throws IOException, InterruptedException {
+
+        KVServer kvServer = Managers.getDefaultKVServer();
+        kvServer.start();
         KVTaskClient kvTaskClient = new KVTaskClient("http://localhost:8078");
         Gson gson = new Gson();
 
@@ -96,6 +100,6 @@ public class KVTaskClient {
         System.out.println(gson.fromJson(kvTaskClient.load("1"), SingleTask.class));
         System.out.println(gson.fromJson(kvTaskClient.load("2"), SingleTask.class));
 
-
+        kvServer.stop();
     }
 }
