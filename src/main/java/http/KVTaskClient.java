@@ -55,7 +55,7 @@ public class KVTaskClient {
                     .build();
             client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
-                System.out.println("Error, response statusCode ---: " + response.statusCode());
+                System.out.println("Error, response statusCode: " + response.statusCode());
             }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

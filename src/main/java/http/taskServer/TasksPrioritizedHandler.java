@@ -10,12 +10,12 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-public class TasksHandler implements HttpHandler {
+public class TasksPrioritizedHandler implements HttpHandler {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private final TaskManager taskManager;
     private final Gson gson = new Gson();
 
-    public TasksHandler(TaskManager taskManager) {
+    public TasksPrioritizedHandler(TaskManager taskManager) {
         this.taskManager = taskManager;
     }
 
@@ -28,15 +28,11 @@ public class TasksHandler implements HttpHandler {
 
         System.out.println("Request: " + path + " by " + method);
 
-        switch (method) {
-
-            case "GET":
-                code = 200;
-                response = gson.toJson(taskManager.getPrioritizedTasks());
-                break;
-
-            default:
-                response = "Not Found";
+        if (method.equals("GET")) {
+            code = 200;
+            response = gson.toJson(taskManager.getPrioritizedTasks());
+        } else {
+            response = "Not Found";
         }
 
         httpExchange.getResponseHeaders().set("Content-Type", "text/plain; charset=" + DEFAULT_CHARSET);

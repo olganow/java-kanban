@@ -2,7 +2,7 @@ package main.java.manager;
 
 import main.java.http.HttpTaskManager;
 import main.java.http.KVServer;
-import main.java.http.taskServer.HttpTaskServer;
+import main.java.http.HttpTaskServer;
 
 import java.io.File;
 import java.io.IOException;

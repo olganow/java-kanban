@@ -7,7 +7,6 @@ import main.java.task.EpicTask;
 import main.java.task.SingleTask;
 import main.java.task.Subtask;
 
-
 import java.io.File;
 import java.io.IOException;
 
@@ -19,8 +18,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     private static KVTaskClient client;
     private static String serverUrl;
-    private static final Gson gson =
-            new GsonBuilder().create();
+    private static final Gson gson = new GsonBuilder().create();
 
     public HttpTaskManager(String serverUrl) throws IOException {
         super(historyFile);
@@ -30,9 +28,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
     @Override
     public void save() {
         client.put(KEY_SINGLETASKS, gson.toJson(singleTaskById.values()));
-        System.out.println(gson.toJson(singleTaskById.values()));
-        client.put(KEY_SUBTASKS, gson.toJson(subtaskById.values()));
         client.put(KEY_EPICS, gson.toJson(epicTaskById.values()));
+        client.put(KEY_SUBTASKS, gson.toJson(subtaskById.values()));
+        System.out.println("HttpTaskManager: задачи сохранены на KVTaskClient");
     }
 
     public TaskManager loadFromHttp(String serverUrl, KVTaskClient client) throws IOException {

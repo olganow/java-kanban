@@ -1,5 +1,6 @@
 package main.java.manager;
 
+import main.java.description.TaskType;
 import main.java.task.SingleTask;
 import main.java.task.Task;
 import main.java.description.TaskStatus;
@@ -246,7 +247,24 @@ public class InMemoryTaskManager implements TaskManager {
             throw new ManagerSaveException("Такой задачи нет");
         }
     }
-
+    @Override
+    public boolean validateTypeOfMapByIdContainsTaskId(int id, TaskType taskType) {
+        if (singleTaskById.containsKey(id) && taskType.equals(TaskType.SINGLE)) {
+            SingleTask task = singleTaskById.get(id);
+            historyManager.add(task);
+            return true;
+        } else if (epicTaskById.containsKey(id) && taskType.equals(TaskType.EPIC)) {
+            EpicTask task = epicTaskById.get(id);
+            historyManager.add(task);
+            return true;
+        } else if (subtaskById.containsKey(id) && taskType.equals(TaskType.EPIC)) {
+            Subtask task = subtaskById.get(id);
+            historyManager.add(task);
+            return true;
+        } else {
+           return false;
+        }
+    }
     private void validateTaskTimeIntersections(Task newTask) {
         if (!sortedTasks.isEmpty()) {
             if (newTask.getStartTime() != null || newTask.getEndTime() != null) {

@@ -1,5 +1,6 @@
 package main.java.manager;
 
+import main.java.description.TaskType;
 import main.java.task.SingleTask;
 import main.java.task.Task;
 import main.java.task.EpicTask;
@@ -34,6 +35,9 @@ public interface TaskManager {
     void updateSubtask(Subtask subtask);
 
     void save();
+
+    boolean validateTypeOfMapByIdContainsTaskId(int id, TaskType taskType);
+
 
     List<Task> getAllSingleTasks();
 
