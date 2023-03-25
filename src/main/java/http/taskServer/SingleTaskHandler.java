@@ -1,11 +1,14 @@
 package main.java.http.taskServer;
 
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import main.java.description.TaskType;
+import main.java.manager.ManagerSaveException;
 import main.java.manager.TaskManager;
+import main.java.task.SingleTask;
 import main.java.task.Task;
 
 import java.io.IOException;
@@ -16,8 +19,7 @@ import java.nio.charset.StandardCharsets;
 public class SingleTaskHandler implements HttpHandler {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private final TaskManager taskManager;
-    private final  Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public SingleTaskHandler(TaskManager taskManager) {
         this.taskManager = taskManager;
@@ -25,7 +27,7 @@ public class SingleTaskHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        int code = 404;
+        int code;
         String response;
         String method = httpExchange.getRequestMethod();
         String path = String.valueOf(httpExchange.getRequestURI());
@@ -42,32 +44,79 @@ public class SingleTaskHandler implements HttpHandler {
                     response = gson.toJson(jsonString);
                 } else {
                     try {
-                        int id = Integer.parseInt(query.substring(query.indexOf("id=") + 3));
+                        int id = Integer.parseInt(query.substring(3));
                         Task task = taskManager.getTaskById(id);
-                        if (task != null || taskManager.getAllSubtasks().contains(id)) {
+                        if (taskManager.validateTypeOfMapByIdContainsTaskId(id, TaskType.SINGLE)) {
                             code = 200;
                             response = gson.toJson(task);
-                        } else  {
+                        } else {
                             code = 404;
-                            response = "Not Found";
+                            response = "Not Found ";
                         }
-                    }catch (NumberFormatException | NullPointerException e) {
+                    } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
                         code = 400;
-                        response = "Bad Request";
+                        response = "Bad Request, expected NumberFormat";
+                    } catch (NullPointerException e) {
+                        code = 404;
+                        response = "Null";
+                    } catch (ManagerSaveException e) {
+                        code = 404;
+                        response = "Not Found";
                     }
                 }
-
                 break;
+
             case "POST":
-                response = "Bad Request";
-
+                String bodyRequest = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+                try {
+                    SingleTask task = gson.fromJson(bodyRequest, SingleTask.class);
+                    int id = task.getId();
+                    if (taskManager.validateTypeOfMapByIdContainsTaskId(id, TaskType.SINGLE)) {
+                        taskManager.updateSingleTask(task);
+                        code = 201;
+                        response = "Task with id=" + id + " has been updated";
+                    } else {
+                        taskManager.addSingleTask(task);
+                        code = 201;
+                        response = "Создана задача с id=" + id;
+                    }
+                } catch (JsonSyntaxException e) {
+                    code = 406;
+                    response = "Not Acceptable Json Syntax in the request";
+                } catch (NullPointerException e) {
+                    code = 404;
+                    response = "Null";
+                }
                 break;
+
             case "DELETE":
-                response = "Bad Request";
+                query = httpExchange.getRequestURI().getQuery();
+                try {
+                    if (query == null) {
+                        taskManager.deleteAllSingleTask();
+                        code = 200;
+                        response = "All single tasks have been deleted";
+                    } else {
+                        int id = Integer.parseInt(query.substring(3));
+                        taskManager.deleteById(id);
+                        code = 200;
+                        response = "Task with id=" + id + " has been deleted";
+                    }
+                } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
+                    code = 400;
+                    response = "Bad Request, expected NumberFormat";
+                } catch (NullPointerException e) {
+                    code = 404;
+                    response = "Null";
+                } catch (ManagerSaveException e) {
+                    code = 404;
+                    response = "Not Found";
+                }
 
                 break;
 
             default:
+                code = 404;
                 response = "Not Found";
         }
 
@@ -77,5 +126,7 @@ public class SingleTaskHandler implements HttpHandler {
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes());
         }
+
+
     }
 }
