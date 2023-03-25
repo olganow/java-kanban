@@ -27,7 +27,7 @@ public class SubtaskHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        int code = 400;
+        int code;
         String response;
         String method = httpExchange.getRequestMethod();
         String path = String.valueOf(httpExchange.getRequestURI());
@@ -46,7 +46,7 @@ public class SubtaskHandler implements HttpHandler {
                     try {
                         int id = Integer.parseInt(query.substring(3));
                         Task task = taskManager.getTaskById(id);
-                        if (taskManager.validateTypeOfMapByIdContainsTaskId(id, TaskType.EPIC)) {
+                        if (taskManager.validateTypeOfMapByIdContainsTaskId(id, TaskType.SUBTASK)) {
                             code = 200;
                             response = gson.toJson(task);
                         } else {
@@ -77,8 +77,9 @@ public class SubtaskHandler implements HttpHandler {
                         response = "Task with id=" + id + " has been updated";
                     } else {
                         taskManager.addNewSubTask(task);
+                        int newId = task.getId();
                         code = 201;
-                        response = "Создана задача с id=" + id;
+                        response = "Task with id=" + newId + " has been created";
                     }
                 } catch (JsonSyntaxException e) {
                     code = 406;

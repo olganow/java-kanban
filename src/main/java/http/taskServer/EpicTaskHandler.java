@@ -77,8 +77,9 @@ public class EpicTaskHandler implements HttpHandler {
                         response = "Task with id=" + id + " has been updated";
                     } else {
                         taskManager.addEpicTask(task);
+                        int newId = task.getId();
                         code = 201;
-                        response = "Создана задача с id=" + id;
+                        response = "Task with id=" + newId + " has been created";
                     }
                 } catch (JsonSyntaxException e) {
                     code = 406;

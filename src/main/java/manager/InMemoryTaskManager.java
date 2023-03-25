@@ -184,9 +184,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubtask(Subtask subtask) {
         int id = subtask.getId();
-        if (singleTaskById.containsKey(id)) {
+        if (subtaskById.containsKey(id)) {
             validateTaskTimeIntersections(subtask);
-            sortedTasks.remove(singleTaskById.get(id));
+            sortedTasks.remove(subtaskById.get(id));
             subtaskById.put(id, subtask);
             sortedTasks.add(subtask);
             //Epic Status updated
@@ -250,16 +250,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public boolean validateTypeOfMapByIdContainsTaskId(int id, TaskType taskType) {
         if (singleTaskById.containsKey(id) && taskType.equals(TaskType.SINGLE)) {
-            SingleTask task = singleTaskById.get(id);
-            historyManager.add(task);
             return true;
         } else if (epicTaskById.containsKey(id) && taskType.equals(TaskType.EPIC)) {
-            EpicTask task = epicTaskById.get(id);
-            historyManager.add(task);
             return true;
-        } else if (subtaskById.containsKey(id) && taskType.equals(TaskType.EPIC)) {
-            Subtask task = subtaskById.get(id);
-            historyManager.add(task);
+        } else if (subtaskById.containsKey(id) && taskType.equals(TaskType.SUBTASK)) {
             return true;
         } else {
            return false;
