@@ -19,13 +19,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class HttpTaskManagerTest {
 
-    KVServer kvServer;
-    HttpTaskManager taskManager;
+    private static KVServer kvServer;
+    private static HttpTaskManager taskManager;
     private SingleTask singleTaskOne;
     private SingleTask singleTaskSecond;
     private EpicTask epicTaskOne;
     private EpicTask epicTaskSecond;
-
     private Subtask subtaskOne;
     private Subtask subtaskSecond;
     private KVTaskClient kvTaskClient;
@@ -48,14 +47,10 @@ class HttpTaskManagerTest {
         epicTaskOne = new EpicTask("First epic for testing", "Desc FE for testing ");
         epicTaskSecond = new EpicTask("First epic for testing", "Desc FE for testing ");
 
-
         subtaskOne = new Subtask("First subtask for testing", "Desc FSB", TaskStatus.NEW,
                 Instant.ofEpochMilli(163857900000L), 707568400L, epicTaskSecond.getId());
-
         subtaskSecond = new Subtask("Second subtask for testing", "Desc SSB", TaskStatus.NEW,
                 Instant.ofEpochMilli(99173857900000L), 707568400L, epicTaskSecond.getId());
-
-
     }
 
     @AfterEach

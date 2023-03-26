@@ -27,11 +27,12 @@ public class HistoryHandler implements HttpHandler {
         String path = String.valueOf(httpExchange.getRequestURI());
 
         System.out.println("Request: " + path + " by " + method + "history" + gson.toJson(taskManager.getHistory()));
-
-        if (method.equals("GET")){
-                code = 200;
-                response = gson.toJson(taskManager.getHistory());}
-        else { response = "Not Found";
+        String query = httpExchange.getRequestURI().getQuery();
+        if (method.equals("GET") && query == null && path.equals("/tasks/history/")) {
+            code = 200;
+            response = gson.toJson(taskManager.getHistory());
+        } else {
+            response = "Not Found";
         }
 
         httpExchange.getResponseHeaders().set("Content-Type", "text/plain; charset=" + DEFAULT_CHARSET);

@@ -19,6 +19,7 @@ public class SubtaskByEpicIdHandler implements HttpHandler {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private final TaskManager taskManager;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
     public SubtaskByEpicIdHandler(TaskManager taskManager) {
         this.taskManager = taskManager;
     }

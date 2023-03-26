@@ -27,8 +27,8 @@ public class TasksPrioritizedHandler implements HttpHandler {
         String path = String.valueOf(httpExchange.getRequestURI());
 
         System.out.println("Request: " + path + " by " + method);
-
-        if (method.equals("GET")) {
+        String query = httpExchange.getRequestURI().getQuery();
+        if (method.equals("GET") && query == null && path.equals("/tasks/")) {
             code = 200;
             response = gson.toJson(taskManager.getPrioritizedTasks());
         } else {

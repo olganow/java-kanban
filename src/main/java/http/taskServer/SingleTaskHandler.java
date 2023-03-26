@@ -38,7 +38,7 @@ public class SingleTaskHandler implements HttpHandler {
 
             case "GET":
                 String query = httpExchange.getRequestURI().getQuery();
-                if (query == null) {
+                if (query == null && path.equals("/tasks/task/")) {
                     code = 200;
                     String jsonString = gson.toJson(taskManager.getAllSingleTasks());
                     response = gson.toJson(jsonString);
@@ -46,7 +46,8 @@ public class SingleTaskHandler implements HttpHandler {
                     try {
                         int id = Integer.parseInt(query.substring(3));
                         Task task = taskManager.getTaskById(id);
-                        if (taskManager.validateTypeOfMapByIdContainsTaskId(id, TaskType.SINGLE)) {
+                        boolean isQueryStartCorrect = query.substring(0, 3).equals("id=");
+                        if (taskManager.validateTypeOfMapByIdContainsTaskId(id, TaskType.SINGLE) && isQueryStartCorrect) {
                             code = 200;
                             response = gson.toJson(task);
                         } else {
@@ -56,10 +57,7 @@ public class SingleTaskHandler implements HttpHandler {
                     } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
                         code = 400;
                         response = "Bad Request, expected NumberFormat";
-                    } catch (NullPointerException e) {
-                        code = 404;
-                        response = "Null";
-                    } catch (ManagerSaveException e) {
+                    } catch (ManagerSaveException | NullPointerException e) {
                         code = 404;
                         response = "Not Found";
                     }
@@ -93,7 +91,7 @@ public class SingleTaskHandler implements HttpHandler {
             case "DELETE":
                 query = httpExchange.getRequestURI().getQuery();
                 try {
-                    if (query == null) {
+                    if (query == null && path.equals("/tasks/task/")) {
                         taskManager.deleteAllSingleTask();
                         code = 200;
                         response = "All single tasks have been deleted";
@@ -106,10 +104,7 @@ public class SingleTaskHandler implements HttpHandler {
                 } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
                     code = 400;
                     response = "Bad Request, expected NumberFormat";
-                } catch (NullPointerException e) {
-                    code = 404;
-                    response = "Null";
-                } catch (ManagerSaveException e) {
+                } catch (ManagerSaveException | NullPointerException e) {
                     code = 404;
                     response = "Not Found";
                 }
