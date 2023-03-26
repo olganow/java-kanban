@@ -12,10 +12,10 @@ import java.time.Instant;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HistoryManagerTest {
-    HistoryManager historyManager;
-    SingleTask singleTaskFirst;
-    SingleTask singleTaskSecond;
-    SingleTask singleTaskThird;
+    private HistoryManager historyManager;
+    private SingleTask singleTaskFirst;
+    private SingleTask singleTaskSecond;
+    private SingleTask singleTaskThird;
 
     @BeforeEach
     private void beforeEach() {

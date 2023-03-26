@@ -17,13 +17,13 @@ import java.time.Instant;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
-    public final String path = "src/test/resources/history_data_test.csv";
+ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
+    private final String path = "src/test/resources/history_data_test.csv";
 
-    File file = new File(path);
-    SingleTask singleTask;
-    EpicTask epicTask;
-    Subtask subtask;
+    private File file = new File(path);
+    private SingleTask singleTask;
+    private EpicTask epicTask;
+    private Subtask subtask;
 
     @BeforeEach
     public void beforeEach() {
