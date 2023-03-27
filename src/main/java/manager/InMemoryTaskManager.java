@@ -196,13 +196,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void save() {
-    }
-
-    @Override
     public List<Task> getAllSingleTasks() {
         return new ArrayList<>(this.singleTaskById.values());
-
     }
 
     @Override
@@ -247,6 +242,7 @@ public class InMemoryTaskManager implements TaskManager {
             throw new ManagerSaveException("Такой задачи нет");
         }
     }
+
     @Override
     public boolean validateTypeOfMapByIdContainsTaskId(int id, TaskType taskType) {
         if (singleTaskById.containsKey(id) && taskType.equals(TaskType.SINGLE)) {
@@ -256,9 +252,10 @@ public class InMemoryTaskManager implements TaskManager {
         } else if (subtaskById.containsKey(id) && taskType.equals(TaskType.SUBTASK)) {
             return true;
         } else {
-           return false;
+            return false;
         }
     }
+
     private void validateTaskTimeIntersections(Task newTask) {
         if (!sortedTasks.isEmpty()) {
             if (newTask.getStartTime() != null || newTask.getEndTime() != null) {

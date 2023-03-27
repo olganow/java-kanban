@@ -34,10 +34,7 @@ public interface TaskManager {
 
     void updateSubtask(Subtask subtask);
 
-    void save();
-
     boolean validateTypeOfMapByIdContainsTaskId(int id, TaskType taskType);
-
 
     List<Task> getAllSingleTasks();
 

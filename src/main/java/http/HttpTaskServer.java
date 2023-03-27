@@ -2,8 +2,6 @@ package main.java.http;
 
 import com.sun.net.httpserver.HttpServer;
 import main.java.http.taskServer.*;
-import main.java.manager.HistoryManager;
-import main.java.manager.Managers;
 import main.java.manager.TaskManager;
 
 import java.io.IOException;
@@ -15,7 +13,6 @@ public class HttpTaskServer {
     private final TaskManager taskManager;
 
     public HttpTaskServer(TaskManager taskManager) throws IOException {
-        HistoryManager historyManager = Managers.getDefaultHistory();
         this.taskManager = taskManager;
         this.httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress(PORT), 0);

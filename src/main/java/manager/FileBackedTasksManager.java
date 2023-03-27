@@ -97,9 +97,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return task;
     }
 
-
-@Override
-    public void save() {
+    protected void save() {
         try (Writer fileWriter = new FileWriter(historyFile)) {
             fileWriter.write(TITLE_LINE);
 
@@ -122,8 +120,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-
-    //Сохранения задачи в строки
     private String toString(Task task) {
         String result = "";
         if (task.getTaskType() == TaskType.SINGLE || task.getTaskType() == TaskType.EPIC) {

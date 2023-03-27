@@ -11,23 +11,24 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 
 public class KVTaskClient {
     private String apiToken;
-    private String clientServerUrl;
+    private final String clientServerUrl;
     private HttpResponse<String> response;
-    HttpClient client = HttpClient.newHttpClient();
+    private HttpClient client = HttpClient.newHttpClient();
 
-    public KVTaskClient(String serverURL) throws IOException {
-        this.clientServerUrl = serverURL;
-        apiToken = getToken(clientServerUrl);
+    public KVTaskClient(String clientServerUrl) {
+        this.clientServerUrl = clientServerUrl;
+        apiToken = getToken();
     }
 
-    private String getToken(String url) throws IOException {
+    private String getToken() {
         HttpRequest request = HttpRequest.newBuilder() // создаём объект, описывающий HTTP-запрос
-                .uri(URI.create(url + "/register")) // указываем адрес ресурса
+                .uri(URI.create(clientServerUrl + "/register")) // указываем адрес ресурса
                 .GET() // указываем HTTP-метод запроса
                 .build();
         System.out.println("\n/register");
@@ -41,7 +42,7 @@ public class KVTaskClient {
             } else {
                 throw new ManagerSaveException("/register is wanting for GET-request, but statusCode is " + response.statusCode());
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -53,9 +54,9 @@ public class KVTaskClient {
                     .uri(uri)
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
-            client.send(request, HttpResponse.BodyHandlers.ofString());
+            client.send(request, HttpResponse.BodyHandlers.discarding());
             if (response.statusCode() != 200) {
-                System.out.println("Error, response statusCode: " + response.statusCode());
+                throw new ManagerSaveException("response.statusCode() != 200");
             }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -69,18 +70,18 @@ public class KVTaskClient {
                     .uri(uri)
                     .GET()
                     .build();
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+            HttpClient client = HttpClient.newHttpClient();
+            HttpResponse<String> response = client.send(request,
+                    HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             if (response.statusCode() != 200) {
-                System.out.println("Error, response statusCode - - : " + response.statusCode());
-                return null;
+                throw new ManagerSaveException("response.statusCode() != 200");
             }
             return response.body();
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
-
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
