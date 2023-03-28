@@ -16,9 +16,8 @@ import java.time.Instant;
 
 
 public class KVTaskClient {
-    private String apiToken;
+    private final String apiToken;
     private final String clientServerUrl;
-    private HttpResponse<String> response;
     private HttpClient client = HttpClient.newHttpClient();
 
     public KVTaskClient(String clientServerUrl) {
@@ -33,12 +32,10 @@ public class KVTaskClient {
                 .build();
         System.out.println("\n/register");
         try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            apiToken = response.body();  // заканчиваем настройку и создаём ("строим") HTTP-запрос
-            System.out.println("apiToken = " + apiToken);
-
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                return apiToken;
+                System.out.println("API_TOKEN HttpClient: = " + response.body());
+                return response.body();
             } else {
                 throw new ManagerSaveException("/register is wanting for GET-request, but statusCode is " + response.statusCode());
             }
@@ -54,7 +51,8 @@ public class KVTaskClient {
                     .uri(uri)
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
-            client.send(request, HttpResponse.BodyHandlers.discarding());
+
+            HttpResponse<Void> response = client.send(request, HttpResponse.BodyHandlers.discarding());
             if (response.statusCode() != 200) {
                 throw new ManagerSaveException("response.statusCode() != 200");
             }
