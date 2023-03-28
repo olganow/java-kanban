@@ -2,25 +2,20 @@ package main.java.http.taskServer;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import main.java.manager.TaskManager;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
-public class TasksPrioritizedHandler implements HttpHandler {
-    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    private final TaskManager taskManager;
+public class TasksPrioritizedHandler extends TaskHandler {
+    // private TaskManager taskManager;
     private final Gson gson = new Gson();
+    String expectedPath;
 
-    public TasksPrioritizedHandler(TaskManager taskManager) {
-        this.taskManager = taskManager;
+    public TasksPrioritizedHandler(TaskManager taskManager, String expectedPath) {
+        super(taskManager);
+        this.expectedPath = expectedPath;
     }
 
     @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
+    public void handle(HttpExchange httpExchange) {
         int code = 404;
         String response;
         String method = httpExchange.getRequestMethod();
@@ -28,18 +23,17 @@ public class TasksPrioritizedHandler implements HttpHandler {
 
         System.out.println("Request: " + path + " by " + method);
         String query = httpExchange.getRequestURI().getQuery();
-        if (method.equals("GET") && query == null && path.equals("/tasks/")) {
+        if (method.equals("GET") && query == null && path.equals(expectedPath)) {
             code = 200;
             response = gson.toJson(taskManager.getPrioritizedTasks());
+            createResponse(httpExchange, response, code);
         } else {
             response = "Not Found";
+            createResponse(httpExchange, response, code);
         }
 
-        httpExchange.getResponseHeaders().set("Content-Type", "text/plain; charset=" + DEFAULT_CHARSET);
-        httpExchange.sendResponseHeaders(code, 0);
 
-        try (OutputStream os = httpExchange.getResponseBody()) {
-            os.write(response.getBytes());
-        }
     }
+
+
 }
