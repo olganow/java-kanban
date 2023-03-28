@@ -28,8 +28,8 @@ public class HttpTaskServer {
         httpServer.createContext(SINGLETASK_URL, new SingleTaskHandler(taskManager, SINGLETASK_URL, TaskType.SINGLE));
         httpServer.createContext(EPIC_URL, new EpicTaskHandler(taskManager, EPIC_URL, TaskType.EPIC));
         httpServer.createContext(SUBTASK_URL, new SubtaskHandler(taskManager, SUBTASK_URL, TaskType.SUBTASK));
-        httpServer.createContext(SUBTASK_BY_EPIC_URL, new SubtaskByEpicIdHandler(taskManager));
-        httpServer.createContext(HISTORY_URL, new HistoryHandler(taskManager));
+        httpServer.createContext(SUBTASK_BY_EPIC_URL, new SubtaskByEpicIdHandler(taskManager, SUBTASK_BY_EPIC_URL));
+        httpServer.createContext(HISTORY_URL, new HistoryHandler(taskManager, HISTORY_URL));
     }
 
     public void start() {

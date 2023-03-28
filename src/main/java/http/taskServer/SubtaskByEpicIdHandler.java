@@ -1,33 +1,28 @@
 package main.java.http.taskServer;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+
 import main.java.description.TaskType;
 import main.java.manager.ManagerSaveException;
 import main.java.manager.TaskManager;
 import main.java.task.Subtask;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class SubtaskByEpicIdHandler implements HttpHandler {
-    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    private final TaskManager taskManager;
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+public class SubtaskByEpicIdHandler extends TaskHandler {
+    private final Gson gson = new Gson();
+    String expectedPath;
 
-    public SubtaskByEpicIdHandler(TaskManager taskManager) {
-        this.taskManager = taskManager;
+    public SubtaskByEpicIdHandler(TaskManager taskManager, String expectedPath) {
+        super(taskManager);
+        this.expectedPath = expectedPath;
     }
 
     @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
-        int code = 400;
-        String response = "";
+    public void handle(HttpExchange httpExchange) {
+        int code;
+        String response;
         String method = httpExchange.getRequestMethod();
         String path = String.valueOf(httpExchange.getRequestURI());
 
@@ -42,31 +37,32 @@ public class SubtaskByEpicIdHandler implements HttpHandler {
                     if (taskManager.validateTypeOfMapByIdContainsTaskId(id, TaskType.EPIC)) {
                         code = 200;
                         response = gson.toJson(subtasks);
+                        createResponse(httpExchange, response, code);
                     } else {
                         code = 404;
                         response = "Not Found ";
+                        createResponse(httpExchange, response, code);
                     }
                 } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
                     code = 400;
                     response = "Bad Request, expected NumberFormat";
+                    createResponse(httpExchange, response, code);
                 } catch (NullPointerException e) {
                     code = 404;
                     response = "Null";
+                    createResponse(httpExchange, response, code);
                 } catch (ManagerSaveException e) {
                     code = 404;
                     response = "Not Found";
+                    createResponse(httpExchange, response, code);
                 }
             } else {
                 code = 404;
                 response = "Not Found";
+                createResponse(httpExchange, response, code);
             }
         }
 
-        httpExchange.getResponseHeaders().set("Content-Type", "text/plain; charset=" + DEFAULT_CHARSET);
-        httpExchange.sendResponseHeaders(code, 0);
 
-        try (OutputStream os = httpExchange.getResponseBody()) {
-            os.write(response.getBytes());
-        }
     }
 }

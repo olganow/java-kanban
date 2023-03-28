@@ -5,7 +5,6 @@ import com.sun.net.httpserver.HttpExchange;
 import main.java.manager.TaskManager;
 
 public class TasksPrioritizedHandler extends TaskHandler {
-    // private TaskManager taskManager;
     private final Gson gson = new Gson();
     String expectedPath;
 
@@ -31,9 +30,5 @@ public class TasksPrioritizedHandler extends TaskHandler {
             response = "Not Found";
             createResponse(httpExchange, response, code);
         }
-
-
     }
-
-
 }

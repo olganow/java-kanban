@@ -1,7 +1,6 @@
 package main.java.http.taskServer;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -114,6 +113,12 @@ public abstract class TaskHandler implements HttpHandler {
         Task task = null;
         try {
             bodyRequest = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+            if (bodyRequest == null) {
+                code = 404;
+                response = "Not Found";
+                createResponse(httpExchange, response, code);
+                return;
+            }
             switch (taskType) {
                 case SINGLE:
                     task = gson.fromJson(bodyRequest, SingleTask.class);
