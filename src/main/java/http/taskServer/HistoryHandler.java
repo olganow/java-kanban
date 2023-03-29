@@ -1,13 +1,11 @@
 package main.java.http.taskServer;
 
-import com.google.gson.Gson;
+
 import com.sun.net.httpserver.HttpExchange;
 import main.java.manager.TaskManager;
 
 
 public class HistoryHandler extends TaskHandler {
-    private final Gson gson = new Gson();
-    String expectedPath;
 
     public HistoryHandler(TaskManager taskManager, String expectedPath) {
         super(taskManager);
@@ -27,7 +25,7 @@ public class HistoryHandler extends TaskHandler {
             code = 200;
             response = gson.toJson(taskManager.getHistory());
             createResponse(httpExchange, response, code);
-        } else if (method.equals("GET")){
+        } else if (method.equals("GET")) {
             code = 404;
             response = "Not Found";
             createResponse(httpExchange, response, code);

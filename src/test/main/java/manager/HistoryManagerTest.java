@@ -21,10 +21,12 @@ class HistoryManagerTest {
     private void beforeEach() {
         historyManager = Managers.getDefaultHistory();
 
-        singleTaskFirst = new SingleTask("First Single Task for testing", "Desc SST", TaskStatus.NEW, Instant.ofEpochMilli(163857900000L),707568400L);
+        singleTaskFirst = new SingleTask("First Single Task for testing", "Desc SST", TaskStatus.NEW,
+                Instant.ofEpochMilli(163857900000L), 707568400L);
         singleTaskFirst.setId(1);
 
-        singleTaskSecond = new SingleTask("Second Single Task for testing", "Desc SST", TaskStatus.NEW, Instant.ofEpochMilli(56163857900000L),707568400L);
+        singleTaskSecond = new SingleTask("Second Single Task for testing", "Desc SST", TaskStatus.NEW,
+                Instant.ofEpochMilli(56163857900000L), 707568400L);
         singleTaskSecond.setId(2);
 
         singleTaskThird = new SingleTask("Third Single Task for testing", "Desc SST", TaskStatus.NEW);
@@ -34,7 +36,7 @@ class HistoryManagerTest {
     @Test
     @DisplayName("Пустая история задач")
     public void shouldBeEmptyListOfSubtasks() {
-        assertEquals(0,historyManager.getHistory().size());
+        assertEquals(0, historyManager.getHistory().size());
     }
 
     @Test
@@ -42,7 +44,7 @@ class HistoryManagerTest {
     public void shouldNotHaveDoubles() {
         historyManager.add(singleTaskFirst);
         historyManager.add(singleTaskFirst);
-        assertEquals(1,historyManager.getHistory().size());
+        assertEquals(1, historyManager.getHistory().size());
     }
 
     @Test
@@ -52,7 +54,7 @@ class HistoryManagerTest {
         historyManager.add(singleTaskSecond);
         historyManager.add(singleTaskThird);
         historyManager.remove(singleTaskFirst.getId());
-        assertEquals(2,historyManager.getHistory().size());
+        assertEquals(2, historyManager.getHistory().size());
     }
 
     @Test
@@ -62,7 +64,7 @@ class HistoryManagerTest {
         historyManager.add(singleTaskSecond);
         historyManager.add(singleTaskThird);
         historyManager.remove(singleTaskSecond.getId());
-        assertEquals(2,historyManager.getHistory().size());
+        assertEquals(2, historyManager.getHistory().size());
     }
 
     @Test
@@ -72,7 +74,7 @@ class HistoryManagerTest {
         historyManager.add(singleTaskSecond);
         historyManager.add(singleTaskThird);
         historyManager.remove(singleTaskThird.getId());
-        assertEquals(2,historyManager.getHistory().size());
+        assertEquals(2, historyManager.getHistory().size());
     }
 
 

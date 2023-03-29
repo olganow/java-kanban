@@ -17,7 +17,7 @@ import java.time.Instant;
 import static org.junit.jupiter.api.Assertions.*;
 
 
- class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
+class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
     private final String path = "src/test/resources/history_data_test.csv";
 
     private File file = new File(path);
@@ -39,10 +39,12 @@ import static org.junit.jupiter.api.Assertions.*;
                 Instant.ofEpochMilli(163857900000L), 707568400L, epicTask.getId());
         subtask.setId(2);
     }
+
     @AfterEach
     public void afterEach() {
         taskManager.deleteAllTask();
     }
+
     @Test
     @DisplayName("Сохранение в файл")
     public void shouldSaveToFile() throws IOException {

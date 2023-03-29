@@ -1,6 +1,5 @@
 package main.java.http.taskServer;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 
 import main.java.description.TaskType;
@@ -11,8 +10,6 @@ import main.java.task.Subtask;
 import java.util.List;
 
 public class SubtaskByEpicIdHandler extends TaskHandler {
-    private final Gson gson = new Gson();
-    String expectedPath;
 
     public SubtaskByEpicIdHandler(TaskManager taskManager, String expectedPath) {
         super(taskManager);

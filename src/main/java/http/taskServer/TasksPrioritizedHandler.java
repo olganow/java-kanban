@@ -1,12 +1,9 @@
 package main.java.http.taskServer;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import main.java.manager.TaskManager;
 
 public class TasksPrioritizedHandler extends TaskHandler {
-    private final Gson gson = new Gson();
-    String expectedPath;
 
     public TasksPrioritizedHandler(TaskManager taskManager, String expectedPath) {
         super(taskManager);

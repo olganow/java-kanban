@@ -14,14 +14,14 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        System.out.println("Это программа Трекер задач Франкенштейн. Версия1");
+        System.out.println("Это программа Трекер задач");
 
         Gson gson = new Gson();
         KVServer kvServer = Managers.getDefaultKVServer();
         kvServer.start();
 
 
-        HttpTaskManager taskManager = (HttpTaskManager) Managers.getDefaultHttpTaskManager("http://localhost:8078");
+        HttpTaskManager taskManager =  Managers.getDefaultHttpTaskManager("http://localhost:8078");
         KVTaskClient kvTaskClient = new KVTaskClient("http://localhost:8078");
 
         SingleTask singleTask1 = new SingleTask("Single safe Task", "Desc SST",
@@ -52,6 +52,14 @@ public class Main {
         System.out.println("Получить по ID\n" + taskManager.getTaskById(0));
         System.out.println("Получить по ID\n" + taskManager.getTaskById(1));
         System.out.println("Получить по ID\n" + taskManager.getTaskById(2));
+
+
+        System.out.println("====");
+        System.out.println(gson.toJson(singleTask1,SingleTask.class));
+        System.out.println(gson.toJson(epicTask1,EpicTask.class));
+        System.out.println(gson.toJson(subtask1,Subtask.class));
+
+
 
         HttpTaskServer taskServer = Managers.getDefaultHttpTaskServer(taskManager);
         taskServer.start();
