@@ -59,31 +59,32 @@ public abstract class TaskHandler implements HttpHandler {
                 break;
 
             default:
-                createResponse(httpExchange, "Not found", 404);
+                code = 405;
+                response = "Method Not Allowed";
+                createResponse(httpExchange, response, code);
         }
 
     }
 
     private void getTask(HttpExchange httpExchange, String path, TaskType taskType, String query) {
-        if (query == null && path.equals(expectedPath)) {
-            String jsonString = "";
-            switch (taskType) {
-                case SINGLE:
-                    jsonString = gson.toJson(taskManager.getAllSingleTasks());
-                    break;
-                case SUBTASK:
-                    jsonString = gson.toJson(taskManager.getAllSubtasks());
-                    break;
-                case EPIC:
-                    jsonString = gson.toJson(taskManager.getAllEpicTasks());
-                    break;
-            }
-
-            code = 200;
-            response = gson.toJson(jsonString);
-            createResponse(httpExchange, response, code);
-        } else {
-            try {
+        try {
+            if (query == null && path.equals(expectedPath)) {
+                String jsonString = "";
+                switch (taskType) {
+                    case SINGLE:
+                        jsonString = gson.toJson(taskManager.getAllSingleTasks());
+                        break;
+                    case SUBTASK:
+                        jsonString = gson.toJson(taskManager.getAllSubtasks());
+                        break;
+                    case EPIC:
+                        jsonString = gson.toJson(taskManager.getAllEpicTasks());
+                        break;
+                }
+                code = 200;
+                response = gson.toJson(jsonString);
+                createResponse(httpExchange, response, code);
+            } else if (query != null) {
                 int id = Integer.parseInt(query.substring(3));
                 Task task = taskManager.getTaskById(id);
                 boolean isQueryStartCorrect = query.substring(0, 3).equals("id=");
@@ -93,29 +94,34 @@ public abstract class TaskHandler implements HttpHandler {
                     createResponse(httpExchange, response, code);
                 } else {
                     code = 404;
-                    response = "Not Found ";
+                    response = "Not Found";
                     createResponse(httpExchange, response, code);
                 }
-            } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
-                code = 400;
-                response = "Bad Request, expected NumberFormat";
-                createResponse(httpExchange, response, code);
-            } catch (ManagerSaveException | NullPointerException e) {
+            } else {
                 code = 404;
                 response = "Not Found";
                 createResponse(httpExchange, response, code);
             }
+        } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
+            code = 400;
+            response = "Bad Request, expected NumberFormat";
+            createResponse(httpExchange, response, code);
+        } catch (ManagerSaveException e) {
+            code = 404;
+            response = "Not Found";
+            createResponse(httpExchange, response, code);
         }
     }
+
 
     private void postTask(HttpExchange httpExchange, TaskType taskType) {
         String bodyRequest;
         Task task = null;
         try {
             bodyRequest = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-            if (bodyRequest == null) {
-                code = 404;
-                response = "Not Found";
+            if (bodyRequest.isEmpty()) {
+                code = 400;
+                response = "BAD_REQUEST";
                 createResponse(httpExchange, response, code);
                 return;
             }
@@ -170,10 +176,6 @@ public abstract class TaskHandler implements HttpHandler {
             code = 406;
             response = "Not Acceptable Json Syntax in the request";
             createResponse(httpExchange, response, code);
-        } catch (NullPointerException e) {
-            code = 404;
-            response = "Null";
-            createResponse(httpExchange, response, code);
         }
     }
 
@@ -194,18 +196,22 @@ public abstract class TaskHandler implements HttpHandler {
                 code = 200;
                 response = "All tasks have been deleted";
                 createResponse(httpExchange, response, code);
-            } else {
+            } else if (path.equals(expectedPath)) {
                 int id = Integer.parseInt(query.substring(3));
                 taskManager.deleteById(id);
                 code = 200;
                 response = "Task with id=" + id + " has been deleted";
                 createResponse(httpExchange, response, code);
+            } else {
+                code = 404;
+                response = "Not Found";
+                createResponse(httpExchange, response, code);
             }
         } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
             code = 400;
-            response = "Bad Request, expected NumberFormat";
+            response = "BAD_REQUEST";
             createResponse(httpExchange, response, code);
-        } catch (ManagerSaveException | NullPointerException e) {
+        } catch (ManagerSaveException e) {
             code = 404;
             response = "Not Found";
             createResponse(httpExchange, response, code);

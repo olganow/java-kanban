@@ -16,7 +16,7 @@ public class HistoryHandler extends TaskHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) {
-        int code = 404;
+        int code;
         String response;
         String method = httpExchange.getRequestMethod();
         String path = String.valueOf(httpExchange.getRequestURI());
@@ -27,8 +27,13 @@ public class HistoryHandler extends TaskHandler {
             code = 200;
             response = gson.toJson(taskManager.getHistory());
             createResponse(httpExchange, response, code);
-        } else {
+        } else if (method.equals("GET")){
+            code = 404;
             response = "Not Found";
+            createResponse(httpExchange, response, code);
+        } else {
+            code = 405;
+            response = "Method Not Allowed";
             createResponse(httpExchange, response, code);
         }
     }

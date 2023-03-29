@@ -458,7 +458,7 @@ class HttpTaskServerTest {
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(400, response.statusCode());
-        assertEquals("Bad Request, expected NumberFormat", response.body());
+        assertEquals("BAD_REQUEST", response.body());
         assertFalse(taskManager.getAllSingleTasks().isEmpty());
 
     }
@@ -474,7 +474,7 @@ class HttpTaskServerTest {
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(400, response.statusCode());
-        assertEquals("Bad Request, expected NumberFormat", response.body());
+        assertEquals("BAD_REQUEST", response.body());
         assertFalse(taskManager.getAllEpicTasks().isEmpty());
     }
 

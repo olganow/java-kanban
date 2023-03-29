@@ -14,11 +14,10 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
-
 public class KVTaskClient {
     private final String apiToken;
     private final String clientServerUrl;
-    private HttpClient client = HttpClient.newHttpClient();
+    private final HttpClient client = HttpClient.newHttpClient();
 
     public KVTaskClient(String clientServerUrl) {
         this.clientServerUrl = clientServerUrl;

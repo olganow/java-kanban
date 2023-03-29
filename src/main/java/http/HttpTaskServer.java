@@ -3,6 +3,7 @@ package main.java.http;
 import com.sun.net.httpserver.HttpServer;
 import main.java.description.TaskType;
 import main.java.http.taskServer.*;
+import main.java.manager.Managers;
 import main.java.manager.TaskManager;
 
 import java.io.IOException;
@@ -17,19 +18,20 @@ public class HttpTaskServer {
     private static final String SUBTASK_URL = "/tasks/subtask/";
     private static final String SUBTASK_BY_EPIC_URL = "/tasks/subtask/epic/";
     private static final String HISTORY_URL = "/tasks/history/";
-    private final TaskManager taskManager;
 
-    public HttpTaskServer(TaskManager taskManager) throws IOException {
-        this.taskManager = taskManager;
-        this.httpServer = HttpServer.create();
-        httpServer.bind(new InetSocketAddress(PORT), 0);
+    public HttpTaskServer() throws IOException {
+        this(Managers.getDefaultHttpTaskManager("http://localhost:8078/"));
+    }
 
-        httpServer.createContext(TASKS_URL, new TasksPrioritizedHandler(taskManager, TASKS_URL));
-        httpServer.createContext(SINGLETASK_URL, new SingleTaskHandler(taskManager, SINGLETASK_URL, TaskType.SINGLE));
-        httpServer.createContext(EPIC_URL, new EpicTaskHandler(taskManager, EPIC_URL, TaskType.EPIC));
-        httpServer.createContext(SUBTASK_URL, new SubtaskHandler(taskManager, SUBTASK_URL, TaskType.SUBTASK));
-        httpServer.createContext(SUBTASK_BY_EPIC_URL, new SubtaskByEpicIdHandler(taskManager, SUBTASK_BY_EPIC_URL));
-        httpServer.createContext(HISTORY_URL, new HistoryHandler(taskManager, HISTORY_URL));
+    public HttpTaskServer(TaskManager httpTaskManager) throws IOException {
+        this.httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
+
+        this.httpServer.createContext(TASKS_URL, new TasksPrioritizedHandler(httpTaskManager, TASKS_URL));
+        this.httpServer.createContext(SINGLETASK_URL, new SingleTaskHandler(httpTaskManager, SINGLETASK_URL, TaskType.SINGLE));
+        this.httpServer.createContext(EPIC_URL, new EpicTaskHandler(httpTaskManager, EPIC_URL, TaskType.EPIC));
+        this.httpServer.createContext(SUBTASK_URL, new SubtaskHandler(httpTaskManager, SUBTASK_URL, TaskType.SUBTASK));
+        this.httpServer.createContext(SUBTASK_BY_EPIC_URL, new SubtaskByEpicIdHandler(httpTaskManager, SUBTASK_BY_EPIC_URL));
+        this.httpServer.createContext(HISTORY_URL, new HistoryHandler(httpTaskManager, HISTORY_URL));
     }
 
     public void start() {

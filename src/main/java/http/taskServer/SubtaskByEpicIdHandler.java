@@ -47,10 +47,6 @@ public class SubtaskByEpicIdHandler extends TaskHandler {
                     code = 400;
                     response = "Bad Request, expected NumberFormat";
                     createResponse(httpExchange, response, code);
-                } catch (NullPointerException e) {
-                    code = 404;
-                    response = "Null";
-                    createResponse(httpExchange, response, code);
                 } catch (ManagerSaveException e) {
                     code = 404;
                     response = "Not Found";
@@ -61,6 +57,10 @@ public class SubtaskByEpicIdHandler extends TaskHandler {
                 response = "Not Found";
                 createResponse(httpExchange, response, code);
             }
+        } else {
+            code = 405;
+            response = "Method Not Allowed";
+            createResponse(httpExchange, response, code);
         }
 
 
