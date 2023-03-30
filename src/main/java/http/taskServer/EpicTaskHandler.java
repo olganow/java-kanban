@@ -22,18 +22,7 @@ public class EpicTaskHandler extends TaskHandler {
         String response;
         try {
             if (query == null && path.equals(expectedPath)) {
-                String jsonString = "";
-                switch (taskType) {
-                    case SINGLE:
-                        jsonString = gson.toJson(taskManager.getAllSingleTasks());
-                        break;
-                    case SUBTASK:
-                        jsonString = gson.toJson(taskManager.getAllSubtasks());
-                        break;
-                    case EPIC:
-                        jsonString = gson.toJson(taskManager.getAllEpicTasks());
-                        break;
-                }
+                String jsonString = gson.toJson(taskManager.getAllEpicTasks());
                 code = 200;
                 response = gson.toJson(jsonString);
                 createResponse(httpExchange, response, code);

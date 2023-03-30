@@ -46,7 +46,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             JsonArray jsonTasksArray = jsonTasks.getAsJsonArray();
             for (JsonElement jsonTask : jsonTasksArray) {
                 SingleTask task = gson.fromJson(jsonTask, SingleTask.class);
-                int taskID = task.getId();
+                int taskID = getTaskId(task);
                 if (taskIdGenerator.getNextFreedI() < taskID) {
                     taskIdGenerator.setNextFreedId(taskID);
                 }
@@ -60,11 +60,11 @@ public class HttpTaskManager extends FileBackedTasksManager {
             JsonArray jsonEpicsArray = jsonEpics.getAsJsonArray();
             for (JsonElement jsonEpic : jsonEpicsArray) {
                 EpicTask task = gson.fromJson(jsonEpic, EpicTask.class);
-                int taskID = task.getId();
+                int taskID = getTaskId(task);
                 if (taskIdGenerator.getNextFreedI() < taskID) {
                     taskIdGenerator.setNextFreedId(taskID);
                 }
-                epicTaskById.put(task.getId(), task);
+                epicTaskById.put(taskID, task);
             }
         }
 
@@ -73,11 +73,11 @@ public class HttpTaskManager extends FileBackedTasksManager {
             JsonArray jsonSubtasksArray = jsonSubtasks.getAsJsonArray();
             for (JsonElement jsonSubtask : jsonSubtasksArray) {
                 Subtask task = gson.fromJson(jsonSubtask, Subtask.class);
-                int taskID = task.getId();
+                int taskID = getTaskId(task);
                 if (taskIdGenerator.getNextFreedI() < taskID) {
                     taskIdGenerator.setNextFreedId(taskID);
                 }
-                subtaskById.put(task.getId(), task);
+                subtaskById.put(taskID, task);
                 sortedTasks.add(task);
             }
         }
@@ -88,14 +88,17 @@ public class HttpTaskManager extends FileBackedTasksManager {
             for (JsonElement jsonTaskId : jsonHistoryArray) {
                 int taskId = jsonTaskId.getAsInt();
                 if (this.subtaskById.containsKey(taskId)) {
-                    this.getTaskById(taskId);
+                    this.historyManager.add(subtaskById.get(taskId));
                 } else if (this.epicTaskById.containsKey(taskId)) {
-                    this.getTaskById(taskId);
+                    this.historyManager.add(epicTaskById.get(taskId));
                 } else if (this.singleTaskById.containsKey(taskId)) {
-                    this.getTaskById(taskId);
+                    this.historyManager.add(singleTaskById.get(taskId));
                 }
             }
         }
     }
 
+    private int getTaskId(Task task) {
+        return task.getId();
+    }
 }
