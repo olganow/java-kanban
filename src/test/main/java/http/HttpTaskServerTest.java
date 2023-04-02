@@ -1,8 +1,6 @@
 package main.java.http;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import main.java.adapters.InstantAdapter;
 import main.java.description.TaskStatus;
 import main.java.manager.Managers;
 import main.java.task.EpicTask;
@@ -39,7 +37,7 @@ class HttpTaskServerTest {
     private static KVServer kvServer;
     private static HttpTaskServer httpTaskServer;
     private static HttpClient httpClient;
-    private static Gson gson = new GsonBuilder().registerTypeAdapter(Instant.class, new InstantAdapter()).create();
+    private static Gson gson = new Gson();
     private static HttpTaskManager taskManager;
 
     @BeforeEach
